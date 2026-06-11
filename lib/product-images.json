@@ -1,0 +1,633 @@
+{
+  "atlas-briefcase-vintage": {
+    "gallery": [
+      "/tanneurs/products/atlas-briefcase-vintage/01.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/02.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/03.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/04.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/05.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/06.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/07.webp",
+      "/tanneurs/products/atlas-briefcase-vintage/08.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-briefcase-vintage.webp"
+  },
+  "atlas-escape-duffle": {
+    "gallery": [
+      "/tanneurs/products/atlas-escape-duffle/01.webp",
+      "/tanneurs/products/atlas-escape-duffle/02.webp",
+      "/tanneurs/products/atlas-escape-duffle/03.webp",
+      "/tanneurs/products/atlas-escape-duffle/04.webp",
+      "/tanneurs/products/atlas-escape-duffle/05.webp",
+      "/tanneurs/products/atlas-escape-duffle/06.webp",
+      "/tanneurs/products/atlas-escape-duffle/07.webp",
+      "/tanneurs/products/atlas-escape-duffle/08.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-escape-duffle.webp"
+  },
+  "atlas-field-briefcase": {
+    "gallery": [
+      "/tanneurs/products/atlas-field-briefcase/01.webp",
+      "/tanneurs/products/atlas-field-briefcase/02.webp",
+      "/tanneurs/products/atlas-field-briefcase/03.webp",
+      "/tanneurs/products/atlas-field-briefcase/04.webp",
+      "/tanneurs/products/atlas-field-briefcase/05.webp",
+      "/tanneurs/products/atlas-field-briefcase/06.webp",
+      "/tanneurs/products/atlas-field-briefcase/07.webp",
+      "/tanneurs/products/atlas-field-briefcase/08.webp",
+      "/tanneurs/products/atlas-field-briefcase/09.webp",
+      "/tanneurs/products/atlas-field-briefcase/10.webp",
+      "/tanneurs/products/atlas-field-briefcase/11.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-field-briefcase.webp"
+  },
+  "atlas-kilim-backpack": {
+    "gallery": [
+      "/tanneurs/products/atlas-kilim-backpack/01.webp",
+      "/tanneurs/products/atlas-kilim-backpack/02.webp",
+      "/tanneurs/products/atlas-kilim-backpack/03.webp",
+      "/tanneurs/products/atlas-kilim-backpack/04.webp",
+      "/tanneurs/products/atlas-kilim-backpack/05.webp",
+      "/tanneurs/products/atlas-kilim-backpack/06.webp",
+      "/tanneurs/products/atlas-kilim-backpack/07.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-kilim-backpack.webp"
+  },
+  "atlas-kilim-duffle": {
+    "gallery": [
+      "/tanneurs/products/atlas-kilim-duffle/01.webp",
+      "/tanneurs/products/atlas-kilim-duffle/02.webp",
+      "/tanneurs/products/atlas-kilim-duffle/03.webp",
+      "/tanneurs/products/atlas-kilim-duffle/04.webp",
+      "/tanneurs/products/atlas-kilim-duffle/05.webp",
+      "/tanneurs/products/atlas-kilim-duffle/06.webp",
+      "/tanneurs/products/atlas-kilim-duffle/07.webp",
+      "/tanneurs/products/atlas-kilim-duffle/08.webp",
+      "/tanneurs/products/atlas-kilim-duffle/09.webp",
+      "/tanneurs/products/atlas-kilim-duffle/10.webp",
+      "/tanneurs/products/atlas-kilim-duffle/11.webp",
+      "/tanneurs/products/atlas-kilim-duffle/12.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-kilim-duffle.webp"
+  },
+  "atlas-kilim-rucksack": {
+    "gallery": [
+      "/tanneurs/products/atlas-kilim-rucksack/01.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/02.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/03.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/04.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/05.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/06.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/07.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/08.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/09.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/10.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/11.webp",
+      "/tanneurs/products/atlas-kilim-rucksack/12.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-kilim-rucksack.webp"
+  },
+  "atlas-messenger-laptop": {
+    "gallery": [
+      "/tanneurs/products/atlas-messenger-laptop/01.webp",
+      "/tanneurs/products/atlas-messenger-laptop/02.webp",
+      "/tanneurs/products/atlas-messenger-laptop/03.webp",
+      "/tanneurs/products/atlas-messenger-laptop/04.webp",
+      "/tanneurs/products/atlas-messenger-laptop/05.webp",
+      "/tanneurs/products/atlas-messenger-laptop/06.webp",
+      "/tanneurs/products/atlas-messenger-laptop/07.webp",
+      "/tanneurs/products/atlas-messenger-laptop/08.webp",
+      "/tanneurs/products/atlas-messenger-laptop/09.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-messenger-laptop.webp"
+  },
+  "atlas-messenger-laptop-strap": {
+    "gallery": [
+      "/tanneurs/products/atlas-messenger-laptop-strap/01.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/02.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/03.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/04.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/05.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/06.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/07.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/08.webp",
+      "/tanneurs/products/atlas-messenger-laptop-strap/09.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-messenger-laptop-strap.webp"
+  },
+  "atlas-weekender-cognac": {
+    "gallery": [
+      "/tanneurs/products/atlas-weekender-cognac/01.webp",
+      "/tanneurs/products/atlas-weekender-cognac/02.webp",
+      "/tanneurs/products/atlas-weekender-cognac/03.webp",
+      "/tanneurs/products/atlas-weekender-cognac/04.webp",
+      "/tanneurs/products/atlas-weekender-cognac/05.webp",
+      "/tanneurs/products/atlas-weekender-cognac/06.webp",
+      "/tanneurs/products/atlas-weekender-cognac/07.webp",
+      "/tanneurs/products/atlas-weekender-cognac/08.webp",
+      "/tanneurs/products/atlas-weekender-cognac/09.webp"
+    ],
+    "hero": "/tanneurs/products/atlas-weekender-cognac.webp"
+  },
+  "classic-cognac-satchel": {
+    "gallery": [
+      "/tanneurs/products/classic-cognac-satchel/01.webp",
+      "/tanneurs/products/classic-cognac-satchel/02.webp",
+      "/tanneurs/products/classic-cognac-satchel/03.webp",
+      "/tanneurs/products/classic-cognac-satchel/04.webp",
+      "/tanneurs/products/classic-cognac-satchel/05.webp",
+      "/tanneurs/products/classic-cognac-satchel/06.webp",
+      "/tanneurs/products/classic-cognac-satchel/07.webp",
+      "/tanneurs/products/classic-cognac-satchel/08.webp",
+      "/tanneurs/products/classic-cognac-satchel/09.webp"
+    ],
+    "hero": "/tanneurs/products/classic-cognac-satchel.webp"
+  },
+  "cognac-brogue-backpack": {
+    "gallery": [
+      "/tanneurs/products/cognac-brogue-backpack/01.webp",
+      "/tanneurs/products/cognac-brogue-backpack/02.webp",
+      "/tanneurs/products/cognac-brogue-backpack/03.webp",
+      "/tanneurs/products/cognac-brogue-backpack/04.webp",
+      "/tanneurs/products/cognac-brogue-backpack/05.webp",
+      "/tanneurs/products/cognac-brogue-backpack/06.webp",
+      "/tanneurs/products/cognac-brogue-backpack/07.webp",
+      "/tanneurs/products/cognac-brogue-backpack/08.webp"
+    ],
+    "hero": "/tanneurs/products/cognac-brogue-backpack.webp"
+  },
+  "expedition-rolltop-cognac": {
+    "gallery": [
+      "/tanneurs/products/expedition-rolltop-cognac/01.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/02.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/03.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/04.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/05.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/06.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/07.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/08.webp",
+      "/tanneurs/products/expedition-rolltop-cognac/09.webp"
+    ],
+    "hero": "/tanneurs/products/expedition-rolltop-cognac.webp"
+  },
+  "expedition-rolltop-noir": {
+    "gallery": [
+      "/tanneurs/products/expedition-rolltop-noir/01.webp",
+      "/tanneurs/products/expedition-rolltop-noir/02.webp",
+      "/tanneurs/products/expedition-rolltop-noir/03.webp",
+      "/tanneurs/products/expedition-rolltop-noir/04.webp",
+      "/tanneurs/products/expedition-rolltop-noir/05.webp",
+      "/tanneurs/products/expedition-rolltop-noir/06.webp",
+      "/tanneurs/products/expedition-rolltop-noir/07.webp",
+      "/tanneurs/products/expedition-rolltop-noir/08.webp",
+      "/tanneurs/products/expedition-rolltop-noir/09.webp",
+      "/tanneurs/products/expedition-rolltop-noir/10.webp"
+    ],
+    "hero": "/tanneurs/products/expedition-rolltop-noir.webp"
+  },
+  "explorer-rolltop-cognac": {
+    "gallery": [
+      "/tanneurs/products/explorer-rolltop-cognac/01.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/02.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/03.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/04.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/05.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/06.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/07.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/08.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/09.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/10.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/11.webp",
+      "/tanneurs/products/explorer-rolltop-cognac/12.webp"
+    ],
+    "hero": "/tanneurs/products/explorer-rolltop-cognac.webp"
+  },
+  "heritage-rucksack": {
+    "gallery": [
+      "/tanneurs/products/heritage-rucksack/01.webp",
+      "/tanneurs/products/heritage-rucksack/02.webp",
+      "/tanneurs/products/heritage-rucksack/03.webp",
+      "/tanneurs/products/heritage-rucksack/04.webp",
+      "/tanneurs/products/heritage-rucksack/05.webp",
+      "/tanneurs/products/heritage-rucksack/06.webp",
+      "/tanneurs/products/heritage-rucksack/07.webp"
+    ],
+    "hero": "/tanneurs/products/heritage-rucksack.webp"
+  },
+  "kilim-travel-bag-moutarde": {
+    "gallery": [
+      "/tanneurs/products/kilim-travel-bag-moutarde/01.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/02.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/03.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/04.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/05.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/06.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/07.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/08.webp",
+      "/tanneurs/products/kilim-travel-bag-moutarde/09.webp"
+    ],
+    "hero": "/tanneurs/products/kilim-travel-bag-moutarde.webp"
+  },
+  "le-caravanier-chocolate": {
+    "gallery": [
+      "/tanneurs/products/le-caravanier-chocolate/01.webp",
+      "/tanneurs/products/le-caravanier-chocolate/02.webp",
+      "/tanneurs/products/le-caravanier-chocolate/03.webp",
+      "/tanneurs/products/le-caravanier-chocolate/04.webp",
+      "/tanneurs/products/le-caravanier-chocolate/05.webp",
+      "/tanneurs/products/le-caravanier-chocolate/06.webp",
+      "/tanneurs/products/le-caravanier-chocolate/07.webp",
+      "/tanneurs/products/le-caravanier-chocolate/08.webp",
+      "/tanneurs/products/le-caravanier-chocolate/09.webp"
+    ],
+    "hero": "/tanneurs/products/le-caravanier-chocolate.webp"
+  },
+  "le-caravanier-light": {
+    "gallery": [
+      "/tanneurs/products/le-caravanier-light/01.webp",
+      "/tanneurs/products/le-caravanier-light/02.webp",
+      "/tanneurs/products/le-caravanier-light/03.webp",
+      "/tanneurs/products/le-caravanier-light/04.webp",
+      "/tanneurs/products/le-caravanier-light/05.webp",
+      "/tanneurs/products/le-caravanier-light/06.webp",
+      "/tanneurs/products/le-caravanier-light/07.webp",
+      "/tanneurs/products/le-caravanier-light/08.webp",
+      "/tanneurs/products/le-caravanier-light/09.webp"
+    ],
+    "hero": "/tanneurs/products/le-caravanier-light.webp"
+  },
+  "le-nomade": {
+    "gallery": [
+      "/tanneurs/products/le-nomade/01.webp",
+      "/tanneurs/products/le-nomade/02.webp",
+      "/tanneurs/products/le-nomade/03.webp",
+      "/tanneurs/products/le-nomade/04.webp",
+      "/tanneurs/products/le-nomade/05.webp",
+      "/tanneurs/products/le-nomade/06.webp",
+      "/tanneurs/products/le-nomade/07.webp",
+      "/tanneurs/products/le-nomade/08.webp"
+    ],
+    "hero": "/tanneurs/products/le-nomade.webp"
+  },
+  "marrakech-tote-cognac": {
+    "gallery": [
+      "/tanneurs/products/marrakech-tote-cognac/01.webp",
+      "/tanneurs/products/marrakech-tote-cognac/02.webp",
+      "/tanneurs/products/marrakech-tote-cognac/03.webp",
+      "/tanneurs/products/marrakech-tote-cognac/04.webp",
+      "/tanneurs/products/marrakech-tote-cognac/05.webp",
+      "/tanneurs/products/marrakech-tote-cognac/06.webp",
+      "/tanneurs/products/marrakech-tote-cognac/07.webp",
+      "/tanneurs/products/marrakech-tote-cognac/08.webp",
+      "/tanneurs/products/marrakech-tote-cognac/09.webp",
+      "/tanneurs/products/marrakech-tote-cognac/10.webp",
+      "/tanneurs/products/marrakech-tote-cognac/11.webp",
+      "/tanneurs/products/marrakech-tote-cognac/12.webp"
+    ],
+    "hero": "/tanneurs/products/marrakech-tote-cognac.webp"
+  },
+  "medina-cargo-rucksack-cognac": {
+    "gallery": [
+      "/tanneurs/products/medina-cargo-rucksack-cognac/01.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/02.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/03.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/04.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/05.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/06.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/07.webp",
+      "/tanneurs/products/medina-cargo-rucksack-cognac/08.webp"
+    ],
+    "hero": "/tanneurs/products/medina-cargo-rucksack-cognac.webp"
+  },
+  "medina-cargo-rucksack-moutarde": {
+    "gallery": [
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/01.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/02.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/03.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/04.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/05.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/06.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/07.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/08.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/09.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/10.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/11.webp",
+      "/tanneurs/products/medina-cargo-rucksack-moutarde/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-cargo-rucksack-moutarde.webp"
+  },
+  "medina-courtyard-crossbody": {
+    "gallery": [
+      "/tanneurs/products/medina-courtyard-crossbody/01.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/02.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/03.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/04.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/05.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/06.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/07.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/08.webp",
+      "/tanneurs/products/medina-courtyard-crossbody/09.webp"
+    ],
+    "hero": "/tanneurs/products/medina-courtyard-crossbody.webp"
+  },
+  "medina-crossbody-clasp-teal": {
+    "gallery": [
+      "/tanneurs/products/medina-crossbody-clasp-teal/01.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/02.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/03.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/04.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/05.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/06.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/07.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/08.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/09.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/10.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/11.webp",
+      "/tanneurs/products/medina-crossbody-clasp-teal/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-crossbody-clasp-teal.webp"
+  },
+  "medina-crossbody-cognac": {
+    "gallery": [
+      "/tanneurs/products/medina-crossbody-cognac/01.webp",
+      "/tanneurs/products/medina-crossbody-cognac/02.webp",
+      "/tanneurs/products/medina-crossbody-cognac/03.webp",
+      "/tanneurs/products/medina-crossbody-cognac/04.webp",
+      "/tanneurs/products/medina-crossbody-cognac/05.webp",
+      "/tanneurs/products/medina-crossbody-cognac/06.webp",
+      "/tanneurs/products/medina-crossbody-cognac/07.webp",
+      "/tanneurs/products/medina-crossbody-cognac/08.webp",
+      "/tanneurs/products/medina-crossbody-cognac/09.webp",
+      "/tanneurs/products/medina-crossbody-cognac/10.webp"
+    ],
+    "hero": "/tanneurs/products/medina-crossbody-cognac.webp"
+  },
+  "medina-crossbody-envelope": {
+    "gallery": [
+      "/tanneurs/products/medina-crossbody-envelope/01.webp",
+      "/tanneurs/products/medina-crossbody-envelope/02.webp",
+      "/tanneurs/products/medina-crossbody-envelope/03.webp",
+      "/tanneurs/products/medina-crossbody-envelope/04.webp",
+      "/tanneurs/products/medina-crossbody-envelope/05.webp",
+      "/tanneurs/products/medina-crossbody-envelope/06.webp",
+      "/tanneurs/products/medina-crossbody-envelope/07.webp",
+      "/tanneurs/products/medina-crossbody-envelope/08.webp",
+      "/tanneurs/products/medina-crossbody-envelope/09.webp",
+      "/tanneurs/products/medina-crossbody-envelope/10.webp",
+      "/tanneurs/products/medina-crossbody-envelope/11.webp",
+      "/tanneurs/products/medina-crossbody-envelope/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-crossbody-envelope.webp"
+  },
+  "medina-crossbody-tooled-dark-brown": {
+    "gallery": [
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/01.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/02.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/03.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/04.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/05.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/06.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/07.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/08.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/09.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/10.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/11.webp",
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-crossbody-tooled-dark-brown.webp"
+  },
+  "medina-crossbody-tooled-walnut": {
+    "gallery": [
+      "/tanneurs/products/medina-crossbody-tooled-walnut/01.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/02.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/03.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/04.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/05.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/06.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/07.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/08.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/09.webp",
+      "/tanneurs/products/medina-crossbody-tooled-walnut/10.webp"
+    ],
+    "hero": "/tanneurs/products/medina-crossbody-tooled-walnut.webp"
+  },
+  "medina-duffle": {
+    "gallery": [
+      "/tanneurs/products/medina-duffle/01.webp",
+      "/tanneurs/products/medina-duffle/02.webp",
+      "/tanneurs/products/medina-duffle/03.webp",
+      "/tanneurs/products/medina-duffle/04.webp",
+      "/tanneurs/products/medina-duffle/05.webp",
+      "/tanneurs/products/medina-duffle/06.webp",
+      "/tanneurs/products/medina-duffle/07.webp",
+      "/tanneurs/products/medina-duffle/08.webp"
+    ],
+    "hero": "/tanneurs/products/medina-duffle.webp"
+  },
+  "medina-market-tote-cognac": {
+    "gallery": [
+      "/tanneurs/products/medina-market-tote-cognac/01.webp",
+      "/tanneurs/products/medina-market-tote-cognac/02.webp",
+      "/tanneurs/products/medina-market-tote-cognac/03.webp",
+      "/tanneurs/products/medina-market-tote-cognac/04.webp",
+      "/tanneurs/products/medina-market-tote-cognac/05.webp",
+      "/tanneurs/products/medina-market-tote-cognac/06.webp",
+      "/tanneurs/products/medina-market-tote-cognac/07.webp",
+      "/tanneurs/products/medina-market-tote-cognac/08.webp",
+      "/tanneurs/products/medina-market-tote-cognac/09.webp"
+    ],
+    "hero": "/tanneurs/products/medina-market-tote-cognac.webp"
+  },
+  "medina-rucksack-drawstring": {
+    "gallery": [
+      "/tanneurs/products/medina-rucksack-drawstring/01.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/02.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/03.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/04.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/05.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/06.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/07.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/08.webp",
+      "/tanneurs/products/medina-rucksack-drawstring/09.webp"
+    ],
+    "hero": "/tanneurs/products/medina-rucksack-drawstring.webp"
+  },
+  "medina-rucksack-drawstring-chocolate": {
+    "gallery": [
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/01.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/02.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/03.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/04.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/05.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/06.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/07.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/08.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/09.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/10.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/11.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-rucksack-drawstring-chocolate.webp"
+  },
+  "medina-rucksack-drawstring-light-brown": {
+    "gallery": [
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/01.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/02.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/03.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/04.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/05.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/06.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/07.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/08.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/09.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/10.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/11.webp",
+      "/tanneurs/products/medina-rucksack-drawstring-light-brown/12.webp"
+    ],
+    "hero": "/tanneurs/products/medina-rucksack-drawstring-light-brown.webp"
+  },
+  "medina-saddlebag-tooled-cognac": {
+    "gallery": [
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/01.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/02.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/03.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/04.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/05.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/06.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/07.webp",
+      "/tanneurs/products/medina-saddlebag-tooled-cognac/08.webp"
+    ],
+    "hero": "/tanneurs/products/medina-saddlebag-tooled-cognac.webp"
+  },
+  "medina-soft-crossbody-walnut": {
+    "gallery": [
+      "/tanneurs/products/medina-soft-crossbody-walnut/01.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/02.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/03.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/04.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/05.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/06.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/07.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/08.webp",
+      "/tanneurs/products/medina-soft-crossbody-walnut/09.webp"
+    ],
+    "hero": "/tanneurs/products/medina-soft-crossbody-walnut.webp"
+  },
+  "medina-zigzag-tote-chocolate": {
+    "gallery": [
+      "/tanneurs/products/medina-zigzag-tote-chocolate/01.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/02.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/03.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/04.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/05.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/06.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/07.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/08.webp",
+      "/tanneurs/products/medina-zigzag-tote-chocolate/09.webp"
+    ],
+    "hero": "/tanneurs/products/medina-zigzag-tote-chocolate.webp"
+  },
+  "medina-zip-sling-cognac": {
+    "gallery": [
+      "/tanneurs/products/medina-zip-sling-cognac/01.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/02.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/03.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/04.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/05.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/06.webp",
+      "/tanneurs/products/medina-zip-sling-cognac/07.webp"
+    ],
+    "hero": "/tanneurs/products/medina-zip-sling-cognac.webp"
+  },
+  "oasis-weekender-oxblood": {
+    "gallery": [
+      "/tanneurs/products/oasis-weekender-oxblood/01.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/02.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/03.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/04.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/05.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/06.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/07.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/08.webp",
+      "/tanneurs/products/oasis-weekender-oxblood/09.webp"
+    ],
+    "hero": "/tanneurs/products/oasis-weekender-oxblood.webp"
+  },
+  "vintage-buckle-backpack": {
+    "gallery": [
+      "/tanneurs/products/vintage-buckle-backpack/01.webp",
+      "/tanneurs/products/vintage-buckle-backpack/02.webp",
+      "/tanneurs/products/vintage-buckle-backpack/03.webp",
+      "/tanneurs/products/vintage-buckle-backpack/04.webp",
+      "/tanneurs/products/vintage-buckle-backpack/05.webp",
+      "/tanneurs/products/vintage-buckle-backpack/06.webp",
+      "/tanneurs/products/vintage-buckle-backpack/07.webp",
+      "/tanneurs/products/vintage-buckle-backpack/08.webp",
+      "/tanneurs/products/vintage-buckle-backpack/09.webp",
+      "/tanneurs/products/vintage-buckle-backpack/10.webp",
+      "/tanneurs/products/vintage-buckle-backpack/11.webp",
+      "/tanneurs/products/vintage-buckle-backpack/12.webp"
+    ],
+    "hero": "/tanneurs/products/vintage-buckle-backpack.webp"
+  },
+  "vintage-buckle-backpack-chocolate": {
+    "gallery": [
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/01.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/02.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/03.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/04.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/05.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/06.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/07.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/08.webp",
+      "/tanneurs/products/vintage-buckle-backpack-chocolate/09.webp"
+    ],
+    "hero": "/tanneurs/products/vintage-buckle-backpack-chocolate.webp"
+  },
+  "vintage-satchel-light-brown": {
+    "gallery": [
+      "/tanneurs/products/vintage-satchel-light-brown/01.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/02.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/03.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/04.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/05.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/06.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/07.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/08.webp",
+      "/tanneurs/products/vintage-satchel-light-brown/09.webp"
+    ],
+    "hero": "/tanneurs/products/vintage-satchel-light-brown.webp"
+  },
+  "vintage-satchel-moutarde": {
+    "gallery": [
+      "/tanneurs/products/vintage-satchel-moutarde/01.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/02.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/03.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/04.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/05.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/06.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/07.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/08.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/09.webp",
+      "/tanneurs/products/vintage-satchel-moutarde/10.webp"
+    ],
+    "hero": "/tanneurs/products/vintage-satchel-moutarde.webp"
+  },
+  "woven-leather-backpack": {
+    "gallery": [
+      "/tanneurs/products/woven-leather-backpack/01.webp",
+      "/tanneurs/products/woven-leather-backpack/02.webp",
+      "/tanneurs/products/woven-leather-backpack/03.webp",
+      "/tanneurs/products/woven-leather-backpack/04.webp",
+      "/tanneurs/products/woven-leather-backpack/05.webp",
+      "/tanneurs/products/woven-leather-backpack/06.webp",
+      "/tanneurs/products/woven-leather-backpack/07.webp",
+      "/tanneurs/products/woven-leather-backpack/08.webp",
+      "/tanneurs/products/woven-leather-backpack/09.webp",
+      "/tanneurs/products/woven-leather-backpack/10.webp",
+      "/tanneurs/products/woven-leather-backpack/11.webp",
+      "/tanneurs/products/woven-leather-backpack/12.webp"
+    ],
+    "hero": "/tanneurs/products/woven-leather-backpack.webp"
+  }
+}
