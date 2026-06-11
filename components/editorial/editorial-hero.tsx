@@ -7,18 +7,32 @@ import { formatPrice } from "@/lib/products"
 export function EditorialHero({ product }: { product?: Product }) {
   return (
     <section className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-dark-close">
-      <picture>
-        <source
-          media="(max-width: 767px)"
-          srcSet="/tanneurs/editorial/hero-ryad-9x16.webp"
-        />
-        <img
-          src="/tanneurs/editorial/hero-ryad-16x9.webp"
-          alt="A woman in cream crossing a white carved-stucco riad courtyard under blue sky, a cognac leather weekender in hand"
-          className="absolute inset-0 h-full w-full object-cover"
-          fetchPriority="high"
-        />
-      </picture>
+      {/* Mobile: still image (no video payload). Desktop: ambient film. */}
+      <img
+        src="/tanneurs/editorial/hero-ryad-9x16.webp"
+        alt="A woman in cream crossing a white carved-stucco riad courtyard under blue sky, a cognac leather weekender in hand"
+        className="absolute inset-0 h-full w-full object-cover md:hidden"
+        fetchPriority="high"
+      />
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster="/tanneurs/films/hero-terrace-poster.jpg"
+        aria-label="A woman with a cognac leather tote on a sunlit stone terrace above the sea"
+        className="hero-film absolute inset-0 hidden h-full w-full object-cover md:block"
+      >
+        <source src="/tanneurs/films/hero-terrace.mp4" type="video/mp4" />
+      </video>
+      {/* Reduced-motion desktop fallback (poster as still) */}
+      <img
+        src="/tanneurs/films/hero-terrace-poster.jpg"
+        alt=""
+        aria-hidden
+        className="hero-film-poster absolute inset-0 hidden h-full w-full object-cover"
+      />
       {/* Top scrim keeps the white header legible over the bright sky */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-black/60 to-transparent" />
 

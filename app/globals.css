@@ -164,5 +164,14 @@
   }
 }
 
-@layer utilities {
+/* Hero film respects reduced motion: swap the loop for its poster still */
+@media (prefers-reduced-motion: reduce) {
+  .hero-film {
+    display: none !important;
+  }
+  @media (min-width: 768px) {
+    .hero-film-poster {
+      display: block !important;
+    }
+  }
 }
