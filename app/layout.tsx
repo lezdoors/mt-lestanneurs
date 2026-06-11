@@ -8,6 +8,7 @@ import { CartDrawer } from "@/components/editorial/cart-drawer"
 import { OrganizationJsonLd } from "@/components/seo/json-ld"
 import { MetaPixel } from "@/components/seo/meta-pixel"
 import { GA4 } from "@/components/seo/ga4"
+import { Clarity } from "@/components/seo/clarity"
 import "./globals.css"
 
 const inter = Inter({
@@ -100,6 +101,7 @@ export default function RootLayout({
         <Analytics />
         <MetaPixel />
         <GA4 />
+        <Clarity />
       </body>
     </html>
   )
