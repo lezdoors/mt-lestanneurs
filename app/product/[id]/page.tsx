@@ -8,6 +8,7 @@ import { AddToCart } from "@/components/editorial/add-to-cart"
 import { MtMark } from "@/components/editorial/mt-mark"
 import { fetchAllProducts, fetchProductBySlug } from "@/lib/supabase"
 import { adaptProduct, curate, formatPrice, isCurated, relatedTo } from "@/lib/products"
+import { ProductJsonLd } from "@/components/seo/json-ld"
 
 export const revalidate = 300
 
@@ -23,8 +24,10 @@ export async function generateMetadata({
   return {
     title: `${p.name} — Maison Tanneurs`,
     description: p.description || undefined,
+    alternates: { canonical: `/product/${id}` },
     openGraph: {
       title: `${p.name} — Maison Tanneurs`,
+      description: p.description || undefined,
       images: [{ url: p.image }],
     },
   }
@@ -46,6 +49,17 @@ export default async function ProductPage({
 
   return (
     <>
+      <ProductJsonLd
+        product={{
+          slug: id,
+          name: product.name,
+          description: product.longDescription || product.description,
+          image: product.images,
+          priceUsdCents: product.price,
+          inStock: row.status === "available" && row.available_quantity > 0,
+          category: product.category,
+        }}
+      />
       <SiteHeader variant="solid" />
       <main className="bg-ground pt-[72px] md:pt-[96px]">
         <nav

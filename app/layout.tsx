@@ -5,6 +5,7 @@ import localFont from "next/font/local"
 import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
+import { OrganizationJsonLd } from "@/components/seo/json-ld"
 import "./globals.css"
 
 const inter = Inter({
@@ -49,10 +50,19 @@ export const metadata: Metadata = {
   },
   description:
     "Full-grain leather bags, cut and saddle-stitched by hand in our Marrakech atelier. A leather house built on patience — objects made to be carried for decades.",
+  alternates: {
+    // Relative canonical resolves per-route against metadataBase, so every
+    // page self-canonicalizes without per-page boilerplate.
+    canonical: "./",
+  },
   openGraph: {
     siteName: "Maison Tanneurs",
     type: "website",
+    locale: "en_US",
     images: [{ url: "/tanneurs/editorial/hero-ryad-16x9.webp" }],
+  },
+  twitter: {
+    card: "summary_large_image",
   },
   icons: {
     icon: [
@@ -80,6 +90,7 @@ export default function RootLayout({
       className={`${inter.variable} ${bodoniSC.variable} ${cormorant.variable}`}
     >
       <body className="font-sans antialiased">
+        <OrganizationJsonLd />
         <CartProvider>
           {children}
           <CartDrawer />
