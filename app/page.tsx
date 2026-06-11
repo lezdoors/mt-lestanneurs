@@ -33,11 +33,7 @@ export default async function Home() {
     <>
       <SiteHeader />
       <main>
-        {/* Floating product card intentionally off: the bag in the current
-            hero frame matches no catalogue SKU (identity check 2026-06-10).
-            Re-enable with product={featured[0]} once the hero is regenerated
-            with a real catalogue bag as the reference image. */}
-        <EditorialHero />
+        <EditorialHero product={featured[0]} />
         <MaisonStatement />
         <FeaturedObjects products={featured} />
         <DuoEditorial />
