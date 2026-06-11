@@ -16,8 +16,8 @@ export default function BoutiquePage() {
     >
       <div className="mx-auto max-w-5xl px-6">
         <img
-          src="/tanneurs/editorial/boutique-threshold.webp"
-          alt="Carved cedar doors opening onto a riad courtyard with an olive tree and zellige fountain"
+          src="/tanneurs/editorial/boutique-court.webp"
+          alt="The boutique interior — a leather bag on a stone plinth, doors open to a sunlit courtyard with an olive tree"
           className="aspect-[16/9] w-full object-cover"
         />
 

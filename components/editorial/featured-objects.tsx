@@ -16,27 +16,46 @@ export function FeaturedObjects({ products }: { products: Product[] }) {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-16 md:grid-cols-4 md:gap-x-12">
-          {products.map((p) => (
-            <Link key={p.id} href={`/product/${p.id}`} className="group">
-              <div className="relative aspect-square w-full">
-                <img
-                  src={p.image}
-                  alt={p.name}
-                  loading="lazy"
-                  className="img-float absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                />
-              </div>
-              <div className="mt-6 text-center">
-                <h3 className="font-serif text-xl leading-snug text-ink">
-                  {p.name}
-                </h3>
-                <p className="mt-2 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-                  {formatPrice(p.price)}
-                </p>
-              </div>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[5fr_7fr] md:gap-14">
+          {/* Campaign panel — the Oasis Weekender in the teal zellige arch */}
+          <Link
+            href="/product/oasis-weekender-oxblood"
+            className="group relative block overflow-hidden"
+          >
+            <img
+              src="/tanneurs/editorial/collection-arch.webp"
+              alt="The Oasis Weekender in oxblood on a carved bench beneath a teal zellige arch, an artisan walking into the light"
+              loading="lazy"
+              className="h-full max-h-[560px] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02] md:max-h-none"
+            />
+            <span className="text-micro absolute bottom-5 left-5 bg-white/95 px-4 py-2.5 text-ink">
+              Oasis Weekender · Oxblood
+            </span>
+          </Link>
+
+          {/* The white-plate tiles */}
+          <div className="grid grid-cols-2 content-center gap-x-6 gap-y-14 md:gap-x-10">
+            {products.map((p) => (
+              <Link key={p.id} href={`/product/${p.id}`} className="group">
+                <div className="relative aspect-square w-full">
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    loading="lazy"
+                    className="img-float absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                </div>
+                <div className="mt-5 text-center">
+                  <h3 className="font-serif text-lg leading-snug text-ink md:text-xl">
+                    {p.name}
+                  </h3>
+                  <p className="mt-2 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
+                    {formatPrice(p.price)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="mt-20 text-center md:mt-24">

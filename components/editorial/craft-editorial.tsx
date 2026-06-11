@@ -21,10 +21,10 @@ export function CraftEditorial() {
           L&rsquo;Atelier
         </Link>
       </div>
-      <div className="relative min-h-[480px] md:min-h-[720px]">
+      <div className="relative min-h-[520px] md:min-h-[820px]">
         <img
-          src="/tanneurs/editorial/atelier-bright.webp"
-          alt="An artisan at a bright cutting table working cognac leather beneath arched windows"
+          src="/tanneurs/editorial/craft-artisan-window.webp"
+          alt="An artisan bent over the work at an arched window, brass hardware laid out, a finished tote beside him"
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
         />

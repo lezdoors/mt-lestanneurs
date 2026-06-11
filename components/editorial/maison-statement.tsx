@@ -18,6 +18,16 @@ export function MaisonStatement() {
         saddle-stitched at one bench in Marrakech, in editions small enough
         to keep every stitch honest.
       </p>
+
+      {/* The proof image — the statement made visible */}
+      <div className="-mx-6 mt-20 md:mt-28">
+        <img
+          src="/tanneurs/editorial/statement-hall.webp"
+          alt="A monumental cognac duffle centered in a symmetric arched hall, mashrabiya light across the stone floor"
+          loading="lazy"
+          className="h-[62vh] min-h-[420px] w-full object-cover md:h-[80vh]"
+        />
+      </div>
     </section>
   )
 }

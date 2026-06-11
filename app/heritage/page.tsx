@@ -74,6 +74,16 @@ export default function HeritagePage() {
           </div>
         </section>
 
+        {/* The tannery — material proof at scale */}
+        <section className="relative w-full overflow-hidden bg-dark-close">
+          <img
+            src="/tanneurs/editorial/heritage-tannery.webp"
+            alt="Stacked full-grain hides in a working tannery, shafts of daylight crossing the room"
+            loading="lazy"
+            className="h-[60vh] min-h-[400px] w-full object-cover md:h-[80vh]"
+          />
+        </section>
+
         {/* The stitch */}
         <section className="grid grid-cols-1 md:grid-cols-2">
           <div className="order-2 flex flex-col justify-center px-6 py-24 md:order-1 md:px-20 md:py-32 lg:px-28">
@@ -90,8 +100,8 @@ export default function HeritagePage() {
           </div>
           <div className="relative order-1 min-h-[420px] md:order-2 md:min-h-[700px]">
             <img
-              src="/tanneurs/editorial/craft-stitch.webp"
-              alt="Hand-laid saddle stitches in waxed linen thread along a burnished edge"
+              src="/tanneurs/editorial/craft-promise.webp"
+              alt="The Maison Tanneurs promise embossed in full-grain leather, laced with waxed linen thread"
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />
