@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
 import { OrganizationJsonLd } from "@/components/seo/json-ld"
+import { MetaPixel } from "@/components/seo/meta-pixel"
 import "./globals.css"
 
 const inter = Inter({
@@ -43,7 +44,7 @@ const cormorant = localFont({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://maisontanneurs.com"),
+  metadataBase: new URL("https://www.maisontanneurs.com"),
   title: {
     default: "Maison Tanneurs — Leather Goods, Made in Marrakech",
     template: "%s",
@@ -96,6 +97,7 @@ export default function RootLayout({
           <CartDrawer />
         </CartProvider>
         <Analytics />
+        <MetaPixel />
       </body>
     </html>
   )

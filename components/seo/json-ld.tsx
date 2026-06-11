@@ -6,7 +6,7 @@
 // input). serialize() additionally escapes "<" (<) so the payload can
 // never close the script tag — the standard Next.js JSON-LD hardening.
 
-const SITE_URL = "https://maisontanneurs.com"
+const SITE_URL = "https://www.maisontanneurs.com"
 
 function serialize(data: Record<string, unknown>): string {
   return JSON.stringify(data).replace(/</g, "\\u003c")

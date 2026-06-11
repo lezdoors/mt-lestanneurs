@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 import { fetchAllProducts } from "@/lib/supabase"
 import { adaptProduct, curate } from "@/lib/products"
 
-const SITE_URL = "https://maisontanneurs.com"
+const SITE_URL = "https://www.maisontanneurs.com"
 
 const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: "/", priority: 1.0 },

@@ -32,6 +32,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: DISALLOW,
       })),
     ],
-    sitemap: "https://maisontanneurs.com/sitemap.xml",
+    sitemap: "https://www.maisontanneurs.com/sitemap.xml",
   }
 }
