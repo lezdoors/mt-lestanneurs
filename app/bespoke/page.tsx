@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { PageShell } from "@/components/editorial/page-shell"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const metadata: Metadata = {
   title: "Bespoke — Maison Tanneurs",
@@ -58,6 +59,21 @@ export default function BespokePage() {
       lede="A single piece, made on the same bench. Twelve to fourteen weeks from confirmed design."
     >
       <div className="mx-auto max-w-2xl px-6">
+        {/* The drawing comes first */}
+        <figure className="mb-16">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/bespoke-sketch-m.webp" />
+            <img
+              src="/tanneurs/editorial/bespoke-sketch.webp"
+              alt="A pencil drawing of the Classic Cognac Satchel on the drafting table"
+              loading="lazy"
+              className="aspect-[16/9] w-full object-cover"
+            />
+          </picture>
+          <figcaption className="text-micro mt-4 text-center text-ink-muted">
+            The drawing comes first.
+          </figcaption>
+        </figure>
         <ol className="border-t border-hairline">
           {STEPS.map((s) => (
             <li key={s.label} className="border-b border-hairline py-12">
@@ -71,6 +87,21 @@ export default function BespokePage() {
             </li>
           ))}
         </ol>
+
+        {/* The edition ritual — your piece leaving the bench */}
+        <div className="mx-auto mt-16 grid grid-cols-1 items-center gap-10 md:grid-cols-[2fr_3fr] md:gap-14">
+          <AmbientLoop
+            src="/tanneurs/films/bespoke-tag.mp4"
+            poster="/tanneurs/films/bespoke-tag-poster.jpg"
+            alt="Hands tying the kraft edition tag to the finished handles"
+            className="aspect-[9/16] w-full object-cover"
+          />
+          <p className="font-serif text-lg leading-relaxed text-ink-soft md:text-xl">
+            When the piece is finished, the tag is tied by the hands that
+            made it — and the commission leaves the bench for its first
+            departure.
+          </p>
+        </div>
 
         <div className="mt-16 text-center">
           <a

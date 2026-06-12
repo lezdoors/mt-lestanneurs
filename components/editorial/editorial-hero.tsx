@@ -1,49 +1,34 @@
-import Link from "next/link"
-import type { Product } from "@/lib/products"
-import { formatPrice } from "@/lib/products"
+import { getLocale, t } from "@/lib/i18n"
 
-// Atmosphere-first hero: no headline, no button. The only words on the
-// frame are the floating product card naming the bag being carried —
-// the Atlas Weekender rendered from its own catalogue reference, so the
-// card is literally true (fidelity-QA'd 87/88 vs the PDP hero).
-export function EditorialHero({ product }: { product?: Product }) {
+// Atmosphere-first hero: no headline, no button, no card. Model-led
+// campaign frame (DeMellier device): the duffle carried past a carved
+// cedar door — Marrakech as architecture, not souk. The thesis line is
+// the only text on the frame.
+export async function EditorialHero() {
+  const lo = await getLocale()
   return (
     <section className="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-dark-close">
       <picture>
         <source
           media="(max-width: 767px)"
-          srcSet="/tanneurs/editorial/hero-shop-9x16.webp"
+          srcSet="/tanneurs/editorial/hero-medina-9x16.webp"
         />
         <img
-          src="/tanneurs/editorial/hero-shop-16x9.webp"
-          alt="A woman in cream linen crossing a sunlit riad courtyard, the Atlas Weekender in hand"
+          src="/tanneurs/editorial/hero-medina-16x9.webp"
+          alt="A woman in a cream coat carrying a walnut leather duffle past a carved cedar door and sculpted plaster arch in warm evening light"
           className="absolute inset-0 h-full w-full object-cover"
           fetchPriority="high"
         />
       </picture>
-      {/* Top scrim keeps the white header legible over bright stucco/sky */}
+      {/* Top scrim keeps the white header legible over the bright sky */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-black/60 to-transparent" />
 
-      {product && (
-        <Link
-          href={`/product/${product.id}`}
-          className="group absolute bottom-8 left-5 flex w-[184px] flex-col bg-white p-4 md:bottom-12 md:left-12 md:w-[264px] md:p-6"
-        >
-          <div className="relative aspect-square w-full overflow-hidden">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            />
-          </div>
-          <p className="mt-4 font-serif text-lg leading-none text-ink">
-            {product.name}
-          </p>
-          <p className="mt-2 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-            {formatPrice(product.price)}
-          </p>
-        </Link>
-      )}
+      {/* The thesis — the page's first words (and, at the closing, its
+          last). With the product card gone the line holds the bottom of
+          the frame on every breakpoint. */}
+      <p className="text-micro pointer-events-none absolute inset-x-0 bottom-8 text-center text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.45)] md:bottom-10">
+        {t(lo, "hero.thesis")}
+      </p>
     </section>
   )
 }

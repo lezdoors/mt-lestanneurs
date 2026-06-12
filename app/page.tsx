@@ -1,5 +1,8 @@
 import { SiteHeader } from "@/components/editorial/site-header"
 import { EditorialHero } from "@/components/editorial/editorial-hero"
+import { FamilyMenu } from "@/components/editorial/family-menu"
+import { DepartureTiles } from "@/components/editorial/departure-tiles"
+import { TrustBand } from "@/components/editorial/trust-band"
 import { MaisonStatement } from "@/components/editorial/maison-statement"
 import { FeaturedObjects } from "@/components/editorial/featured-objects"
 import { DuoEditorial } from "@/components/editorial/duo-editorial"
@@ -14,10 +17,12 @@ import { adaptProduct } from "@/lib/products"
 export const revalidate = 300
 
 // Curated landing selection — pixel-verified consistent white plates.
-// First slug is also the bag carried in the hero frame (floating card).
+// The hero is now pure atmosphere (no floating card), so featured[0]
+// is held out and the grid shows the next four, unchanged.
 const FEATURED_SLUGS = [
   "atlas-weekender-cognac",
-  "oasis-weekender-oxblood",
+  "marrakech-tote-cognac",
+  "atlas-kilim-duffle",
   "medina-saddlebag-tooled-cognac",
   "expedition-rolltop-noir",
 ]
@@ -33,13 +38,16 @@ export default async function Home() {
     <>
       <SiteHeader />
       <main>
-        <EditorialHero product={featured[0]} />
+        <EditorialHero />
+        <DepartureTiles />
+        <FamilyMenu />
+        <FeaturedObjects products={featured.slice(1)} />
         <MaisonStatement />
-        <FeaturedObjects products={featured} />
         <DuoEditorial />
         <TravelEditorial />
         <CraftEditorial />
         <CampaignFilm />
+        <TrustBand />
         <ClosingInvitation />
       </main>
       <SiteFooter />

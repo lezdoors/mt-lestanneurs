@@ -48,6 +48,21 @@ function injectPixel(pixelId: string) {
   window.fbq!("track", "PageView")
 }
 
+// Fire a standard Pixel event from client components. eventID (when given)
+// must match the server CAPI event_id so Meta dedupes browser vs server.
+export function trackPixelEvent(
+  event: string,
+  params?: Record<string, unknown>,
+  eventID?: string,
+) {
+  if (typeof window === "undefined" || !window.fbq) return
+  if (eventID) {
+    window.fbq("track", event, params || {}, { eventID })
+  } else {
+    window.fbq("track", event, params || {})
+  }
+}
+
 export function MetaPixel() {
   useEffect(() => {
     if (!PIXEL_ID) return

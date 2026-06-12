@@ -2,7 +2,9 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { formatPrice, type Product } from "@/lib/products"
+import { useHref, useT } from "@/lib/i18n-client"
 
 export function ShopClient({
   products,
@@ -11,7 +13,13 @@ export function ShopClient({
   products: Product[]
   categories: string[]
 }) {
-  const [active, setActive] = useState("All")
+  const t = useT()
+  const lhref = useHref()
+  const params = useSearchParams()
+  const requested = params.get("c")
+  const [active, setActive] = useState(
+    requested && categories.includes(requested) ? requested : "All",
+  )
 
   const filtered =
     active === "All" ? products : products.filter((p) => p.category === active)
@@ -33,14 +41,14 @@ export function ShopClient({
                 : "border-b border-transparent text-ink-muted hover:opacity-60"
             }`}
           >
-            {c}
+            {c === "All" ? t("shop.all") : c}
           </button>
         ))}
       </nav>
 
       <div className="mx-auto mt-16 grid max-w-[1560px] grid-cols-2 gap-x-6 gap-y-16 px-6 md:mt-24 md:grid-cols-3 md:gap-x-12 lg:grid-cols-4">
         {filtered.map((p) => (
-          <Link key={p.id} href={`/product/${p.id}`} className="group">
+          <Link key={p.id} href={lhref(`/product/${p.id}`)} className="group">
             <div className="relative aspect-square w-full">
               <img
                 src={p.image}
@@ -63,7 +71,7 @@ export function ShopClient({
 
       {filtered.length === 0 && (
         <p className="mt-24 text-center font-serif text-lg italic text-ink-muted">
-          Nothing in this category at the moment.
+          {t("shop.empty")}
         </p>
       )}
     </>

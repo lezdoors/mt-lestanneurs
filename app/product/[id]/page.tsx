@@ -5,9 +5,12 @@ import { SiteHeader } from "@/components/editorial/site-header"
 import { SiteFooter } from "@/components/editorial/site-footer"
 import { PdpGallery } from "@/components/editorial/pdp-gallery"
 import { AddToCart } from "@/components/editorial/add-to-cart"
+import { StickyAddToCart } from "@/components/editorial/sticky-add-to-cart"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 import { MtMark } from "@/components/editorial/mt-mark"
 import { fetchAllProducts, fetchProductBySlug } from "@/lib/supabase"
 import { adaptProduct, curate, formatPrice, isCurated, relatedTo } from "@/lib/products"
+import { getLocale, t, withLocale } from "@/lib/i18n"
 import { ProductJsonLd } from "@/components/seo/json-ld"
 
 export const revalidate = 300
@@ -46,6 +49,7 @@ export default async function ProductPage({
   const product = adaptProduct(row)
   const all = curate((await fetchAllProducts()).map(adaptProduct))
   const related = relatedTo(product, all, 3)
+  const lo = await getLocale()
 
   return (
     <>
@@ -68,8 +72,8 @@ export default async function ProductPage({
         >
           <ol className="text-micro flex items-center gap-3 text-ink-muted">
             <li>
-              <Link href="/shop" className="transition-opacity hover:opacity-60">
-                La Collection
+              <Link href={withLocale("/shop", lo)} className="transition-opacity hover:opacity-60">
+                {t(lo, "nav.collection")}
               </Link>
             </li>
             <li aria-hidden>—</li>
@@ -87,6 +91,9 @@ export default async function ProductPage({
             <p className="mt-4 font-sans text-sm tracking-[0.08em] text-ink-soft">
               {formatPrice(product.price)}
             </p>
+            <p className="mt-2 font-serif text-sm italic text-ink-muted">
+              {t(lo, "pdp.atelierDirect")}
+            </p>
 
             {product.longDescription && (
               <p className="mt-8 max-w-md font-serif text-lg leading-relaxed text-ink-soft">
@@ -96,24 +103,25 @@ export default async function ProductPage({
 
             <div className="mt-10">
               <AddToCart product={product} />
+              <StickyAddToCart product={product} />
               <div className="mt-5 flex flex-col items-center gap-1.5">
                 <MtMark className="text-base text-ink-muted" />
                 <p className="text-micro text-ink-muted">
-                  Cut and stitched by Les Tanneurs — Marrakech
+                  {t(lo, "pdp.stamp")}
                 </p>
               </div>
             </div>
 
             <dl className="mt-12 border-t border-hairline">
               <div className="border-b border-hairline py-5">
-                <dt className="text-micro mb-3 text-ink-muted">Materials</dt>
+                <dt className="text-micro mb-3 text-ink-muted">{t(lo, "pdp.materials")}</dt>
                 <dd className="font-serif text-base leading-relaxed text-ink-soft">
                   {product.materials.join(" — ")}
                 </dd>
               </div>
               {product.details.length > 0 && (
                 <div className="border-b border-hairline py-5">
-                  <dt className="text-micro mb-3 text-ink-muted">Details</dt>
+                  <dt className="text-micro mb-3 text-ink-muted">{t(lo, "pdp.details")}</dt>
                   <dd>
                     <ul className="flex flex-col gap-1.5 font-serif text-base leading-relaxed text-ink-soft">
                       {product.details.map((d) => (
@@ -124,7 +132,7 @@ export default async function ProductPage({
                 </div>
               )}
               <div className="border-b border-hairline py-5">
-                <dt className="text-micro mb-3 text-ink-muted">Care</dt>
+                <dt className="text-micro mb-3 text-ink-muted">{t(lo, "pdp.care")}</dt>
                 <dd>
                   <ul className="flex flex-col gap-1.5 font-serif text-base leading-relaxed text-ink-soft">
                     {product.care.map((c) => (
@@ -138,44 +146,69 @@ export default async function ProductPage({
             {/* Service strip — lifetime repair leads; each links to policy */}
             <div className="mt-2">
               <Link
-                href="/legal/repair"
+                href={withLocale("/legal/repair", lo)}
                 className="group flex items-baseline justify-between border-b border-hairline py-4"
               >
-                <span className="text-micro text-ink">Lifetime Repair</span>
+                <span className="text-micro text-ink">{t(lo, "pdp.repair")}</span>
                 <span className="font-serif text-sm text-ink-muted transition-opacity group-hover:opacity-60">
-                  Re-stitched at the bench, for as long as the bag exists
+                  {t(lo, "pdp.repairLine")}
                 </span>
               </Link>
               <Link
-                href="/legal/shipping"
+                href={withLocale("/legal/shipping", lo)}
                 className="group flex items-baseline justify-between border-b border-hairline py-4"
               >
-                <span className="text-micro text-ink">Shipping</span>
+                <span className="text-micro text-ink">{t(lo, "pdp.shipping")}</span>
                 <span className="font-serif text-sm text-ink-muted transition-opacity group-hover:opacity-60">
-                  Free DHL Express worldwide
+                  {t(lo, "pdp.shippingLine")}
                 </span>
               </Link>
               <Link
-                href="/legal/returns"
+                href={withLocale("/legal/returns", lo)}
                 className="group flex items-baseline justify-between border-b border-hairline py-4"
               >
-                <span className="text-micro text-ink">Returns</span>
+                <span className="text-micro text-ink">{t(lo, "pdp.returns")}</span>
                 <span className="font-serif text-sm text-ink-muted transition-opacity group-hover:opacity-60">
-                  30 days, unused, original packaging
+                  {t(lo, "pdp.returnsLine")}
                 </span>
               </Link>
             </div>
           </div>
         </section>
 
+        {/* The craft, proven — the embossed promise and the hardware itself */}
+        <section className="border-t border-hairline">
+          <div className="mx-auto grid max-w-[1560px] grid-cols-1 md:grid-cols-2">
+            <div className="relative min-h-[360px] md:min-h-[560px]">
+              <img
+                src="/tanneurs/editorial/craft-promise.webp"
+                alt="The Maison Tanneurs promise embossed in full-grain leather, laced with waxed linen thread"
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+            <div className="relative min-h-[360px] md:min-h-[560px]">
+              <AmbientLoop
+                src="/tanneurs/films/pdp-buckle-macro.mp4"
+                poster="/tanneurs/films/pdp-buckle-macro-poster.jpg"
+                alt="Solid brass buckle on full-grain leather, macro"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
+          </div>
+          <p className="text-micro border-t border-hairline py-6 text-center text-ink-muted">
+            {t(lo, "pdp.craftLine")}
+          </p>
+        </section>
+
         {related.length > 0 && (
           <section className="border-t border-hairline px-6 py-24 md:py-32">
             <h2 className="text-center font-serif text-3xl text-ink md:text-4xl">
-              You may also like
+              {t(lo, "pdp.related")}
             </h2>
             <div className="mx-auto mt-14 grid max-w-[1200px] grid-cols-3 gap-x-6 md:mt-20 md:gap-x-12">
               {related.map((p) => (
-                <Link key={p.id} href={`/product/${p.id}`} className="group">
+                <Link key={p.id} href={withLocale(`/product/${p.id}`, lo)} className="group">
                   <div className="relative aspect-square w-full">
                     <img
                       src={p.image}

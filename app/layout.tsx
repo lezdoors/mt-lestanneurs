@@ -5,6 +5,8 @@ import localFont from "next/font/local"
 import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
+import { LocaleProvider } from "@/lib/i18n-client"
+import { dirForLocale, getLocale } from "@/lib/i18n"
 import { OrganizationJsonLd } from "@/components/seo/json-ld"
 import { MetaPixel } from "@/components/seo/meta-pixel"
 import { GA4 } from "@/components/seo/ga4"
@@ -62,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "Maison Tanneurs",
     type: "website",
     locale: "en_US",
-    images: [{ url: "/tanneurs/editorial/hero-ryad-16x9.webp" }],
+    images: [{ url: "/tanneurs/editorial/hero-medina-16x9.webp" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -82,22 +84,26 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dirForLocale(locale)}
       className={`${inter.variable} ${bodoniSC.variable} ${cormorant.variable}`}
     >
       <body className="font-sans antialiased">
         <OrganizationJsonLd />
-        <CartProvider>
-          {children}
-          <CartDrawer />
-        </CartProvider>
+        <LocaleProvider locale={locale}>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+          </CartProvider>
+        </LocaleProvider>
         <Analytics />
         <MetaPixel />
         <GA4 />

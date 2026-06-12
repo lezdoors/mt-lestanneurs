@@ -4,10 +4,13 @@ import Link from "next/link"
 import { useEffect } from "react"
 import { useCart } from "@/lib/cart"
 import { formatPrice } from "@/lib/products"
+import { useHref, useT } from "@/lib/i18n-client"
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, removeItem, setQuantity } =
     useCart()
+  const t = useT()
+  const href = useHref()
 
   useEffect(() => {
     if (!isOpen) return
@@ -38,31 +41,31 @@ export function CartDrawer() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         role="dialog"
-        aria-label="Bag"
+        aria-label={t("cart.title")}
       >
         <div className="flex items-center justify-between border-b border-hairline px-7 py-6">
-          <h2 className="font-serif text-2xl text-ink">Bag</h2>
+          <h2 className="font-serif text-2xl text-ink">{t("cart.title")}</h2>
           <button
             type="button"
             onClick={closeCart}
-            aria-label="Close"
+            aria-label={t("cart.close")}
             className="text-micro text-ink-soft transition-opacity hover:opacity-50"
           >
-            Close
+            {t("cart.close")}
           </button>
         </div>
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-8 px-7">
             <p className="font-serif text-lg italic text-ink-muted">
-              Your bag is empty.
+              {t("cart.empty")}
             </p>
             <Link
-              href="/shop"
+              href={href("/shop")}
               onClick={closeCart}
               className="link-caps text-ink"
             >
-              View the Collection
+              {t("cart.viewCollection")}
             </Link>
           </div>
         ) : (
@@ -72,7 +75,7 @@ export function CartDrawer() {
                 {items.map((item) => (
                   <li key={item.slug} className="flex gap-5">
                     <Link
-                      href={`/product/${item.slug}`}
+                      href={href(`/product/${item.slug}`)}
                       onClick={closeCart}
                       className="relative h-28 w-24 shrink-0"
                     >
@@ -92,7 +95,7 @@ export function CartDrawer() {
                       <div className="mt-auto flex items-center gap-4 pt-3">
                         <button
                           type="button"
-                          aria-label="Decrease quantity"
+                          aria-label={t("cart.decrease")}
                           onClick={() => setQuantity(item.slug, item.quantity - 1)}
                           className="flex h-7 w-7 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
                         >
@@ -103,7 +106,7 @@ export function CartDrawer() {
                         </span>
                         <button
                           type="button"
-                          aria-label="Increase quantity"
+                          aria-label={t("cart.increase")}
                           onClick={() => setQuantity(item.slug, item.quantity + 1)}
                           className="flex h-7 w-7 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
                         >
@@ -114,7 +117,7 @@ export function CartDrawer() {
                           onClick={() => removeItem(item.slug)}
                           className="text-micro ml-auto text-ink-muted transition-opacity hover:opacity-50"
                         >
-                          Remove
+                          {t("cart.remove")}
                         </button>
                       </div>
                     </div>
@@ -125,20 +128,20 @@ export function CartDrawer() {
 
             <div className="border-t border-hairline px-7 py-6">
               <div className="flex items-baseline justify-between">
-                <span className="text-micro text-ink-soft">Subtotal</span>
+                <span className="text-micro text-ink-soft">{t("cart.subtotal")}</span>
                 <span className="font-serif text-xl text-ink">
                   {formatPrice(subtotal)}
                 </span>
               </div>
               <p className="mt-2 font-sans text-[11px] leading-relaxed text-ink-muted">
-                Complimentary shipping. Taxes calculated at checkout.
+                {t("cart.note")}
               </p>
               <Link
-                href="/checkout"
+                href={href("/checkout")}
                 onClick={closeCart}
                 className="mt-6 block w-full bg-ink py-4 text-center text-micro text-ground transition-opacity hover:opacity-85"
               >
-                Checkout
+                {t("cart.checkout")}
               </Link>
             </div>
           </>

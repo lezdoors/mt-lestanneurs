@@ -1,27 +1,220 @@
 "use client"
 
 import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart"
 import { formatPrice } from "@/lib/products"
+import { useHref, useT } from "@/lib/i18n-client"
+import { trackPixelEvent } from "@/components/seo/meta-pixel"
+import { trackGA4Event } from "@/components/seo/ga4"
 
-// Checkout entry — shipping details + order summary wired to the live
-// cart. Payment processing is intentionally not wired here; the payment
-// step ships with the processor integration (approval-gated).
+// Checkout — shipping details + order summary wired to the live cart,
+// payment via Revolut Acquiring (same flow that ran on the previous
+// site): create order server-side, mount the Revolut popup, then land
+// on /checkout/success which verifies + persists the order server-side.
+
+const REVOLUT_EMBED_SRC = "https://merchant.revolut.com/embed.js"
+
+declare global {
+  interface Window {
+    RevolutCheckout?: (
+      token: string,
+      mode?: "prod" | "sandbox",
+    ) => Promise<RevolutCheckoutInstance>
+  }
+}
+
+interface RevolutCheckoutInstance {
+  payWithPopup: (options: {
+    name?: string
+    email?: string
+    shippingAddress?: {
+      streetLine1?: string
+      city?: string
+      countryCode?: string
+      postcode?: string
+    }
+    onSuccess: () => void
+    onError: (error: { message?: string }) => void
+    onCancel?: () => void
+  }) => void
+  destroy?: () => void
+}
+
+function loadRevolutEmbed(): Promise<void> {
+  if (typeof window === "undefined") return Promise.reject(new Error("server"))
+  if (window.RevolutCheckout) return Promise.resolve()
+  const existing = document.querySelector<HTMLScriptElement>(
+    `script[src="${REVOLUT_EMBED_SRC}"]`,
+  )
+  if (existing) {
+    return new Promise((resolve, reject) => {
+      existing.addEventListener("load", () => resolve())
+      existing.addEventListener("error", () =>
+        reject(new Error("embed load failed")),
+      )
+    })
+  }
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script")
+    s.src = REVOLUT_EMBED_SRC
+    s.async = true
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error("embed load failed"))
+    document.head.appendChild(s)
+  })
+}
+
+function getCookieValue(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined
+  const prefix = `${name}=`
+  const found = document.cookie
+    .split(";")
+    .map((p) => p.trim())
+    .find((p) => p.startsWith(prefix))
+  return found ? decodeURIComponent(found.slice(prefix.length)) : undefined
+}
+
+function getMetaTracking() {
+  const tracking: { fbp?: string; fbc?: string } = {}
+  const fbp = getCookieValue("_fbp")
+  const fbc =
+    getCookieValue("_fbc") ||
+    (() => {
+      const fbclid = new URLSearchParams(window.location.search).get("fbclid")
+      return fbclid ? `fb.1.${Date.now()}.${fbclid}` : undefined
+    })()
+  if (fbp) tracking.fbp = fbp
+  if (fbc) tracking.fbc = fbc
+  return Object.keys(tracking).length > 0 ? tracking : undefined
+}
+
+type Status = "loading" | "ready" | "error"
+
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
+  const t = useT()
+  const lhref = useHref()
+  const router = useRouter()
+
+  const [status, setStatus] = useState<Status>("loading")
+  const [token, setToken] = useState<string | null>(null)
+  const [orderId, setOrderId] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const initiatedRef = useRef<string | null>(null)
+
+  const revolutMode =
+    process.env.NEXT_PUBLIC_REVOLUT_MODE === "sandbox" ? "sandbox" : "prod"
+
+  // Create the Revolut order as soon as the cart is known; recreate when
+  // the cart contents change so the charged amount always matches.
+  useEffect(() => {
+    if (items.length === 0) return
+    let cancelled = false
+    setStatus("loading")
+    ;(async () => {
+      try {
+        await loadRevolutEmbed()
+        const res = await fetch("/api/checkout/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: items.map((i) => ({
+              product_id: "",
+              slug: i.slug,
+              quantity: i.quantity,
+            })),
+            tracking: getMetaTracking(),
+          }),
+        })
+        if (!res.ok) throw new Error("Failed to create checkout order")
+        const data = (await res.json()) as { token: string; orderId: string }
+        if (cancelled) return
+        setToken(data.token)
+        setOrderId(data.orderId)
+        setStatus("ready")
+      } catch {
+        if (!cancelled) setStatus("error")
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length === 0, subtotal])
+
+  // InitiateCheckout — once per created order.
+  useEffect(() => {
+    if (status !== "ready" || !orderId || initiatedRef.current === orderId)
+      return
+    initiatedRef.current = orderId
+    const value = subtotal / 100
+    trackGA4Event("begin_checkout", { currency: "USD", value })
+    trackPixelEvent("InitiateCheckout", {
+      value,
+      currency: "USD",
+      content_ids: items.map((i) => i.slug),
+      content_type: "product",
+      num_items: items.reduce((sum, i) => sum + i.quantity, 0),
+    })
+  }, [status, orderId, subtotal, items])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (!token || !orderId || !window.RevolutCheckout) return
+    setSubmitting(true)
+    setErrorMessage(null)
+
+    const form = new FormData(e.currentTarget)
+    const get = (k: string) => String(form.get(k) || "").trim()
+    const email = get("email")
+    const name = `${get("firstName")} ${get("lastName")}`.trim()
+
+    try {
+      trackPixelEvent("AddPaymentInfo", {
+        value: subtotal / 100,
+        currency: "USD",
+        content_ids: items.map((i) => i.slug),
+        content_type: "product",
+      })
+      const RC = await window.RevolutCheckout(token, revolutMode)
+      RC.payWithPopup({
+        email,
+        name,
+        shippingAddress: {
+          streetLine1: get("address") || undefined,
+          city: get("city") || undefined,
+          postcode: get("zip") || undefined,
+        },
+        onSuccess: () => {
+          router.push(`/checkout/success?revolut_order_id=${orderId}`)
+        },
+        onError: (err) => {
+          setErrorMessage(err.message || t("checkout.payError"))
+          setSubmitting(false)
+        },
+        onCancel: () => setSubmitting(false),
+      })
+    } catch {
+      setErrorMessage(t("checkout.payError"))
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-ground">
       <header className="border-b border-hairline">
         <div className="mx-auto grid h-[72px] max-w-[1560px] grid-cols-[1fr_auto_1fr] items-center px-6 md:px-10">
           <Link
-            href="/shop"
+            href={lhref("/shop")}
             className="text-micro text-ink-soft transition-opacity hover:opacity-60"
           >
-            ← Back
+            {t("checkout.back")}
           </Link>
           <Link
-            href="/"
+            href={lhref("/")}
             aria-label="Maison Tanneurs home"
             className="whitespace-nowrap font-wordmark text-[14px] font-normal uppercase leading-none tracking-[0.18em] text-ink md:text-xl md:tracking-[0.24em]"
           >
@@ -30,7 +223,7 @@ export default function CheckoutPage() {
             <span>Tanneurs</span>
           </Link>
           <p className="text-micro hidden justify-self-end text-ink-muted md:block">
-            Secure checkout
+            {t("checkout.secure")}
           </p>
         </div>
       </header>
@@ -39,49 +232,61 @@ export default function CheckoutPage() {
         {items.length === 0 ? (
           <div className="flex flex-col items-center gap-8 py-24 text-center">
             <h1 className="font-serif text-3xl text-ink">
-              Your bag is empty.
+              {t("checkout.emptyTitle")}
             </h1>
-            <Link href="/shop" className="link-caps text-ink">
-              View the Collection
+            <Link href={lhref("/shop")} className="link-caps text-ink">
+              {t("cart.viewCollection")}
             </Link>
           </div>
         ) : (
           <div className="grid gap-14 md:grid-cols-2 md:gap-20">
             {/* Shipping form */}
             <section className="order-2 md:order-1">
-              <h1 className="font-serif text-3xl text-ink">Shipping</h1>
-              <form
-                className="mt-10 flex flex-col gap-6"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <Field label="Email address" id="email" type="email" />
+              <h1 className="font-serif text-3xl text-ink">{t("checkout.shippingTitle")}</h1>
+              <form className="mt-10 flex flex-col gap-6" onSubmit={handleSubmit}>
+                <Field label={t("checkout.email")} id="email" type="email" required />
                 <div className="grid grid-cols-2 gap-5">
-                  <Field label="First name" id="firstName" />
-                  <Field label="Last name" id="lastName" />
+                  <Field label={t("checkout.firstName")} id="firstName" required />
+                  <Field label={t("checkout.lastName")} id="lastName" required />
                 </div>
-                <Field label="Address" id="address" />
+                <Field label={t("checkout.address")} id="address" />
                 <div className="grid grid-cols-3 gap-5">
-                  <Field label="City" id="city" />
-                  <Field label="Postal code" id="zip" />
-                  <Field label="Country" id="country" />
+                  <Field label={t("checkout.city")} id="city" />
+                  <Field label={t("checkout.zip")} id="zip" />
+                  <Field label={t("checkout.country")} id="country" />
                 </div>
                 <button
                   type="submit"
-                  disabled
-                  className="text-micro mt-4 w-full cursor-not-allowed bg-ink/40 py-5 text-ground"
-                  title="Payment opens at launch"
+                  disabled={status !== "ready" || submitting}
+                  className={`text-micro mt-4 w-full py-5 text-ground transition-opacity ${
+                    status === "ready" && !submitting
+                      ? "bg-ink hover:opacity-85"
+                      : "cursor-wait bg-ink/40"
+                  }`}
                 >
-                  Continue to payment
+                  {submitting
+                    ? t("checkout.processing")
+                    : `${t("checkout.continue")} · ${formatPrice(subtotal)}`}
                 </button>
+                {status === "error" && (
+                  <p className="text-micro text-center text-[#9b2c2c]">
+                    {t("checkout.sessionError")}
+                  </p>
+                )}
+                {errorMessage && (
+                  <p className="text-micro text-center text-[#9b2c2c]">
+                    {errorMessage}
+                  </p>
+                )}
                 <p className="text-micro text-center text-ink-muted">
-                  Payment opens at launch.
+                  {t("checkout.payNote")}
                 </p>
               </form>
             </section>
 
             {/* Order summary */}
             <section className="order-1 md:order-2">
-              <h2 className="font-serif text-3xl text-ink">Your order</h2>
+              <h2 className="font-serif text-3xl text-ink">{t("checkout.orderTitle")}</h2>
               <ul className="mt-10 flex flex-col gap-7">
                 {items.map((item) => (
                   <li key={item.slug} className="flex gap-5">
@@ -95,7 +300,7 @@ export default function CheckoutPage() {
                     <div className="flex flex-1 flex-col justify-center">
                       <p className="font-serif text-lg text-ink">{item.name}</p>
                       <p className="text-micro mt-1 text-ink-muted">
-                        Qty {item.quantity}
+                        {t("checkout.qty")} {item.quantity}
                       </p>
                     </div>
                     <p className="self-center font-sans text-sm text-ink-soft">
@@ -107,17 +312,17 @@ export default function CheckoutPage() {
 
               <dl className="mt-10 border-t border-hairline pt-6">
                 <div className="flex justify-between py-1.5">
-                  <dt className="text-micro text-ink-soft">Subtotal</dt>
+                  <dt className="text-micro text-ink-soft">{t("checkout.subtotal")}</dt>
                   <dd className="font-sans text-sm text-ink">
                     {formatPrice(subtotal)}
                   </dd>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <dt className="text-micro text-ink-soft">Shipping</dt>
-                  <dd className="font-sans text-sm text-ink">Complimentary</dd>
+                  <dt className="text-micro text-ink-soft">{t("checkout.shipping")}</dt>
+                  <dd className="font-sans text-sm text-ink">{t("checkout.complimentary")}</dd>
                 </div>
                 <div className="mt-3 flex justify-between border-t border-hairline pt-4">
-                  <dt className="text-micro text-ink">Total</dt>
+                  <dt className="text-micro text-ink">{t("checkout.total")}</dt>
                   <dd className="font-serif text-xl text-ink">
                     {formatPrice(subtotal)}
                   </dd>
@@ -125,8 +330,7 @@ export default function CheckoutPage() {
               </dl>
 
               <p className="mt-8 font-sans text-[11px] leading-relaxed text-ink-muted">
-                Every order includes tracked shipping and the house packaging.
-                Returns accepted within 30 days.
+                {t("checkout.note")}
               </p>
             </section>
           </div>
@@ -140,10 +344,12 @@ function Field({
   label,
   id,
   type = "text",
+  required = false,
 }: {
   label: string
   id: string
   type?: string
+  required?: boolean
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -154,6 +360,8 @@ function Field({
         id={id}
         name={id}
         type={type}
+        required={required}
+        autoComplete={id === "email" ? "email" : undefined}
         className="border-b border-hairline bg-transparent pb-2 font-serif text-lg text-ink outline-none transition-colors focus:border-ink"
       />
     </div>

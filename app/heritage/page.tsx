@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { SiteHeader } from "@/components/editorial/site-header"
 import { SiteFooter } from "@/components/editorial/site-footer"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const metadata: Metadata = {
   title: "Savoir-Faire — Maison Tanneurs",
@@ -52,10 +53,10 @@ export default function HeritagePage() {
         {/* The hide */}
         <section className="grid grid-cols-1 md:grid-cols-2">
           <div className="relative min-h-[420px] md:min-h-[700px]">
-            <img
-              src="/tanneurs/editorial/craft-emboss.webp"
-              alt="The Maison Tanneurs blind stamp pressed into full-grain leather"
-              loading="lazy"
+            <AmbientLoop
+              src="/tanneurs/films/heritage-grain.mp4"
+              poster="/tanneurs/films/heritage-grain-poster.jpg"
+              alt="Raking light moving slowly across full-grain leather"
               className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
@@ -99,10 +100,10 @@ export default function HeritagePage() {
             </p>
           </div>
           <div className="relative order-1 min-h-[420px] md:order-2 md:min-h-[700px]">
-            <img
-              src="/tanneurs/editorial/craft-promise.webp"
-              alt="The Maison Tanneurs promise embossed in full-grain leather, laced with waxed linen thread"
-              loading="lazy"
+            <AmbientLoop
+              src="/tanneurs/films/heritage-stitch.mp4"
+              poster="/tanneurs/films/heritage-stitch-poster.jpg"
+              alt="A saddle stitch being laid in waxed linen thread, macro"
               className="absolute inset-0 h-full w-full object-cover"
             />
           </div>

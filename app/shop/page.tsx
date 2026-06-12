@@ -1,9 +1,12 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { SiteHeader } from "@/components/editorial/site-header"
 import { SiteFooter } from "@/components/editorial/site-footer"
 import { fetchAllProducts } from "@/lib/supabase"
+import { getLocale, t } from "@/lib/i18n"
 import { adaptProduct, curate, getCategories } from "@/lib/products"
 import { ShopClient } from "./shop-client"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const revalidate = 300
 
@@ -14,6 +17,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ShopPage() {
+  const lo = await getLocale()
   const products = curate((await fetchAllProducts()).map(adaptProduct))
   const categories = getCategories(products)
 
@@ -24,15 +28,26 @@ export default async function ShopPage() {
         <header className="px-6 py-20 text-center md:py-28">
           <p className="text-micro mb-8 text-ink-muted">Maison Tanneurs</p>
           <h1 className="font-serif text-5xl text-ink md:text-6xl">
-            La Collection
+            {t(lo, "shop.title")}
           </h1>
           <p className="mx-auto mt-8 max-w-md font-serif text-lg italic leading-relaxed text-ink-soft">
-            Full-grain leather, cut and saddle-stitched by hand. Each piece
-            leaves the bench ready to outlast its first decade.
+            {t(lo, "shop.lede")}
           </p>
         </header>
 
-        <ShopClient products={products} categories={categories} />
+        {/* Opener — the maison reel, bench to departure */}
+        <div className="mx-auto mb-16 max-w-[1400px] px-6 md:mb-20 md:px-10">
+          <AmbientLoop
+            src="/tanneurs/films/maison-reel-v3.mp4"
+            poster="/tanneurs/films/maison-reel-v3-poster.jpg"
+            alt="The maison reel — from the Marrakech bench to the ferry deck, the weekender carried into departure"
+            className="aspect-video w-full object-cover"
+          />
+        </div>
+
+        <Suspense>
+          <ShopClient products={products} categories={categories} />
+        </Suspense>
       </main>
       <SiteFooter />
     </>

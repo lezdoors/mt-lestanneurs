@@ -2,9 +2,11 @@
 
 import { useCart } from "@/lib/cart"
 import type { Product } from "@/lib/products"
+import { useT } from "@/lib/i18n-client"
 
 export function AddToCart({ product }: { product: Product }) {
   const { addItem } = useCart()
+  const t = useT()
 
   return (
     <button
@@ -19,7 +21,7 @@ export function AddToCart({ product }: { product: Product }) {
       }
       className="text-micro w-full bg-ink py-5 text-ground transition-opacity hover:opacity-85"
     >
-      Add to Bag
+      {t("pdp.addToBag")}
     </button>
   )
 }

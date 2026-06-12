@@ -3,10 +3,12 @@
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useCart } from "@/lib/cart"
+import { useHref, useLocale, useSwitchLocaleHref, useT } from "@/lib/i18n-client"
+import { LOCALES, LOCALE_LABELS } from "@/lib/i18n-shared"
 
 const NAV_LEFT = [
-  { href: "/shop", label: "La Collection" },
-  { href: "/heritage", label: "Savoir-Faire" },
+  { href: "/shop", label: "nav.collection" },
+  { href: "/heritage", label: "nav.savoirFaire" },
 ]
 
 // variant "overlay": transparent white-on-image over a full-bleed hero,
@@ -18,8 +20,13 @@ export function SiteHeader({
 }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const [langOpen, setLangOpen] = useState(false)
   const ticking = useRef(false)
   const { count, openCart } = useCart()
+  const t = useT()
+  const href = useHref()
+  const locale = useLocale()
+  const switchHref = useSwitchLocaleHref()
 
   useEffect(() => {
     if (variant === "solid") return
@@ -45,6 +52,13 @@ export function SiteHeader({
     }
   }, [open])
 
+  useEffect(() => {
+    if (!langOpen) return
+    const close = () => setLangOpen(false)
+    document.addEventListener("click", close)
+    return () => document.removeEventListener("click", close)
+  }, [langOpen])
+
   const solid = variant === "solid" || scrolled || open
   const tone = solid
     ? "text-ink"
@@ -64,10 +78,10 @@ export function SiteHeader({
           {NAV_LEFT.map((l) => (
             <Link
               key={l.href}
-              href={l.href}
+              href={href(l.href)}
               className="text-micro font-sans opacity-90 transition-opacity hover:opacity-50"
             >
-              {l.label}
+              {t(l.label)}
             </Link>
           ))}
         </nav>
@@ -94,7 +108,7 @@ export function SiteHeader({
         </button>
 
         <Link
-          href="/"
+          href={href("/")}
           onClick={() => setOpen(false)}
           aria-label="Maison Tanneurs home"
           className={`justify-self-center whitespace-nowrap px-3 font-wordmark font-normal uppercase leading-none transition-all duration-500 md:px-0 ${
@@ -108,12 +122,49 @@ export function SiteHeader({
           <span>Tanneurs</span>
         </Link>
 
-        <div className={`flex items-center justify-end gap-9 ${tone}`}>
+        <div className={`flex items-center justify-end gap-7 md:gap-9 ${tone}`}>
+          <span className="relative hidden md:block">
+            <button
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={langOpen}
+              onClick={(e) => {
+                e.stopPropagation()
+                setLangOpen(!langOpen)
+              }}
+              className="text-micro flex items-center gap-2 font-sans opacity-90 transition-opacity hover:opacity-50"
+            >
+              {LOCALE_LABELS[locale]}
+              <span
+                aria-hidden
+                className={`text-[8px] transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`}
+              >
+                ▾
+              </span>
+            </button>
+            {langOpen && (
+              <span className="absolute right-0 top-full z-50 mt-4 flex min-w-[72px] flex-col border border-hairline bg-ground py-1.5 shadow-[0_8px_30px_rgba(28,26,23,0.08)]">
+                {LOCALES.map((l) => (
+                  <a
+                    key={l}
+                    href={switchHref(l)}
+                    className={`text-micro px-5 py-2 text-left transition-colors ${
+                      l === locale
+                        ? "bg-ground-deep/60 text-ink"
+                        : "text-ink-muted hover:text-ink"
+                    }`}
+                  >
+                    {LOCALE_LABELS[l]}
+                  </a>
+                ))}
+              </span>
+            )}
+          </span>
           <Link
-            href="/heritage"
+            href={href("/atelier")}
             className="text-micro hidden font-sans opacity-90 transition-opacity hover:opacity-50 md:block"
           >
-            La Maison
+            {t("nav.atelier")}
           </Link>
           <button
             type="button"
@@ -123,7 +174,7 @@ export function SiteHeader({
             }}
             className="text-micro font-sans opacity-90 transition-opacity hover:opacity-50"
           >
-            Bag{count > 0 ? ` (${count})` : ""}
+            {t("nav.bag")}{count > 0 ? ` (${count})` : ""}
           </button>
         </div>
       </div>
@@ -135,16 +186,27 @@ export function SiteHeader({
         }`}
       >
         <nav className="flex flex-col px-6 pt-10">
-          {[...NAV_LEFT, { href: "/heritage", label: "La Maison" }].map((l) => (
+          {[...NAV_LEFT, { href: "/atelier", label: "nav.atelier" }].map((l) => (
             <Link
               key={l.label}
-              href={l.href}
+              href={href(l.href)}
               onClick={() => setOpen(false)}
               className="border-b border-hairline py-6 font-serif text-3xl text-ink"
             >
-              {l.label}
+              {t(l.label)}
             </Link>
           ))}
+          <div className="text-micro flex items-center gap-4 py-6 text-ink-soft">
+            {LOCALES.map((l) => (
+              <a
+                key={l}
+                href={switchHref(l)}
+                className={l === locale ? "text-ink" : "opacity-60"}
+              >
+                {LOCALE_LABELS[l]}
+              </a>
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => {
@@ -153,7 +215,7 @@ export function SiteHeader({
             }}
             className="text-micro py-7 text-left text-ink-soft"
           >
-            Bag{count > 0 ? ` (${count})` : ""}
+            {t("nav.bag")}{count > 0 ? ` (${count})` : ""}
           </button>
         </nav>
       </div>

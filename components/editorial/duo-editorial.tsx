@@ -1,19 +1,26 @@
-// Wordless 2-up — one world, two frames (dusk, lantern light, the desert).
+// Wordless 2-up — one world, two frames: the same rooftop, the same
+// dusk, two departures. Cognac and noir, one skyline.
 export function DuoEditorial() {
   return (
     <section className="grid grid-cols-1 gap-1 bg-ground md:grid-cols-2">
-      <img
-        src="/tanneurs/editorial/duo-noir-sun.webp"
-        alt="A black leather tote under a parallelogram of sunlight on travertine stone"
-        loading="lazy"
-        className="aspect-[4/5] w-full object-cover md:aspect-[5/6]"
-      />
-      <img
-        src="/tanneurs/editorial/duo-noir-pedestal.webp"
-        alt="A black soft tote on a stone pedestal beside folded linen, raking light"
-        loading="lazy"
-        className="aspect-[4/5] w-full object-cover md:aspect-[5/6]"
-      />
+      <picture>
+        <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/duo-rooftop-cognac-m.webp" />
+        <img
+          src="/tanneurs/editorial/duo-rooftop-cognac.webp"
+          alt="A cognac leather duffle beside a stone table on a medina rooftop at dusk, the Koutoubia minaret on the skyline"
+          loading="lazy"
+          className="aspect-[4/5] w-full object-cover md:aspect-[5/6]"
+        />
+      </picture>
+      <picture>
+        <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/duo-rooftop-noir-m.webp" />
+        <img
+          src="/tanneurs/editorial/duo-rooftop-noir.webp"
+          alt="A black rolltop backpack at the same rooftop table in the last warm light, mint tea waiting"
+          loading="lazy"
+          className="aspect-[4/5] w-full object-cover md:aspect-[5/6]"
+        />
+      </picture>
     </section>
   )
 }
