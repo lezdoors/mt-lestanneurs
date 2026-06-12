@@ -77,10 +77,47 @@ function getMetaAttributionFromMetadata(
   };
 }
 
+// Bounded retry around Revolut: transient 5xx/timeouts and transitional
+// states (PROCESSING/AUTHORISED settle within seconds) get a few chances
+// before we give up and render the pending page. Without a registered
+// webhook this in-request retry is the only settlement window we have.
+const TRANSITIONAL_STATES = new Set(["PENDING", "PROCESSING", "AUTHORISED"]);
+const RETRY_DELAYS_MS = [1200, 2000, 3000];
+
+async function getOrderSettled(revolutOrderId: string): Promise<RevolutOrder> {
+  let order: RevolutOrder | null = null;
+  let lastErr: unknown = null;
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    if (attempt > 0) {
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt - 1]));
+    }
+    try {
+      order = await getOrder(revolutOrderId);
+      lastErr = null;
+      if (!TRANSITIONAL_STATES.has(order.state)) return order;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  if (order) {
+    console.error(
+      `[confirm-order] ${revolutOrderId} still ${order.state} after retries — rendering pending`,
+    );
+    return order;
+  }
+  console.error(
+    `[confirm-order] ${revolutOrderId} unreachable at Revolut after retries:`,
+    lastErr,
+  );
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error("Revolut order lookup failed");
+}
+
 export async function confirmAndPersistOrder(
   revolutOrderId: string,
 ): Promise<ConfirmedOrder> {
-  const order = await getOrder(revolutOrderId);
+  const order = await getOrderSettled(revolutOrderId);
 
   const items = parseItemsFromMetadata(order.metadata);
   const customerEmail = order.customer?.email || "";
@@ -140,32 +177,68 @@ export async function confirmAndPersistOrder(
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to create order:", error);
-    // Don't fire emails/CAPI for an order we could not record.
-    return result;
+    // A COMPLETED payment we cannot record must never render as success —
+    // throw so the page shows the problem state and the error is loud in
+    // the logs. The customer's money is safe in Revolut either way.
+    console.error(
+      `[confirm-order] PERSIST FAILED for paid order ${revolutOrderId}:`,
+      error,
+    );
+    throw new Error(`Order persistence failed for ${revolutOrderId}`);
   }
 
   if (!won) {
     // Another caller won the insert — read its order number, send nothing.
-    const { data: existing } = await supabase
-      .from("orders")
-      .select("order_number")
-      .eq("revolut_order_id", revolutOrderId)
-      .maybeSingle();
-    if (existing?.order_number) {
-      result.orderNumber = existing.order_number as string;
+    // One short retry covers the sliver where the winner hasn't committed.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const { data: existing } = await supabase
+        .from("orders")
+        .select("order_number")
+        .eq("revolut_order_id", revolutOrderId)
+        .maybeSingle();
+      if (existing?.order_number) {
+        result.orderNumber = existing.order_number as string;
+        return result;
+      }
+      await new Promise((r) => setTimeout(r, 800));
     }
-    return result;
+    console.error(
+      `[confirm-order] conflict row unreadable for ${revolutOrderId}`,
+    );
+    throw new Error(`Order record unreadable for ${revolutOrderId}`);
   }
 
   const orderNumber = won.order_number as string;
   result.orderNumber = orderNumber;
 
+  // Conditional sale-marking: only flips rows that are still purchasable.
+  // Zero rows affected means a concurrent order already took the piece —
+  // these are one-of-one objects, so scream for a manual refund.
   for (const item of items) {
-    await supabase
+    const { data: flipped } = await supabase
       .from("products")
       .update({ status: "sold", available_quantity: 0 })
-      .eq("id", item.product_id);
+      .eq("id", item.product_id)
+      .eq("status", "available")
+      .select("id");
+    if (!flipped || flipped.length === 0) {
+      console.error(
+        `[confirm-order] OVERSELL on order ${orderNumber}: ${item.slug || item.product_id} was already sold — refund ${customerEmail} manually`,
+      );
+      try {
+        await sendAdminNotification({
+          orderNumber: `OVERSELL — ${orderNumber}`,
+          customerName,
+          customerEmail,
+          items: [item],
+          total,
+          currency,
+          shippingAddress,
+        });
+      } catch {
+        /* logged above — admin email is best-effort */
+      }
+    }
   }
 
   try {

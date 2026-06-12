@@ -92,7 +92,25 @@ async function loadProducts(items: CartItem[]): Promise<ProductRow[]> {
   return data as ProductRow[];
 }
 
-async function validateCart(items: CartItem[]): Promise<ValidatedItem[]> {
+function aggregateItems(items: CartItem[]): CartItem[] {
+  // Collapse duplicate lines onto one key so per-product stock validation
+  // sees the SUM — a crafted payload repeating one slug must not multiply
+  // a one-of-one piece.
+  const byKey = new Map<string, CartItem>();
+  for (const item of items) {
+    const key = item.product_id || item.slug || "";
+    const prev = byKey.get(key);
+    if (prev) {
+      prev.quantity = (prev.quantity || 1) + (item.quantity || 1);
+    } else {
+      byKey.set(key, { ...item });
+    }
+  }
+  return Array.from(byKey.values());
+}
+
+async function validateCart(rawItems: CartItem[]): Promise<ValidatedItem[]> {
+  const items = aggregateItems(rawItems);
   const products = await loadProducts(items);
   const byId = new Map(products.map((p) => [p.id, p]));
   const bySlug = new Map(products.map((p) => [p.slug, p]));

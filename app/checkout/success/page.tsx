@@ -53,7 +53,9 @@ export default async function CheckoutSuccessPage({
     )
   }
 
-  if (confirmed.state !== "COMPLETED") {
+  // COMPLETED without a persisted order number cannot render as success —
+  // confirm-order throws on persistence failure, but keep the gate airtight.
+  if (confirmed.state !== "COMPLETED" || !confirmed.orderNumber) {
     return (
       <Shell>
         <Status
@@ -75,7 +77,6 @@ export default async function CheckoutSuccessPage({
   return (
     <Shell>
       <SuccessClient
-        orderId={confirmed.revolutOrderId}
         orderNumber={confirmed.orderNumber}
         total={confirmed.total}
         currency={currency}

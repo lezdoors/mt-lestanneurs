@@ -21,8 +21,11 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
+  // Gate metadata exactly like the page body — otherwise streaming starts
+  // with a 200 before the body's notFound() fires and the 404 ships soft.
+  if (!isCurated(id)) notFound()
   const row = await fetchProductBySlug(id)
-  if (!row) return { title: "Maison Tanneurs" }
+  if (!row) notFound()
   const p = adaptProduct(row)
   return {
     title: `${p.name} — Maison Tanneurs`,

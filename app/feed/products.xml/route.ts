@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { HIDDEN_SKUS, HIDDEN_SKUS_ARRAY } from "@/lib/hidden-skus";
+import { isCurated } from "@/lib/products";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -68,7 +69,15 @@ export async function GET() {
 ${renderFeed([])}`;
       return renderResponse(xml);
     }
-    products = (data || []).filter((p) => !HIDDEN_SKUS.has(p.slug));
+    // Mirror the storefront's visibility exactly: a feed entry must have a
+    // live, buyable PDP. Curation gates the PDP route, quantity gates the
+    // Add to Bag — anything else would hand Meta a dead link.
+    products = (data || []).filter(
+      (p) =>
+        !HIDDEN_SKUS.has(p.slug) &&
+        isCurated(p.slug) &&
+        (p.available_quantity ?? 0) > 0,
+    );
   }
 
   return renderResponse(renderFeed(products));

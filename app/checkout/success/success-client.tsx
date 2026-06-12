@@ -10,14 +10,12 @@ import { trackGA4Event } from "@/components/seo/ga4"
 // order number — the same event_id the server CAPI uses — so Meta dedupes.
 
 export function SuccessClient({
-  orderId,
   orderNumber,
   total,
   currency,
   items,
 }: {
-  orderId: string
-  orderNumber?: string
+  orderNumber: string
   total: number
   currency: string
   items: { slug: string; quantity: number; price: number }[]
@@ -33,7 +31,7 @@ export function SuccessClient({
 
   useEffect(() => {
     if (firedRef.current) return
-    const key = `mt-purchase-${orderId}`
+    const key = `mt-purchase-${orderNumber}`
     try {
       if (sessionStorage.getItem(key)) return
       sessionStorage.setItem(key, "1")
@@ -49,10 +47,10 @@ export function SuccessClient({
         content_type: "product",
         num_items: items.reduce((sum, i) => sum + i.quantity, 0),
       },
-      orderNumber || orderId,
+      orderNumber,
     )
     trackGA4Event("purchase", {
-      transaction_id: orderNumber || orderId,
+      transaction_id: orderNumber,
       currency,
       value,
       items: items.map((i) => ({
@@ -61,7 +59,7 @@ export function SuccessClient({
         quantity: i.quantity,
       })),
     })
-  }, [orderId, orderNumber, total, currency, items])
+  }, [orderNumber, total, currency, items])
 
   return null
 }
