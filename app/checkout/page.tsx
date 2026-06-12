@@ -143,7 +143,7 @@ export default function CheckoutPage() {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items.length === 0, subtotal])
+  }, [items.length, subtotal])
 
   // InitiateCheckout — once per created order.
   useEffect(() => {

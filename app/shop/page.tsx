@@ -38,8 +38,8 @@ export default async function ShopPage() {
         {/* Opener — the maison reel, bench to departure */}
         <div className="mx-auto mb-16 max-w-[1400px] px-6 md:mb-20 md:px-10">
           <AmbientLoop
-            src="/tanneurs/films/maison-reel-v3.mp4"
-            poster="/tanneurs/films/maison-reel-v3-poster.jpg"
+            src="/tanneurs/films/shop-opening-weekender.mp4"
+            poster="/tanneurs/films/shop-opening-weekender-poster.jpg"
             alt="The maison reel — from the Marrakech bench to the ferry deck, the weekender carried into departure"
             className="aspect-video w-full object-cover"
           />

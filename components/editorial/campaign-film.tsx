@@ -44,10 +44,10 @@ export function CampaignFilm() {
             loop
             playsInline
             preload="metadata"
-            poster="/tanneurs/films/maison-reel-poster.jpg"
+            poster="/tanneurs/films/maison-reel-v3-poster.jpg"
             className="h-full w-full object-cover"
           >
-            <source src="/tanneurs/films/maison-reel.mp4" type="video/mp4" />
+            <source src="/tanneurs/films/maison-reel-v3.mp4" type="video/mp4" />
           </video>
         </div>
         <p className="mt-8 text-center font-serif text-lg italic text-ink-muted">

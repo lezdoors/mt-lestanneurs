@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import imageManifest from "./product-images.json"
+import { HIDDEN_SKUS } from "@/lib/hidden-skus"
 
 // Read-only data layer against the same Supabase project production uses.
 // Server-side only — never import from a "use client" file.
@@ -39,9 +40,7 @@ export type SupabaseProduct = {
 type ImageManifest = Record<string, { hero: string; gallery: string[] }>
 const MANIFEST = imageManifest as ImageManifest
 
-const HIDDEN_SKUS = new Set<string>([
-  "test-e2e",
-])
+
 const PUBLISHED_STATUSES = new Set(["available", "reserved"])
 
 const FULL_COLS =
@@ -135,6 +134,7 @@ const PRODUCT_NUMBERS: Record<string, string> = {
   "medina-crossbody-clasp-teal": "MT-BAG-026",
   "medina-market-tote-cognac": "MT-BAG-027",
   "medina-zigzag-tote-chocolate": "MT-BAG-028",
+  "medina-zigzag-tote-noir": "MT-BAG-029",
 }
 
 export function productNumber(slug: string): string {

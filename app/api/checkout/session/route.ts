@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 import { createOrder } from "@/lib/checkout/revolut";
-import { HIDDEN_SKUS } from "@/lib/checkout/hidden-skus";
+import { HIDDEN_SKUS } from "@/lib/hidden-skus";
 import { getRates, convertUSDCents } from "@/lib/checkout/fx";
 import {
   CURRENCY_COOKIE,
@@ -103,11 +103,7 @@ async function validateCart(items: CartItem[]): Promise<ValidatedItem[]> {
     if (!product) {
       throw new CartValidationError(`Product not found: ${item.slug || item.product_id}`);
     }
-    if (
-      product.status !== "available" ||
-      product.featured === false ||
-      HIDDEN_SKUS.has(product.slug)
-    ) {
+    if (product.status !== "available" || HIDDEN_SKUS.has(product.slug)) {
       throw new CartValidationError(`Product unavailable: ${product.slug}`);
     }
     const quantity = normalizeQuantity(item.quantity);

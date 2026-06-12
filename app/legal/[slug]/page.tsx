@@ -21,17 +21,17 @@ const PAGES: Record<string, LegalPage> = {
     eyebrow: "Shipping",
     title: "How it gets to you.",
     description:
-      "How Maison Tanneurs ships leather goods worldwide. Free worldwide shipping via DHL Express, with most orders arriving in 5 to 10 business days.",
+      "How Maison Tanneurs ships leather goods worldwide. Free worldwide tracked express shipping, with most orders arriving in 5 to 10 business days.",
     updated: "19 May 2026",
     sections: [
       {
         heading: "Free worldwide shipping",
-        body: "Every order ships free, worldwide, with no minimum — via DHL Express, direct from Marrakech.",
+        body: "Every order ships free, worldwide, with no minimum — by tracked express courier, direct from Marrakech.",
       },
       {
         heading: "Delivery times",
         items: [
-          "Most destinations · 5–10 business days, DHL Express direct from Marrakech.",
+          "Most destinations · 5–10 business days, tracked express courier direct from Marrakech.",
           "Remote destinations · transit may take longer depending on local customs and carrier access.",
         ],
       },
@@ -173,11 +173,11 @@ const PAGES: Record<string, LegalPage> = {
       },
       {
         heading: "How long does shipping take?",
-        body: "Most destinations 5–10 business days via DHL Express, direct from Marrakech.",
+        body: "Most destinations 5–10 business days by tracked express courier, direct from Marrakech.",
       },
       {
         heading: "Do you offer free shipping?",
-        body: "Yes — free worldwide shipping on every order, with no minimum and no surcharge for DHL Express service.",
+        body: "Yes — free worldwide shipping on every order, with no minimum and no surcharge for express courier service.",
       },
       {
         heading: "What sizes do you carry?",

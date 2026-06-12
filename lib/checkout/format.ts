@@ -15,10 +15,12 @@ export function formatPrice(cents: number, currency: Currency = "USD"): string {
   }).format(cents / 100);
 }
 
-// Maison Tanneurs order number — "MT-NNNNNN".
+// Maison Tanneurs order number — "MT-NNNNNNNN". Seconds since the house
+// epoch + one random digit: unique per second, no coordination needed.
+// (The orders table also has UNIQUE(revolut_order_id), which is the real
+// idempotency guard — this only needs to be human-friendly and distinct.)
+const HOUSE_EPOCH = Date.UTC(2026, 0, 1) / 1000;
 export function generateOrderNumber(): string {
-  const num = Math.floor(Math.random() * 999999)
-    .toString()
-    .padStart(6, "0");
-  return `MT-${num}`;
+  const seconds = Math.floor(Date.now() / 1000 - HOUSE_EPOCH);
+  return `MT-${seconds}${Math.floor(Math.random() * 10)}`;
 }

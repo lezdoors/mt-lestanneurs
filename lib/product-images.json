@@ -527,6 +527,18 @@
     ],
     "hero": "/tanneurs/products/medina-zigzag-tote-chocolate.webp"
   },
+  "medina-zigzag-tote-noir": {
+    "gallery": [
+      "/tanneurs/products/medina-zigzag-tote-noir/07.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/02.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/05.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/04.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/06.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/03.webp",
+      "/tanneurs/products/medina-zigzag-tote-noir/01.webp"
+    ],
+    "hero": "/tanneurs/products/medina-zigzag-tote-noir.webp"
+  },
   "medina-zip-sling-cognac": {
     "gallery": [
       "/tanneurs/products/medina-zip-sling-cognac/01.webp",

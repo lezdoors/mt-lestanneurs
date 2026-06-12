@@ -6,7 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { HIDDEN_SKUS, HIDDEN_SKUS_ARRAY } from "@/lib/checkout/hidden-skus";
+import { HIDDEN_SKUS, HIDDEN_SKUS_ARRAY } from "@/lib/hidden-skus";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -91,7 +91,7 @@ function renderFeed(products: ProductRow[]): string {
       const heroImg = imgs[0] || "";
       if (!heroImg || !p.title || !p.price) return null;
 
-      const link = `${SITE_URL}/products/${p.slug}`;
+      const link = `${SITE_URL}/product/${p.slug}`;
       const priceStr = (p.price / 100).toFixed(2);
       const availability = (p.available_quantity ?? 0) > 0 ? "in stock" : "out of stock";
       const description = (p.description || p.title).slice(0, 4990);

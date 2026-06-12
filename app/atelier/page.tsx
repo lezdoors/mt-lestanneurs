@@ -7,7 +7,7 @@ import { AtelierFilm } from "@/components/editorial/atelier-film"
 export const metadata: Metadata = {
   title: "L'Atelier — Maison Tanneurs",
   description:
-    "A small leather house working out of a Marrakech atelier — master artisans stitching full-grain leather since 1962, three generations, father to son.",
+    "A small leather house working out of a Marrakech atelier — master artisans stitching full-grain leather for three generations, father to son.",
 }
 
 const PILLARS = [
@@ -21,7 +21,7 @@ const PILLARS = [
   },
   {
     label: "Departure",
-    text: "Every piece ships direct from the atelier — DHL Express, free worldwide, most orders within 5 to 10 business days. No middlemen, no warehouses, no inventory we didn't make.",
+    text: "Every piece ships direct from the atelier — tracked express courier, free worldwide, most orders within 5 to 10 business days. No middlemen, no warehouses, no inventory we didn't make.",
   },
 ]
 
@@ -34,7 +34,7 @@ export default function AtelierPage() {
         <header className="px-6 pb-12 pt-20 text-center md:pb-16 md:pt-28">
           <p className="text-micro mb-8 text-ink-muted">L&rsquo;Atelier</p>
           <h1 className="mx-auto max-w-3xl font-serif text-4xl leading-tight text-ink md:text-6xl">
-            One workshop, since 1962.
+            One workshop, three generations.
           </h1>
           <p className="mx-auto mt-8 max-w-md font-serif text-lg italic leading-relaxed text-ink-soft">
             A leather house for people who want the maker&rsquo;s mark on the
@@ -46,8 +46,8 @@ export default function AtelierPage() {
         <section className="mx-auto max-w-2xl px-6 pb-16 md:pb-20">
           <p className="font-serif text-lg leading-relaxed text-ink-soft md:text-xl">
             Maison Tanneurs works out of a Marrakech atelier whose master
-            artisans have been stitching full-grain leather since 1962 —
-            three generations, father to son, in the same workshop in the
+            artisans have been stitching full-grain leather for three
+            generations — father to son, in the same workshop in the
             medina. We design the silhouettes; they cut, stitch and finish
             each piece by hand, one at a time.
           </p>

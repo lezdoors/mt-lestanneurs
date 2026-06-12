@@ -16,9 +16,9 @@ const TILES = [
     alt: "The cognac flap crossbody carried at the hip past sunlit stone facades",
   },
   {
-    img: "depart-street-rucksack",
-    href: "/product/medina-rucksack-drawstring",
-    alt: "The tooled drawstring rucksack carried by hand down a quiet city street",
+    img: "depart-street-satchel",
+    href: "/product/classic-cognac-satchel",
+    alt: "A model mid-stride with the structured cognac satchel in hand on a sunlit limestone street",
   },
 ]
 

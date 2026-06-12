@@ -100,6 +100,7 @@ const CURATED_ORDER: string[] = [
   "marrakech-tote-cognac",
   "medina-market-tote-cognac",
   "medina-zigzag-tote-chocolate",
+  "medina-zigzag-tote-noir",
 ]
 
 export function curate(products: Product[]): Product[] {

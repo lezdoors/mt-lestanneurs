@@ -37,10 +37,14 @@ export interface ConfirmedOrder {
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
+  // Service role ONLY — the anon key cannot write `orders` under RLS, so a
+  // fallback would silently drop paid orders. Better to fail loud.
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY missing — refusing to confirm an order that cannot be persisted",
+    );
+  }
   return createClient(url, key, { auth: { persistSession: false } });
 }
 
@@ -108,44 +112,53 @@ export async function confirmAndPersistOrder(
     : {};
 
   const supabase = getSupabase();
-  if (!supabase) {
-    console.warn("Supabase not configured — skipping order persistence");
-    return result;
-  }
 
-  const { data: existing } = await supabase
+  // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
+  // Exactly one concurrent caller (success page load, refresh, future
+  // webhook) gets a row back and owns the side effects; everyone else
+  // reads the canonical row and returns silently.
+  const { data: won, error } = await supabase
     .from("orders")
+    .upsert(
+      {
+        order_number: generateOrderNumber(),
+        sales_channel: "direct",
+        revolut_order_id: revolutOrderId,
+        customer_email: customerEmail,
+        customer_name: customerName,
+        shipping_address: shippingAddress,
+        items,
+        subtotal: total,
+        shipping_cost: 0,
+        total,
+        currency,
+        status: "paid",
+      },
+      { onConflict: "revolut_order_id", ignoreDuplicates: true },
+    )
     .select("order_number")
-    .eq("revolut_order_id", revolutOrderId)
     .maybeSingle();
 
-  if (existing?.order_number) {
-    // Already persisted (webhook or an earlier success-page load) —
-    // never re-send emails or CAPI.
-    result.orderNumber = existing.order_number as string;
-    return result;
-  }
-
-  const orderNumber = generateOrderNumber();
-  const { error } = await supabase.from("orders").insert({
-    order_number: orderNumber,
-    sales_channel: "direct",
-    revolut_order_id: revolutOrderId,
-    customer_email: customerEmail,
-    customer_name: customerName,
-    shipping_address: shippingAddress,
-    items,
-    subtotal: total,
-    shipping_cost: 0,
-    total,
-    currency,
-    status: "paid",
-  });
   if (error) {
     console.error("Failed to create order:", error);
     // Don't fire emails/CAPI for an order we could not record.
     return result;
   }
+
+  if (!won) {
+    // Another caller won the insert — read its order number, send nothing.
+    const { data: existing } = await supabase
+      .from("orders")
+      .select("order_number")
+      .eq("revolut_order_id", revolutOrderId)
+      .maybeSingle();
+    if (existing?.order_number) {
+      result.orderNumber = existing.order_number as string;
+    }
+    return result;
+  }
+
+  const orderNumber = won.order_number as string;
   result.orderNumber = orderNumber;
 
   for (const item of items) {
