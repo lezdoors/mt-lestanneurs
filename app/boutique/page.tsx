@@ -32,8 +32,8 @@ export default function BoutiquePage() {
 
         <div className="mt-20 grid grid-cols-1 items-center gap-8 md:mt-28 md:grid-cols-2 md:gap-14">
           <img
-            src="/tanneurs/editorial/boutique-worktable.webp"
-            alt="A workbench with leather tools in bright window light"
+            src="/tanneurs/editorial/boutique-craft-hands.webp"
+            alt="The maker at the bench — hands finishing an edge in window light"
             loading="lazy"
             className="aspect-[4/5] w-full object-cover"
           />

@@ -11,9 +11,9 @@ const TILES = [
     alt: "The tooled cognac saddlebag worn crossbody on a limestone street in morning light",
   },
   {
-    img: "depart-street-crossbody",
-    href: "/product/medina-crossbody-cognac",
-    alt: "The cognac flap crossbody carried at the hip past sunlit stone facades",
+    img: "depart-street-tote-camel",
+    href: "/product/marrakech-tote-cognac",
+    alt: "A model in navy carrying the camel tote past sunlit stone facades",
   },
   {
     img: "depart-street-satchel",

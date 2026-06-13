@@ -21,8 +21,8 @@ const PROGRAMS = [
     title: "A small number of stockists.",
     body: "We place the collection with a few stores whose floor it belongs on. Numbered editions, honest margins, no wholesale catalogue — each season is built together.",
     subject: "Trade%20—%20Stockists",
-    image: "/tanneurs/editorial/trade-retail.webp",
-    alt: "Three cognac flap bags on a travertine plinth beneath a keyhole arch",
+    image: "/tanneurs/editorial/trade-boutique-wide.webp",
+    alt: "A boutique interior — the collection presented on pale stone shelving",
   },
   {
     label: "03 — Gifting",

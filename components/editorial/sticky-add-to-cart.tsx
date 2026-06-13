@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useCart } from "@/lib/cart"
 import type { Product } from "@/lib/products"
-import { formatPrice } from "@/lib/products"
+import { useFormatPrice } from "@/lib/currency-client"
 import { useT } from "@/lib/i18n-client"
 
 // Mobile-only sticky bar: appears once the primary Add to Bag scrolls
@@ -11,6 +11,7 @@ import { useT } from "@/lib/i18n-client"
 export function StickyAddToCart({ product }: { product: Product }) {
   const { addItem } = useCart()
   const t = useT()
+  const formatPrice_ = useFormatPrice()
   const sentinelRef = useRef<HTMLDivElement>(null)
   const [show, setShow] = useState(false)
 
@@ -47,7 +48,7 @@ export function StickyAddToCart({ product }: { product: Product }) {
               {product.name}
             </p>
             <p className="font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-              {formatPrice(product.price)}
+              {formatPrice_(product.price)}
             </p>
           </div>
           <button

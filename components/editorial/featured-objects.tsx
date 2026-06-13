@@ -1,11 +1,13 @@
 import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
 import type { Product } from "@/lib/products"
-import { formatPrice } from "@/lib/products"
+import { formatDisplayPrice, getDisplayCurrency, getRates } from "@/lib/currency-display"
 
 // Floating collection — no plates, no borders, no buttons. White packshot
 // grounds dissolve into the page via multiply; the bag sits as sculpture.
 export async function FeaturedObjects({ products }: { products: Product[] }) {
+  const currency = await getDisplayCurrency()
+  const rates = await getRates()
   if (products.length === 0) return null
   const lo = await getLocale()
   return (
@@ -57,7 +59,7 @@ export async function FeaturedObjects({ products }: { products: Product[] }) {
                     {p.name}
                   </h3>
                   <p className="mt-2 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-                    {formatPrice(p.price)}
+                    {formatDisplayPrice(p.price, currency, rates)}
                   </p>
                 </div>
               </Link>

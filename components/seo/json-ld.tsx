@@ -64,6 +64,10 @@ export interface ProductJsonLdInput {
   description: string
   image: string[]
   priceUsdCents: number
+  // Geo display price — when provided, the schema mirrors what the visitor
+  // sees instead of the stored USD base.
+  displayPriceCents?: number
+  displayCurrency?: string
   inStock: boolean
   category?: string
 }
@@ -90,8 +94,10 @@ export function ProductJsonLd({ product }: { product: ProductJsonLdInput }) {
             offers: {
               "@type": "Offer",
               url,
-              price: (product.priceUsdCents / 100).toFixed(2),
-              priceCurrency: "USD",
+              price: (
+                (product.displayPriceCents ?? product.priceUsdCents) / 100
+              ).toFixed(2),
+              priceCurrency: product.displayCurrency ?? "USD",
               availability: product.inStock
                 ? "https://schema.org/InStock"
                 : "https://schema.org/OutOfStock",

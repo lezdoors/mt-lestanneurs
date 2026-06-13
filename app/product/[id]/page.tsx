@@ -9,7 +9,9 @@ import { StickyAddToCart } from "@/components/editorial/sticky-add-to-cart"
 import { AmbientLoop } from "@/components/editorial/ambient-loop"
 import { MtMark } from "@/components/editorial/mt-mark"
 import { fetchAllProducts, fetchProductBySlug } from "@/lib/supabase"
-import { adaptProduct, curate, formatPrice, isCurated, relatedTo } from "@/lib/products"
+import { adaptProduct, curate, isCurated, relatedTo } from "@/lib/products"
+import { formatDisplayPrice, getDisplayCurrency, getRates } from "@/lib/currency-display"
+import { convertUSDCents } from "@/lib/checkout/fx"
 import { getLocale, t, withLocale } from "@/lib/i18n"
 import { ProductJsonLd } from "@/components/seo/json-ld"
 
@@ -53,6 +55,8 @@ export default async function ProductPage({
   const all = curate((await fetchAllProducts()).map(adaptProduct))
   const related = relatedTo(product, all, 3)
   const lo = await getLocale()
+  const currency = await getDisplayCurrency()
+  const rates = await getRates()
 
   return (
     <>
@@ -63,6 +67,8 @@ export default async function ProductPage({
           description: product.longDescription || product.description,
           image: product.images,
           priceUsdCents: product.price,
+          displayPriceCents: convertUSDCents(product.price, currency, rates),
+          displayCurrency: currency,
           inStock: row.status === "available" && row.available_quantity > 0,
           category: product.category,
         }}
@@ -92,7 +98,7 @@ export default async function ProductPage({
               {product.name}
             </h1>
             <p className="mt-4 font-sans text-sm tracking-[0.08em] text-ink-soft">
-              {formatPrice(product.price)}
+              {formatDisplayPrice(product.price, currency, rates)}
             </p>
             <p className="mt-2 font-serif text-sm italic text-ink-muted">
               {t(lo, "pdp.atelierDirect")}
@@ -184,8 +190,8 @@ export default async function ProductPage({
           <div className="mx-auto grid max-w-[1560px] grid-cols-1 md:grid-cols-2">
             <div className="relative min-h-[360px] md:min-h-[560px]">
               <img
-                src="/tanneurs/editorial/craft-promise.webp"
-                alt="The Maison Tanneurs promise embossed in full-grain leather, laced with waxed linen thread"
+                src="/tanneurs/editorial/pdp-craft-hands.webp"
+                alt="An artisan's hands guiding waxed linen thread through full-grain leather, mid saddle-stitch"
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover"
               />
@@ -225,7 +231,7 @@ export default async function ProductPage({
                       {p.name}
                     </h3>
                     <p className="mt-1.5 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-                      {formatPrice(p.price)}
+                      {formatDisplayPrice(p.price, currency, rates)}
                     </p>
                   </div>
                 </Link>

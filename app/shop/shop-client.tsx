@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { formatPrice, type Product } from "@/lib/products"
+import { type Product } from "@/lib/products"
+import { useFormatPrice } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
 
 export function ShopClient({
@@ -14,6 +15,7 @@ export function ShopClient({
   categories: string[]
 }) {
   const t = useT()
+  const formatPrice_ = useFormatPrice()
   const lhref = useHref()
   const params = useSearchParams()
   const requested = params.get("c")
@@ -62,7 +64,7 @@ export function ShopClient({
                 {p.name}
               </h3>
               <p className="mt-2 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-                {formatPrice(p.price)}
+                {formatPrice_(p.price)}
               </p>
             </div>
           </Link>

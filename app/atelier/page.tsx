@@ -17,7 +17,7 @@ const PILLARS = [
   },
   {
     label: "Atelier",
-    text: "Each bag is cut, stitched and finished by hand in one Marrakech workshop. Full-grain Moroccan leather, solid brass hardware, vegetable-tanned linings. One artisan takes a piece from start to end.",
+    text: "Each bag is cut, stitched and finished by hand in one Marrakech workshop. Full-grain leather, solid brass hardware, vegetable-tanned linings. One artisan takes a piece from start to end.",
   },
   {
     label: "Departure",
@@ -92,8 +92,8 @@ export default function AtelierPage() {
         <section className="grid grid-cols-1 md:grid-cols-2">
           <div className="relative min-h-[420px] md:min-h-[640px]">
             <img
-              src="/tanneurs/editorial/atelier-table.webp"
-              alt="The cutting table — cognac leather panels under arched light"
+              src="/tanneurs/editorial/atelier-craft-hands.webp"
+              alt="Hands at the bench — an artisan working full-grain leather in low afternoon light"
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover"
             />

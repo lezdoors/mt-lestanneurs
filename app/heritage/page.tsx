@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { SiteHeader } from "@/components/editorial/site-header"
 import { SiteFooter } from "@/components/editorial/site-footer"
-import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const metadata: Metadata = {
   title: "Savoir-Faire — Maison Tanneurs",
@@ -53,10 +52,10 @@ export default function HeritagePage() {
         {/* The hide */}
         <section className="grid grid-cols-1 md:grid-cols-2">
           <div className="relative min-h-[420px] md:min-h-[700px]">
-            <AmbientLoop
-              src="/tanneurs/films/heritage-grain.mp4"
-              poster="/tanneurs/films/heritage-grain-poster.jpg"
-              alt="Raking light moving slowly across full-grain leather"
+            <img
+              loading="lazy"
+              src="/tanneurs/editorial/heritage-stamp-macro.webp"
+              alt="Raking morning light across full-grain cognac leather, the maker's stamp pressed blind into the hide"
               className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
@@ -78,8 +77,8 @@ export default function HeritagePage() {
         {/* The tannery — material proof at scale */}
         <section className="relative w-full overflow-hidden bg-dark-close">
           <img
-            src="/tanneurs/editorial/heritage-tannery.webp"
-            alt="Stacked full-grain hides in a working tannery, shafts of daylight crossing the room"
+            src="/tanneurs/editorial/heritage-atelier-wide.webp"
+            alt="The atelier at work — benches, hides and tools in honest daylight"
             loading="lazy"
             className="h-[60vh] min-h-[400px] w-full object-cover md:h-[80vh]"
           />
@@ -100,10 +99,10 @@ export default function HeritagePage() {
             </p>
           </div>
           <div className="relative order-1 min-h-[420px] md:order-2 md:min-h-[700px]">
-            <AmbientLoop
-              src="/tanneurs/films/heritage-stitch.mp4"
-              poster="/tanneurs/films/heritage-stitch-poster.jpg"
-              alt="A saddle stitch being laid in waxed linen thread, macro"
+            <img
+              loading="lazy"
+              src="/tanneurs/editorial/heritage-stitch-dusk.webp"
+              alt="A saddle stitch mid-cross at dusk — two needles, one waxed linen thread, lamplight on the bench"
               className="absolute inset-0 h-full w-full object-cover"
             />
           </div>

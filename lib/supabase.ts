@@ -99,9 +99,12 @@ export function productGallery(slug: string): string[] {
 
 // Supabase stores prices in cents. Display in EUR (matches production —
 // Polène / Bleu de Chauffe register).
+// DEPRECATED — display prices now go through lib/currency-display (server)
+// or useFormatPrice (client), which convert to the visitor's geo currency.
+// Stored cents are USD; this legacy helper renders them honestly as USD.
 export function formatPrice(cents: number): string {
-  const eur = cents / 100
-  return `€${eur.toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+  const usd = cents / 100
+  return `$${usd.toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
 }
 
 // Stable slug → MT reference (Airtable canonical IDs).

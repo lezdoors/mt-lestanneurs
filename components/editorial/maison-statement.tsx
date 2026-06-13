@@ -25,11 +25,11 @@ export async function MaisonStatement() {
         <picture>
           <source
             media="(max-width: 767px)"
-            srcSet="/tanneurs/editorial/statement-hall-m.webp"
+            srcSet="/tanneurs/editorial/statement-train-terracotta-m.webp"
           />
           <img
-            src="/tanneurs/editorial/statement-hall.webp"
-            alt="A monumental cognac duffle centered in a symmetric arched hall, mashrabiya light across the stone floor"
+            src="/tanneurs/editorial/statement-train-terracotta.webp"
+            alt="A traveller in a burnt-terracotta silk shirt seated in a train compartment, a cognac leather duffle on the seat opposite, Tuscan hills in the window"
             loading="lazy"
             className="h-[62vh] min-h-[420px] w-full object-cover md:h-[80vh]"
           />

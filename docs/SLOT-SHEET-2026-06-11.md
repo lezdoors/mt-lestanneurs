@@ -9,13 +9,13 @@ same-day. Aspect = what the slot crops to.
 |---|---|---|---|---|
 | H1 | Hero (full screen, NO card — thesis line only) | 16:9 + 9:16 | medina-street--model-door--181 (model + walnut duffle, carved door) — DeMellier pass 2026-06-11 PM | |
 | H2 | Trio tile 1 — L'Heure du Départ | 4:5 | city-street--model-saddlebag--205-HD → links medina-saddlebag-tooled-cognac | |
-| H3 | Trio tile 2 | 4:5 | city-street--model-crossbody--206-HD → links medina-crossbody-cognac | |
+| H3 | Trio tile 2 | 4:5 | city-street--navy-tote-camel--234-HD → links marrakech-tote-cognac (navy wardrobe pass 2026-06-12) | |
 | H4 | Trio tile 3 | 4:5 | Model-walking-weekend-HD-03 → links classic-cognac-satchel (Ryan 2026-06-12; rucksack 207-HD benched) | |
-| H5 | Statement full-bleed (under "L'Équilibre") | wide | statement-hall (duffle in arched hall) | |
+| H5 | Statement full-bleed (under "L'Équilibre") | wide | train-compartment--terracotta-duffle-wide--249-HD (terracotta silk + cognac duffle, generated for this slot) — 2026-06-12 PM; 153-HD + 236-HD benched | |
 | H4b | Featured campaign panel (left of white plates) | portrait | studio--model-portrait--173 (black tote portrait) → links medina-zigzag-tote-noir (NEW SKU 2026-06-12) | |
 | H6 | Duo left (wordless 2-up) | 4:5 | medina-street--model-door--180 (red kilim rucksack, blue wall/golden door) — Ryan 2026-06-12; carriage 147-HD + rooftop-cognac benched | |
 | H7 | Duo right | 4:5 | medina-street--rooftop-bag--220-HD (noir rolltop, same rooftop) | |
-| H8 | Travel full-bleed ("Carried — at first light") | wide | travel-olive-parapet (woman on parapet) | |
+| H8 | Travel full-bleed ("Carried — at first light") | wide | other--tennis-model--130-HD (clay court above the clouds) — 2026-06-12 | |
 | H9 | Craft split image ("Made at the speed of the hand") | portrait | craft-artisan-window | |
 | H10 | Film band | 16:9 video | maison-reel.mp4 (NEW 15s 9-cut montage, 2026-06-11) — the-departure.mp4 benched | |
 | H11 | Closing full-bleed (thesis) | wide | closing-plinth (duffle in dark) | |

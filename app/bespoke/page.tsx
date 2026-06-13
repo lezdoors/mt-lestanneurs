@@ -62,9 +62,9 @@ export default function BespokePage() {
         {/* The drawing comes first */}
         <figure className="mb-16">
           <picture>
-            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/bespoke-sketch-m.webp" />
+            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/bespoke-drawing-m.webp" />
             <img
-              src="/tanneurs/editorial/bespoke-sketch.webp"
+              src="/tanneurs/editorial/bespoke-drawing.webp"
               alt="A pencil drawing of the Classic Cognac Satchel on the drafting table"
               loading="lazy"
               className="aspect-[16/9] w-full object-cover"

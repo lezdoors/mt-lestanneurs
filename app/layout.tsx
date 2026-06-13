@@ -6,6 +6,8 @@ import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
 import { LocaleProvider } from "@/lib/i18n-client"
+import { CurrencyProvider } from "@/lib/currency-client"
+import { getDisplayCurrency, getRates } from "@/lib/currency-display"
 import { dirForLocale, getLocale } from "@/lib/i18n"
 import { OrganizationJsonLd } from "@/components/seo/json-ld"
 import { MetaPixel } from "@/components/seo/meta-pixel"
@@ -90,6 +92,8 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const locale = await getLocale()
+  const currency = await getDisplayCurrency()
+  const rates = await getRates()
   return (
     <html
       lang={locale}
@@ -99,10 +103,12 @@ export default async function RootLayout({
       <body className="font-sans antialiased">
         <OrganizationJsonLd />
         <LocaleProvider locale={locale}>
+          <CurrencyProvider currency={currency} rate={rates[currency]}>
           <CartProvider>
             {children}
             <CartDrawer />
           </CartProvider>
+          </CurrencyProvider>
         </LocaleProvider>
         <Analytics />
         <MetaPixel />

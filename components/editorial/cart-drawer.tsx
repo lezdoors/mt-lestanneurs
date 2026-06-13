@@ -3,13 +3,14 @@
 import Link from "next/link"
 import { useEffect } from "react"
 import { useCart } from "@/lib/cart"
-import { formatPrice } from "@/lib/products"
+import { useFormatPrice } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, closeCart, removeItem, setQuantity } =
     useCart()
   const t = useT()
+  const formatPrice_ = useFormatPrice()
   const href = useHref()
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export function CartDrawer() {
                         {item.name}
                       </p>
                       <p className="mt-1 font-sans text-[11px] tracking-[0.08em] text-ink-muted">
-                        {formatPrice(item.price)}
+                        {formatPrice_(item.price)}
                       </p>
                       <div className="mt-auto flex items-center gap-4 pt-3">
                         <button
@@ -130,7 +131,7 @@ export function CartDrawer() {
               <div className="flex items-baseline justify-between">
                 <span className="text-micro text-ink-soft">{t("cart.subtotal")}</span>
                 <span className="font-serif text-xl text-ink">
-                  {formatPrice(subtotal)}
+                  {formatPrice_(subtotal)}
                 </span>
               </div>
               <p className="mt-2 font-sans text-[11px] leading-relaxed text-ink-muted">
