@@ -11,11 +11,11 @@ export async function EditorialHero() {
       <picture>
         <source
           media="(max-width: 767px)"
-          srcSet="/tanneurs/editorial/hero-medina-9x16.webp"
+          srcSet="/tanneurs/editorial/hero-stone-9x16.webp"
         />
         <img
-          src="/tanneurs/editorial/hero-medina-16x9.webp"
-          alt="A woman in a cream coat carrying a walnut leather duffle past a carved cedar door and sculpted plaster arch in warm evening light"
+          src="/tanneurs/editorial/hero-stone-16x9.webp"
+          alt="A woman in an ivory tailored coat carrying a cognac leather weekender along a sunlit street of warm pale stone"
           className="absolute inset-0 h-full w-full object-cover"
           fetchPriority="high"
         />

@@ -7,12 +7,12 @@ export async function TravelEditorial() {
   return (
     <section className="relative w-full overflow-hidden bg-dark-close">
       <picture>
-        <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/travel-tennis-court-m.webp" />
+        <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/travel-olive-parapet-m.webp" />
         <img
-          src="/tanneurs/editorial/travel-tennis-court.webp"
-          alt="A woman crossing a clay tennis court above the clouds at sunrise, a cognac leather bag in hand"
+          src="/tanneurs/editorial/travel-olive-parapet.webp"
+          alt="A woman seated on a stone parapet above olive groves at first light, a cognac leather bag beside her"
           loading="lazy"
-          className="h-[72vh] min-h-[480px] w-full object-cover md:h-[92vh]"
+          className="aspect-[4/5] w-full object-cover md:aspect-auto md:h-[92vh] md:min-h-[480px]"
         />
       </picture>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />

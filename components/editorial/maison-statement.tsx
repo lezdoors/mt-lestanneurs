@@ -31,7 +31,7 @@ export async function MaisonStatement() {
             src="/tanneurs/editorial/statement-train-terracotta.webp"
             alt="A traveller in a burnt-terracotta silk shirt seated in a train compartment, a cognac leather duffle on the seat opposite, Tuscan hills in the window"
             loading="lazy"
-            className="h-[62vh] min-h-[420px] w-full object-cover md:h-[80vh]"
+            className="aspect-[4/5] w-full object-cover md:aspect-auto md:h-[80vh] md:min-h-[420px]"
           />
         </picture>
       </div>
