@@ -189,10 +189,10 @@ export default async function ProductPage({
         <section className="border-t border-hairline">
           <div className="mx-auto grid max-w-[1560px] grid-cols-1 md:grid-cols-2">
             <div className="relative min-h-[360px] md:min-h-[560px]">
-              <img
-                src="/tanneurs/editorial/pdp-craft-hands.webp"
-                alt="An artisan's hands guiding waxed linen thread through full-grain leather, mid saddle-stitch"
-                loading="lazy"
+              <AmbientLoop
+                src="/tanneurs/films/pdp-hands-work.mp4"
+                poster="/tanneurs/films/pdp-hands-work-poster.jpg"
+                alt="An artisan's hands saddle-stitching a leather panel at the bench"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
