@@ -173,7 +173,11 @@ export async function POST(request: NextRequest) {
   try {
     const validated = await validateCart(items);
 
-    const currency = await getRequestCurrency();
+    // [PAYMENT TEST 2026-06-15] Force GBP to test whether the Revolut UK
+    // account only accepts GBP acquiring. REVERT to getRequestCurrency()
+    // once the accepted currency is confirmed.
+    const currency = "GBP" as Awaited<ReturnType<typeof getRequestCurrency>>;
+    void getRequestCurrency;
     const rates = await getRates();
     const toMinor = (usdCents: number) => convertUSDCents(usdCents, currency, rates);
 

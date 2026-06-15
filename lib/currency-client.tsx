@@ -33,3 +33,9 @@ export function useFormatPrice() {
   return (usdCents: number) =>
     `${CURRENCY_SYMBOLS[currency]}${Math.round((usdCents * rate) / 100).toLocaleString("en-GB")}`
 }
+
+// The visitor's geo currency + USD→currency rate, for analytics/tracking
+// that must report the same currency the order is actually charged in.
+export function useCurrency() {
+  return useContext(CurrencyContext)
+}

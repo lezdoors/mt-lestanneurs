@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart"
-import { formatPrice } from "@/lib/products"
+import { useFormatPrice, useCurrency } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
 import { trackPixelEvent } from "@/components/seo/meta-pixel"
 import { trackGA4Event } from "@/components/seo/ga4"
@@ -96,6 +96,8 @@ export default function CheckoutPage() {
   const { items, subtotal } = useCart()
   const t = useT()
   const lhref = useHref()
+  const formatPrice = useFormatPrice()
+  const { currency: displayCurrency, rate: displayRate } = useCurrency()
   const router = useRouter()
 
   const [status, setStatus] = useState<Status>("loading")
@@ -150,16 +152,16 @@ export default function CheckoutPage() {
     if (status !== "ready" || !orderId || initiatedRef.current === orderId)
       return
     initiatedRef.current = orderId
-    const value = subtotal / 100
-    trackGA4Event("begin_checkout", { currency: "USD", value })
+    const value = Math.round((subtotal * displayRate) / 100)
+    trackGA4Event("begin_checkout", { currency: displayCurrency, value })
     trackPixelEvent("InitiateCheckout", {
       value,
-      currency: "USD",
+      currency: displayCurrency,
       content_ids: items.map((i) => i.slug),
       content_type: "product",
       num_items: items.reduce((sum, i) => sum + i.quantity, 0),
     })
-  }, [status, orderId, subtotal, items])
+  }, [status, orderId, subtotal, items, displayRate, displayCurrency])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -174,8 +176,8 @@ export default function CheckoutPage() {
 
     try {
       trackPixelEvent("AddPaymentInfo", {
-        value: subtotal / 100,
-        currency: "USD",
+        value: Math.round((subtotal * displayRate) / 100),
+        currency: displayCurrency,
         content_ids: items.map((i) => i.slug),
         content_type: "product",
       })
