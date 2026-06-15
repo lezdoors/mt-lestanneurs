@@ -173,7 +173,11 @@ export async function POST(request: NextRequest) {
   try {
     const validated = await validateCart(items);
 
-    const currency = await getRequestCurrency();
+    // [2026-06-15] Revolut account AKAL DIGITAL SERVICES LTD is GBP-only
+    // acquiring (a £1 Merchant-API charge settled 2026-05-22; USD charges
+    // fail). Charge in GBP until USD acceptance is enabled on the account.
+    const currency = "GBP" as Awaited<ReturnType<typeof getRequestCurrency>>;
+    void getRequestCurrency;
     const rates = await getRates();
     const toMinor = (usdCents: number) => convertUSDCents(usdCents, currency, rates);
 
