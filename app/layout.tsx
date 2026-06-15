@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     siteName: "Maison Tanneurs",
     type: "website",
     locale: "en_US",
-    images: [{ url: "/tanneurs/editorial/hero-stone-16x9.webp" }],
+    images: [{ url: "/tanneurs/editorial/hero-tote-16x9.webp" }],
   },
   twitter: {
     card: "summary_large_image",
