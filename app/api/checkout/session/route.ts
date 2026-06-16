@@ -179,7 +179,11 @@ export async function POST(request: NextRequest) {
     const currency = "GBP" as Awaited<ReturnType<typeof getRequestCurrency>>;
     void getRequestCurrency;
     const rates = await getRates();
-    const toMinor = (usdCents: number) => convertUSDCents(usdCents, currency, rates);
+    // Charge the SAME whole-unit price the storefront displays
+    // (formatDisplayPrice rounds to whole units). Without this, a £242 page
+    // price would charge £241.50 — a penny-level display!=charge mismatch.
+    const toMinor = (usdCents: number) =>
+      Math.round(convertUSDCents(usdCents, currency, rates) / 100) * 100;
 
     const converted = validated.map((i) => ({
       ...i,
