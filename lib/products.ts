@@ -81,8 +81,12 @@ export function getCategories(products: Product[]): string[] {
 // related modules even if its Supabase row is published and has imagery.
 // Empty list = curation pending; show everything (manifest-gated upstream).
 const CURATED_ORDER: string[] = [
+  "voyageur-holdall-cognac",
+  "voyageur-holdall-forest",
+  "voyageur-flap-naturel",
   "atlas-weekender-cognac",
   "oasis-weekender-oxblood",
+  "cabin-duffle-cognac",
   "atlas-kilim-duffle",
   "medina-rucksack-drawstring",
   "atlas-field-briefcase",
