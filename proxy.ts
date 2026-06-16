@@ -28,12 +28,13 @@ function resolveCurrency(request: NextRequest): {
   currency: Currency
   fromCookie: boolean
 } {
-  const cookie = request.cookies.get(CURRENCY_COOKIE)?.value
-  if (isCurrency(cookie)) return { currency: cookie, fromCookie: true }
-  const country = request.headers.get("x-vercel-ip-country") || ""
-  if (country === "GB") return { currency: "GBP", fromCookie: false }
-  if (EUR_COUNTRIES.has(country)) return { currency: "EUR", fromCookie: false }
-  return { currency: DEFAULT_CURRENCY, fromCookie: false }
+  // [2026-06-15] GBP-everywhere launch state: the Revolut acquiring account
+  // is GBP-only, so we DISPLAY and CHARGE in GBP for every visitor — honest
+  // end-to-end (the customer's own bank handles their card FX). Geo display
+  // (the cookie/IP logic below) is restored once multi-currency acquiring is
+  // enabled on the Revolut account.
+  void CURRENCY_COOKIE; void EUR_COUNTRIES; void DEFAULT_CURRENCY; void isCurrency
+  return { currency: "GBP", fromCookie: true }
 }
 
 // Hotlink protection for /tanneurs/ imagery + films. Blocks OTHER websites

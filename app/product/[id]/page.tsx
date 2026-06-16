@@ -215,7 +215,7 @@ export default async function ProductPage({
             <h2 className="text-center font-serif text-3xl text-ink md:text-4xl">
               {t(lo, "pdp.related")}
             </h2>
-            <div className="mx-auto mt-14 grid max-w-[1200px] grid-cols-3 gap-x-6 md:mt-20 md:gap-x-12">
+            <div className="mx-auto mt-14 grid max-w-[1200px] grid-cols-2 gap-x-6 md:grid-cols-3 md:mt-20 md:gap-x-12">
               {related.map((p) => (
                 <Link key={p.id} href={withLocale(`/product/${p.id}`, lo)} className="group">
                   <div className="relative aspect-square w-full">

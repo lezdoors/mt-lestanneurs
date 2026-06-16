@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { HIDDEN_SKUS, HIDDEN_SKUS_ARRAY } from "@/lib/hidden-skus";
 import { isCurated } from "@/lib/products";
+import { getRates, convertUSDCents } from "@/lib/checkout/fx";
+import type { RateMap } from "@/lib/checkout/fx";
 
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
@@ -52,6 +54,7 @@ interface ProductRow {
 
 export async function GET() {
   const supabase = getSupabase();
+  const rates = await getRates();
   let products: ProductRow[] = [];
 
   if (supabase) {
@@ -66,7 +69,7 @@ export async function GET() {
     if (error) {
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- supabase error: ${xmlEscape(error.message)} -->
-${renderFeed([])}`;
+${renderFeed([], rates)}`;
       return renderResponse(xml);
     }
     // Mirror the storefront's visibility exactly: a feed entry must have a
@@ -80,7 +83,7 @@ ${renderFeed([])}`;
     );
   }
 
-  return renderResponse(renderFeed(products));
+  return renderResponse(renderFeed(products, rates));
 }
 
 function renderResponse(xml: string): NextResponse {
@@ -93,7 +96,7 @@ function renderResponse(xml: string): NextResponse {
   });
 }
 
-function renderFeed(products: ProductRow[]): string {
+function renderFeed(products: ProductRow[], rates: RateMap): string {
   const items = products
     .map((p) => {
       const imgs = (p.images || []).filter(Boolean);
@@ -101,7 +104,8 @@ function renderFeed(products: ProductRow[]): string {
       if (!heroImg || !p.title || !p.price) return null;
 
       const link = `${SITE_URL}/product/${p.slug}`;
-      const priceStr = (p.price / 100).toFixed(2);
+      // GBP-everywhere: feed advertises the same currency we charge.
+      const priceStr = (convertUSDCents(p.price, "GBP", rates) / 100).toFixed(2);
       const availability = (p.available_quantity ?? 0) > 0 ? "in stock" : "out of stock";
       const description = (p.description || p.title).slice(0, 4990);
       const additionalImages = imgs
@@ -118,7 +122,7 @@ function renderFeed(products: ProductRow[]): string {
 ${additionalImages}
       <g:availability>${availability}</g:availability>
       <g:condition>new</g:condition>
-      <g:price>${priceStr} USD</g:price>
+      <g:price>${priceStr} GBP</g:price>
       <g:brand>Maison Tanneurs</g:brand>
       <g:product_type>${xmlEscape(p.category || "Leather Goods")}</g:product_type>
       <g:identifier_exists>no</g:identifier_exists>

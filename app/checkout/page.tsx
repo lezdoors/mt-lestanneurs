@@ -248,14 +248,14 @@ export default function CheckoutPage() {
               <form className="mt-10 flex flex-col gap-6" onSubmit={handleSubmit}>
                 <Field label={t("checkout.email")} id="email" type="email" required />
                 <div className="grid grid-cols-2 gap-5">
-                  <Field label={t("checkout.firstName")} id="firstName" required />
-                  <Field label={t("checkout.lastName")} id="lastName" required />
+                  <Field label={t("checkout.firstName")} id="firstName" required autoComplete="given-name" />
+                  <Field label={t("checkout.lastName")} id="lastName" required autoComplete="family-name" />
                 </div>
-                <Field label={t("checkout.address")} id="address" />
+                <Field label={t("checkout.address")} id="address" autoComplete="street-address" />
                 <div className="grid grid-cols-3 gap-5">
-                  <Field label={t("checkout.city")} id="city" />
-                  <Field label={t("checkout.zip")} id="zip" />
-                  <Field label={t("checkout.country")} id="country" />
+                  <Field label={t("checkout.city")} id="city" autoComplete="address-level2" />
+                  <Field label={t("checkout.zip")} id="zip" autoComplete="postal-code" />
+                  <Field label={t("checkout.country")} id="country" autoComplete="country-name" />
                 </div>
                 <button
                   type="submit"
@@ -347,11 +347,13 @@ function Field({
   id,
   type = "text",
   required = false,
+  autoComplete,
 }: {
   label: string
   id: string
   type?: string
   required?: boolean
+  autoComplete?: string
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -363,7 +365,7 @@ function Field({
         name={id}
         type={type}
         required={required}
-        autoComplete={id === "email" ? "email" : undefined}
+        autoComplete={autoComplete ?? (id === "email" ? "email" : undefined)}
         className="border-b border-hairline bg-transparent pb-2 font-serif text-lg text-ink outline-none transition-colors focus:border-ink"
       />
     </div>
