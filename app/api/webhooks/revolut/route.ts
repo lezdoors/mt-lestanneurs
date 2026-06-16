@@ -9,6 +9,10 @@ import { confirmAndPersistOrder } from "@/lib/checkout/confirm-order";
 // path runs first or how often Revolut retries.
 
 export const dynamic = "force-dynamic";
+// confirmAndPersistOrder may sleep across a few settle-retries (~6s) waiting
+// for a transitional order to reach COMPLETED — give the handler headroom so
+// the serverless runtime never truncates it mid-retry.
+export const maxDuration = 30;
 
 interface WebhookPayload {
   event: string;
@@ -43,7 +47,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  if (payload.event !== "ORDER_COMPLETED") {
+  // Event names are matched case-insensitively (the 2024-09-01 API returns
+  // order *states* lowercase; don't assume the event casing either).
+  // ORDER_AUTHORISED is processed too — confirmAndPersistOrder gates on
+  // COMPLETED internally and no-ops on a non-completed state, so handling it
+  // is safe and covers the async/3DS path where AUTHORISED arrives first.
+  const event = (payload.event || "").toUpperCase();
+  if (event !== "ORDER_COMPLETED" && event !== "ORDER_AUTHORISED") {
     return NextResponse.json({ received: true, ignored: payload.event });
   }
 

@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { getOrder, type RevolutOrder } from "@/lib/checkout/revolut";
+import { getOrder, type RevolutOrder, type OrderState } from "@/lib/checkout/revolut";
 import { generateOrderNumber } from "@/lib/checkout/format";
 import {
   sendOrderConfirmation,
@@ -25,7 +25,7 @@ export type OrderItem = {
 };
 
 export interface ConfirmedOrder {
-  state: RevolutOrder["state"];
+  state: OrderState;
   revolutOrderId: string;
   orderNumber?: string;
   customerName: string;
@@ -81,8 +81,17 @@ function getMetaAttributionFromMetadata(
 // states (PROCESSING/AUTHORISED settle within seconds) get a few chances
 // before we give up and render the pending page. Without a registered
 // webhook this in-request retry is the only settlement window we have.
+//
+// IMPORTANT: the Merchant API version we pin (2024-09-01) returns order
+// states in lowercase ("completed", "pending", "authorised"…). Always
+// compare against an upper-cased copy — a raw `=== "COMPLETED"` silently
+// treats every paid order as pending and drops it (no persist/email/CAPI).
 const TRANSITIONAL_STATES = new Set(["PENDING", "PROCESSING", "AUTHORISED"]);
 const RETRY_DELAYS_MS = [1200, 2000, 3000];
+
+function normState(s: string | undefined): OrderState {
+  return (s || "").toUpperCase() as OrderState;
+}
 
 async function getOrderSettled(revolutOrderId: string): Promise<RevolutOrder> {
   let order: RevolutOrder | null = null;
@@ -94,7 +103,7 @@ async function getOrderSettled(revolutOrderId: string): Promise<RevolutOrder> {
     try {
       order = await getOrder(revolutOrderId);
       lastErr = null;
-      if (!TRANSITIONAL_STATES.has(order.state)) return order;
+      if (!TRANSITIONAL_STATES.has(normState(order.state))) return order;
     } catch (err) {
       lastErr = err;
     }
@@ -118,6 +127,7 @@ export async function confirmAndPersistOrder(
   revolutOrderId: string,
 ): Promise<ConfirmedOrder> {
   const order = await getOrderSettled(revolutOrderId);
+  const state = normState(order.state);
 
   const items = parseItemsFromMetadata(order.metadata);
   const meta = order.metadata || {};
@@ -127,7 +137,7 @@ export async function confirmAndPersistOrder(
   const currency = order.currency.toUpperCase();
 
   const result: ConfirmedOrder = {
-    state: order.state,
+    state,
     revolutOrderId,
     customerName,
     customerEmail,
@@ -136,7 +146,7 @@ export async function confirmAndPersistOrder(
     currency,
   };
 
-  if (order.state !== "COMPLETED") return result;
+  if (state !== "COMPLETED") return result;
 
   // Prefer Revolut's collected shipping; fall back to the address the
   // shopper entered on our branded form (stashed in metadata at order
@@ -193,6 +203,22 @@ export async function confirmAndPersistOrder(
       `[confirm-order] PERSIST FAILED for paid order ${revolutOrderId}:`,
       error,
     );
+    // The card is already captured. A console.error in Vercel logs is not
+    // monitored in real time — page a human so the paid-but-unrecorded
+    // order can be reconciled by hand. Best-effort; never mask the throw.
+    try {
+      await sendAdminNotification({
+        orderNumber: `PERSIST FAILED — ${revolutOrderId}`,
+        customerName,
+        customerEmail,
+        items,
+        total,
+        currency,
+        shippingAddress,
+      });
+    } catch {
+      /* logged above — alert is best-effort */
+    }
     throw new Error(`Order persistence failed for ${revolutOrderId}`);
   }
 
@@ -250,6 +276,8 @@ export async function confirmAndPersistOrder(
     }
   }
 
+  // Independent try/catch — a failure sending the customer confirmation must
+  // not skip the admin notification (fulfilment depends on it), and vice versa.
   try {
     await sendOrderConfirmation({
       to: customerEmail,
@@ -259,6 +287,10 @@ export async function confirmAndPersistOrder(
       total,
       currency,
     });
+  } catch (emailErr) {
+    console.error("Failed to send customer confirmation:", emailErr);
+  }
+  try {
     await sendAdminNotification({
       orderNumber,
       customerName,
@@ -269,7 +301,7 @@ export async function confirmAndPersistOrder(
       shippingAddress,
     });
   } catch (emailErr) {
-    console.error("Failed to send emails:", emailErr);
+    console.error("Failed to send admin notification:", emailErr);
   }
 
   try {
@@ -293,7 +325,7 @@ export async function confirmAndPersistOrder(
       })),
       fbp: metaAttribution.fbp,
       fbc: metaAttribution.fbc,
-      eventSourceUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com"}/checkout/success?revolut_order_id=${revolutOrderId}`,
+      eventSourceUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com"}/checkout/success`,
     });
   } catch (capiErr) {
     console.error("Failed to send CAPI Purchase event:", capiErr);

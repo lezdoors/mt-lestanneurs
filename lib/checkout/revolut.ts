@@ -56,18 +56,33 @@ export interface CreateOrderInput {
   capture_mode?: "automatic" | "manual";
 }
 
+// The Merchant API version we pin (2024-09-01) returns order states in
+// LOWERCASE. Type the raw field as exactly those values so a stray
+// `order.state === "COMPLETED"` fails to compile — the lowercase-vs-uppercase
+// mismatch already silently dropped every paid order once. Read it only
+// through normState() in confirm-order, which returns the normalized union.
+export type RawOrderState =
+  | "pending"
+  | "processing"
+  | "authorised"
+  | "completed"
+  | "cancelled"
+  | "failed";
+
+export type OrderState =
+  | "PENDING"
+  | "PROCESSING"
+  | "AUTHORISED"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "FAILED";
+
 export interface RevolutOrder {
   id: string;
   token: string;
   checkout_url: string;
   type: string;
-  state:
-    | "PENDING"
-    | "PROCESSING"
-    | "AUTHORISED"
-    | "COMPLETED"
-    | "CANCELLED"
-    | "FAILED";
+  state: RawOrderState;
   amount: number;
   currency: string;
   created_at: string;

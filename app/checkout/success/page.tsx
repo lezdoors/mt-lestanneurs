@@ -22,15 +22,17 @@ export default async function CheckoutSuccessPage({
   const sp = await searchParams
   const param = (k: string) =>
     typeof sp[k] === "string" ? (sp[k] as string) : null
-  // The Hosted Checkout flow parks the real Revolut order id in a first-party
-  // cookie before redirecting (cookie = the id our GET /orders/{id} needs).
-  // URL params are accepted as fallbacks: revolut_order_id (legacy/explicit),
-  // then Revolut's own appended ids.
+  // The Hosted Checkout flow parks the real Revolut order id (the one our
+  // GET /orders/{id} needs) in a first-party cookie before redirecting.
+  // We deliberately do NOT fall back to Revolut's appended `_rp_oid` — that
+  // is the PUBLIC order id and 404s against GET /orders/{id}, which would
+  // render a paid order as a hard error. If neither the explicit param nor
+  // the cookie is present, the webhook path still records the order and the
+  // customer still gets their email; we just show the pending screen.
   const cookieStore = await cookies()
   const revolutOrderId =
     param("revolut_order_id") ||
     cookieStore.get("mt_pending_order")?.value ||
-    param("_rp_oid") ||
     param("order_id") ||
     null
 
@@ -52,12 +54,16 @@ export default async function CheckoutSuccessPage({
   try {
     confirmed = await confirmAndPersistOrder(revolutOrderId)
   } catch {
+    // The lookup failed (transient Revolut error, or an id we can't resolve).
+    // The payment has very likely succeeded — never tell a paying customer
+    // their order is "invalid". Show the pending screen; the webhook will
+    // record it and the confirmation email will follow.
     return (
       <Shell>
         <Status
-          eyebrow={t(lo, "success.problemEyebrow")}
-          title={t(lo, "success.invalidTitle")}
-          body={t(lo, "success.invalidBody")}
+          eyebrow={t(lo, "success.pendingEyebrow")}
+          title={t(lo, "success.pendingTitle")}
+          body={t(lo, "success.pendingBody")}
           cta={t(lo, "success.cta")}
           href={withLocale("/shop", lo)}
         />

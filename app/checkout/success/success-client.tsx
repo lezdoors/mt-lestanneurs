@@ -26,6 +26,11 @@ export function SuccessClient({
   useEffect(() => {
     // Empty the cart once on mount.
     cartItems.forEach((i) => removeItem(i.slug))
+    // Clear the parked order-id cookie now that this order has confirmed —
+    // otherwise a later visit to /checkout/success (back button, bookmark)
+    // would re-resolve this same id and render a false "success" for an
+    // order the shopper didn't just place.
+    document.cookie = "mt_pending_order=; max-age=0; path=/"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

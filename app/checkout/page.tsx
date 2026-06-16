@@ -121,7 +121,7 @@ export default function CheckoutPage() {
       // Park the real order id so /checkout/success can confirm it on return.
       document.cookie = `${PENDING_ORDER_COOKIE}=${encodeURIComponent(
         data.orderId,
-      )}; path=/; max-age=3600; samesite=lax`
+      )}; path=/; max-age=3600; samesite=lax; secure`
       // Hand off to Revolut's Hosted Checkout Page.
       window.location.assign(data.checkoutUrl)
     } catch {
