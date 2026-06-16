@@ -649,5 +649,57 @@
       "/tanneurs/products/woven-leather-backpack/12.webp"
     ],
     "hero": "/tanneurs/products/woven-leather-backpack.webp"
+  },
+  "voyageur-holdall-forest": {
+    "gallery": [
+      "/tanneurs/products/voyageur-holdall-forest/01.webp",
+      "/tanneurs/products/voyageur-holdall-forest/02.webp",
+      "/tanneurs/products/voyageur-holdall-forest/03.webp",
+      "/tanneurs/products/voyageur-holdall-forest/04.webp",
+      "/tanneurs/products/voyageur-holdall-forest/05.webp",
+      "/tanneurs/products/voyageur-holdall-forest/06.webp",
+      "/tanneurs/products/voyageur-holdall-forest/07.webp"
+    ],
+    "hero": "/tanneurs/products/voyageur-holdall-forest.webp"
+  },
+  "voyageur-holdall-cognac": {
+    "gallery": [
+      "/tanneurs/products/voyageur-holdall-cognac/01.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/02.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/03.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/04.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/05.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/06.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/07.webp",
+      "/tanneurs/products/voyageur-holdall-cognac/08.webp"
+    ],
+    "hero": "/tanneurs/products/voyageur-holdall-cognac.webp"
+  },
+  "cabin-duffle-cognac": {
+    "gallery": [
+      "/tanneurs/products/cabin-duffle-cognac/01.webp",
+      "/tanneurs/products/cabin-duffle-cognac/02.webp",
+      "/tanneurs/products/cabin-duffle-cognac/03.webp",
+      "/tanneurs/products/cabin-duffle-cognac/04.webp",
+      "/tanneurs/products/cabin-duffle-cognac/05.webp",
+      "/tanneurs/products/cabin-duffle-cognac/06.webp",
+      "/tanneurs/products/cabin-duffle-cognac/07.webp",
+      "/tanneurs/products/cabin-duffle-cognac/08.webp"
+    ],
+    "hero": "/tanneurs/products/cabin-duffle-cognac.webp"
+  },
+  "voyageur-flap-naturel": {
+    "gallery": [
+      "/tanneurs/products/voyageur-flap-naturel/01.webp",
+      "/tanneurs/products/voyageur-flap-naturel/02.webp",
+      "/tanneurs/products/voyageur-flap-naturel/03.webp",
+      "/tanneurs/products/voyageur-flap-naturel/04.webp",
+      "/tanneurs/products/voyageur-flap-naturel/05.webp",
+      "/tanneurs/products/voyageur-flap-naturel/06.webp",
+      "/tanneurs/products/voyageur-flap-naturel/07.webp",
+      "/tanneurs/products/voyageur-flap-naturel/08.webp",
+      "/tanneurs/products/voyageur-flap-naturel/09.webp"
+    ],
+    "hero": "/tanneurs/products/voyageur-flap-naturel.webp"
   }
 }
