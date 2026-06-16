@@ -45,8 +45,10 @@ export interface CreateOrderInput {
   amount: number; // minor units
   currency: string; // ISO 4217
   description?: string;
-  customer_email?: string;
-  customer_full_name?: string;
+  // Revolut's canonical nested shape — customer.email pre-fills the Hosted
+  // Checkout Page and guarantees order.customer.email for the receipt path.
+  customer?: { email?: string; full_name?: string };
+  merchant_order_data?: { reference?: string };
   external_id?: string;
   redirect_url?: string;
   metadata?: Record<string, string>;

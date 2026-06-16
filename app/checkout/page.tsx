@@ -2,69 +2,26 @@
 
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-import { useRouter } from "next/navigation"
 import { useCart } from "@/lib/cart"
 import { useFormatPrice, useCurrency } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
 import { trackPixelEvent } from "@/components/seo/meta-pixel"
 import { trackGA4Event } from "@/components/seo/ga4"
 
-// Checkout — shipping details + order summary wired to the live cart,
-// payment via Revolut Acquiring (same flow that ran on the previous
-// site): create order server-side, mount the Revolut popup, then land
-// on /checkout/success which verifies + persists the order server-side.
+// Checkout — shipping details + order summary wired to the live cart.
+// Payment runs on Revolut's Hosted Checkout Page: we create the order
+// server-side with the shopper's details, then redirect the browser to
+// the returned checkout_url. The hosted page surfaces card + Apple Pay /
+// Google Pay / Revolut Pay and handles 3DS, then redirects back to
+// /checkout/success, which verifies + persists the order server-side.
+// (The old card-only embedded popup is gone — it could not show wallets
+// and failed 3DS.)
 
-const REVOLUT_EMBED_SRC = "https://merchant.revolut.com/embed.js"
-
-declare global {
-  interface Window {
-    RevolutCheckout?: (
-      token: string,
-      mode?: "prod" | "sandbox",
-    ) => Promise<RevolutCheckoutInstance>
-  }
-}
-
-interface RevolutCheckoutInstance {
-  payWithPopup: (options: {
-    name?: string
-    email?: string
-    shippingAddress?: {
-      streetLine1?: string
-      city?: string
-      countryCode?: string
-      postcode?: string
-    }
-    onSuccess: () => void
-    onError: (error: { message?: string }) => void
-    onCancel?: () => void
-  }) => void
-  destroy?: () => void
-}
-
-function loadRevolutEmbed(): Promise<void> {
-  if (typeof window === "undefined") return Promise.reject(new Error("server"))
-  if (window.RevolutCheckout) return Promise.resolve()
-  const existing = document.querySelector<HTMLScriptElement>(
-    `script[src="${REVOLUT_EMBED_SRC}"]`,
-  )
-  if (existing) {
-    return new Promise((resolve, reject) => {
-      existing.addEventListener("load", () => resolve())
-      existing.addEventListener("error", () =>
-        reject(new Error("embed load failed")),
-      )
-    })
-  }
-  return new Promise((resolve, reject) => {
-    const s = document.createElement("script")
-    s.src = REVOLUT_EMBED_SRC
-    s.async = true
-    s.onload = () => resolve()
-    s.onerror = () => reject(new Error("embed load failed"))
-    document.head.appendChild(s)
-  })
-}
+// The created order id is parked in this first-party cookie right before
+// the redirect, so /checkout/success can confirm the exact order on return
+// without depending on Revolut's appended _rp_oid (which is the public id,
+// not the order id our GET /orders/{id} call needs).
+const PENDING_ORDER_COOKIE = "mt_pending_order"
 
 function getCookieValue(name: string): string | undefined {
   if (typeof document === "undefined") return undefined
@@ -90,68 +47,21 @@ function getMetaTracking() {
   return Object.keys(tracking).length > 0 ? tracking : undefined
 }
 
-type Status = "loading" | "ready" | "error"
-
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
   const t = useT()
   const lhref = useHref()
   const formatPrice = useFormatPrice()
   const { currency: displayCurrency, rate: displayRate } = useCurrency()
-  const router = useRouter()
 
-  const [status, setStatus] = useState<Status>("loading")
-  const [token, setToken] = useState<string | null>(null)
-  const [orderId, setOrderId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const initiatedRef = useRef<string | null>(null)
+  const initiatedRef = useRef(false)
 
-  const revolutMode =
-    process.env.NEXT_PUBLIC_REVOLUT_MODE === "sandbox" ? "sandbox" : "prod"
-
-  // Create the Revolut order as soon as the cart is known; recreate when
-  // the cart contents change so the charged amount always matches.
+  // InitiateCheckout — once, when the cart is first shown at checkout.
   useEffect(() => {
-    if (items.length === 0) return
-    let cancelled = false
-    setStatus("loading")
-    ;(async () => {
-      try {
-        await loadRevolutEmbed()
-        const res = await fetch("/api/checkout/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items: items.map((i) => ({
-              product_id: "",
-              slug: i.slug,
-              quantity: i.quantity,
-            })),
-            tracking: getMetaTracking(),
-          }),
-        })
-        if (!res.ok) throw new Error("Failed to create checkout order")
-        const data = (await res.json()) as { token: string; orderId: string }
-        if (cancelled) return
-        setToken(data.token)
-        setOrderId(data.orderId)
-        setStatus("ready")
-      } catch {
-        if (!cancelled) setStatus("error")
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items.length, subtotal])
-
-  // InitiateCheckout — once per created order.
-  useEffect(() => {
-    if (status !== "ready" || !orderId || initiatedRef.current === orderId)
-      return
-    initiatedRef.current = orderId
+    if (items.length === 0 || initiatedRef.current) return
+    initiatedRef.current = true
     const value = Math.round((subtotal * displayRate) / 100)
     trackGA4Event("begin_checkout", { currency: displayCurrency, value })
     trackPixelEvent("InitiateCheckout", {
@@ -161,18 +71,16 @@ export default function CheckoutPage() {
       content_type: "product",
       num_items: items.reduce((sum, i) => sum + i.quantity, 0),
     })
-  }, [status, orderId, subtotal, items, displayRate, displayCurrency])
+  }, [items, subtotal, displayRate, displayCurrency])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!token || !orderId || !window.RevolutCheckout) return
+    if (submitting || items.length === 0) return
     setSubmitting(true)
     setErrorMessage(null)
 
     const form = new FormData(e.currentTarget)
     const get = (k: string) => String(form.get(k) || "").trim()
-    const email = get("email")
-    const name = `${get("firstName")} ${get("lastName")}`.trim()
 
     try {
       trackPixelEvent("AddPaymentInfo", {
@@ -181,24 +89,41 @@ export default function CheckoutPage() {
         content_ids: items.map((i) => i.slug),
         content_type: "product",
       })
-      const RC = await window.RevolutCheckout(token, revolutMode)
-      RC.payWithPopup({
-        email,
-        name,
-        shippingAddress: {
-          streetLine1: get("address") || undefined,
-          city: get("city") || undefined,
-          postcode: get("zip") || undefined,
-        },
-        onSuccess: () => {
-          router.push(`/checkout/success?revolut_order_id=${orderId}`)
-        },
-        onError: (err) => {
-          setErrorMessage(err.message || t("checkout.payError"))
-          setSubmitting(false)
-        },
-        onCancel: () => setSubmitting(false),
+      const res = await fetch("/api/checkout/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({
+            product_id: "",
+            slug: i.slug,
+            quantity: i.quantity,
+          })),
+          customer: {
+            email: get("email"),
+            firstName: get("firstName"),
+            lastName: get("lastName"),
+            address: get("address"),
+            city: get("city"),
+            zip: get("zip"),
+            country: get("country"),
+          },
+          tracking: getMetaTracking(),
+        }),
       })
+      if (!res.ok) throw new Error("Failed to create checkout order")
+      const data = (await res.json()) as {
+        orderId?: string
+        checkoutUrl?: string
+      }
+      if (!data.checkoutUrl || !data.orderId) {
+        throw new Error("Missing checkout URL")
+      }
+      // Park the real order id so /checkout/success can confirm it on return.
+      document.cookie = `${PENDING_ORDER_COOKIE}=${encodeURIComponent(
+        data.orderId,
+      )}; path=/; max-age=3600; samesite=lax`
+      // Hand off to Revolut's Hosted Checkout Page.
+      window.location.assign(data.checkoutUrl)
     } catch {
       setErrorMessage(t("checkout.payError"))
       setSubmitting(false)
@@ -259,22 +184,17 @@ export default function CheckoutPage() {
                 </div>
                 <button
                   type="submit"
-                  disabled={status !== "ready" || submitting}
+                  disabled={submitting}
                   className={`text-micro mt-4 w-full py-5 text-ground transition-opacity ${
-                    status === "ready" && !submitting
-                      ? "bg-ink hover:opacity-85"
-                      : "cursor-wait bg-ink/40"
+                    submitting
+                      ? "cursor-wait bg-ink/40"
+                      : "bg-ink hover:opacity-85"
                   }`}
                 >
                   {submitting
                     ? t("checkout.processing")
                     : `${t("checkout.continue")} · ${formatPrice(subtotal)}`}
                 </button>
-                {status === "error" && (
-                  <p className="text-micro text-center text-[#9b2c2c]">
-                    {t("checkout.sessionError")}
-                  </p>
-                )}
                 {errorMessage && (
                   <p className="text-micro text-center text-[#9b2c2c]">
                     {errorMessage}

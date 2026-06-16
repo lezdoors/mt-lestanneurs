@@ -97,7 +97,7 @@ export function ProductJsonLd({ product }: { product: ProductJsonLdInput }) {
               price: (
                 (product.displayPriceCents ?? product.priceUsdCents) / 100
               ).toFixed(2),
-              priceCurrency: product.displayCurrency ?? "GBP",
+              priceCurrency: product.displayCurrency ?? "USD",
               availability: product.inStock
                 ? "https://schema.org/InStock"
                 : "https://schema.org/OutOfStock",

@@ -28,13 +28,14 @@ function resolveCurrency(request: NextRequest): {
   currency: Currency
   fromCookie: boolean
 } {
-  // [2026-06-15] GBP-everywhere launch state: the Revolut acquiring account
-  // is GBP-only, so we DISPLAY and CHARGE in GBP for every visitor — honest
-  // end-to-end (the customer's own bank handles their card FX). Geo display
-  // (the cookie/IP logic below) is restored once multi-currency acquiring is
-  // enabled on the Revolut account.
+  // [2026-06-16] USD-everywhere launch state. Revolut confirmed USD/EUR/GBP
+  // are all accepted by default (each settles into its own merchant pocket),
+  // so the earlier GBP-only workaround is retired. The house prices in USD;
+  // we DISPLAY and CHARGE USD for every visitor (the customer's own bank
+  // handles their card FX). Geo display (the cookie/IP logic above) can be
+  // switched on later as a conversion lever — EUR for Europe, GBP for the UK.
   void CURRENCY_COOKIE; void EUR_COUNTRIES; void DEFAULT_CURRENCY; void isCurrency
-  return { currency: "GBP", fromCookie: true }
+  return { currency: "USD", fromCookie: true }
 }
 
 // Hotlink protection for /tanneurs/ imagery + films. Blocks OTHER websites

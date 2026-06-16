@@ -104,8 +104,8 @@ function renderFeed(products: ProductRow[], rates: RateMap): string {
       if (!heroImg || !p.title || !p.price) return null;
 
       const link = `${SITE_URL}/product/${p.slug}`;
-      // GBP-everywhere: feed advertises the same currency we charge.
-      const priceStr = (convertUSDCents(p.price, "GBP", rates) / 100).toFixed(2);
+      // USD-everywhere: feed advertises the same currency we charge.
+      const priceStr = (convertUSDCents(p.price, "USD", rates) / 100).toFixed(2);
       const availability = (p.available_quantity ?? 0) > 0 ? "in stock" : "out of stock";
       const description = (p.description || p.title).slice(0, 4990);
       const additionalImages = imgs
@@ -122,7 +122,7 @@ function renderFeed(products: ProductRow[], rates: RateMap): string {
 ${additionalImages}
       <g:availability>${availability}</g:availability>
       <g:condition>new</g:condition>
-      <g:price>${priceStr} GBP</g:price>
+      <g:price>${priceStr} USD</g:price>
       <g:brand>Maison Tanneurs</g:brand>
       <g:product_type>${xmlEscape(p.category || "Leather Goods")}</g:product_type>
       <g:identifier_exists>no</g:identifier_exists>

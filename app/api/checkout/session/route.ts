@@ -31,6 +31,16 @@ type CartItem = {
 
 type MetaTrackingParams = { fbp?: string; fbc?: string };
 
+type CustomerParams = {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  city?: string;
+  zip?: string;
+  country?: string;
+};
+
 type ProductRow = {
   id: string;
   title: string;
@@ -155,9 +165,17 @@ async function getRequestCurrency(): Promise<Currency> {
 }
 
 export async function POST(request: NextRequest) {
-  let body: { items?: CartItem[]; tracking?: MetaTrackingParams };
+  let body: {
+    items?: CartItem[];
+    tracking?: MetaTrackingParams;
+    customer?: CustomerParams;
+  };
   try {
-    body = (await request.json()) as { items?: CartItem[]; tracking?: MetaTrackingParams };
+    body = (await request.json()) as {
+      items?: CartItem[];
+      tracking?: MetaTrackingParams;
+      customer?: CustomerParams;
+    };
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
@@ -173,10 +191,11 @@ export async function POST(request: NextRequest) {
   try {
     const validated = await validateCart(items);
 
-    // [2026-06-15] Revolut account AKAL DIGITAL SERVICES LTD is GBP-only
-    // acquiring (a £1 Merchant-API charge settled 2026-05-22; USD charges
-    // fail). Charge in GBP until USD acceptance is enabled on the account.
-    const currency = "GBP" as Awaited<ReturnType<typeof getRequestCurrency>>;
+    // [2026-06-16] USD-everywhere. Revolut confirmed USD is accepted by
+    // default (settles into a USD merchant pocket), so we charge in the same
+    // currency the house prices and the storefront displays. Prices are
+    // stored USD-canonical, so this is a 1:1 pass-through.
+    const currency = "USD" as Awaited<ReturnType<typeof getRequestCurrency>>;
     void getRequestCurrency;
     const rates = await getRates();
     // Charge the SAME whole-unit price the storefront displays
@@ -192,10 +211,26 @@ export async function POST(request: NextRequest) {
     }));
     const totalMinor = converted.reduce((acc, i) => acc + i.totalMinor, 0);
 
+    // Customer details collected on our branded form. We pass email to
+    // Revolut (pre-fills Hosted Checkout + guarantees order.customer.email
+    // for the receipt) and stash name + shipping in metadata so the admin
+    // notification + CAPI always have an address, even if the shopper pays
+    // with a wallet that doesn't surface a separate shipping step.
+    const c = body.customer || {};
+    const custEmail = String(c.email || "").trim();
+    const custName = `${String(c.firstName || "").trim()} ${String(
+      c.lastName || "",
+    ).trim()}`.trim();
+
     const metadata: Record<string, string> = {
       item_count: String(converted.length),
       display_currency: currency,
     };
+    if (custName) metadata.customer_name = custName.slice(0, 120);
+    if (c.address) metadata.ship_line1 = String(c.address).slice(0, 180);
+    if (c.city) metadata.ship_city = String(c.city).slice(0, 80);
+    if (c.zip) metadata.ship_postcode = String(c.zip).slice(0, 32);
+    if (c.country) metadata.ship_country = String(c.country).slice(0, 80);
     if (body.tracking?.fbp) metadata.meta_fbp = body.tracking.fbp;
     if (body.tracking?.fbc) metadata.meta_fbc = body.tracking.fbc;
     converted.forEach((i, idx) => {
@@ -215,6 +250,7 @@ export async function POST(request: NextRequest) {
       capture_mode: "automatic",
       redirect_url: `${siteUrl}/checkout/success`,
       description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}`,
+      ...(custEmail ? { customer: { email: custEmail } } : {}),
       metadata,
       line_items: converted.map((i) => ({
         name: i.title,

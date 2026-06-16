@@ -120,8 +120,9 @@ export async function confirmAndPersistOrder(
   const order = await getOrderSettled(revolutOrderId);
 
   const items = parseItemsFromMetadata(order.metadata);
+  const meta = order.metadata || {};
   const customerEmail = order.customer?.email || "";
-  const customerName = order.customer?.full_name || "";
+  const customerName = order.customer?.full_name || meta.customer_name || "";
   const total = order.amount;
   const currency = order.currency.toUpperCase();
 
@@ -137,6 +138,9 @@ export async function confirmAndPersistOrder(
 
   if (order.state !== "COMPLETED") return result;
 
+  // Prefer Revolut's collected shipping; fall back to the address the
+  // shopper entered on our branded form (stashed in metadata at order
+  // creation) so fulfilment always has somewhere to send the piece.
   const shippingAddress = order.shipping_address
     ? {
         line1: order.shipping_address.street_line_1,
@@ -146,7 +150,12 @@ export async function confirmAndPersistOrder(
         postal_code: order.shipping_address.postcode,
         country: order.shipping_address.country_code,
       }
-    : {};
+    : {
+        line1: meta.ship_line1 || undefined,
+        city: meta.ship_city || undefined,
+        postal_code: meta.ship_postcode || undefined,
+        country: meta.ship_country || undefined,
+      };
 
   const supabase = getSupabase();
 

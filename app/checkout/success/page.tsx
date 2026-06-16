@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { cookies } from "next/headers"
 import { confirmAndPersistOrder } from "@/lib/checkout/confirm-order"
 import { formatPrice as formatChargePrice } from "@/lib/checkout/format"
 import type { Currency } from "@/lib/checkout/currency"
@@ -19,8 +20,19 @@ export default async function CheckoutSuccessPage({
 }) {
   const lo = await getLocale()
   const sp = await searchParams
+  const param = (k: string) =>
+    typeof sp[k] === "string" ? (sp[k] as string) : null
+  // The Hosted Checkout flow parks the real Revolut order id in a first-party
+  // cookie before redirecting (cookie = the id our GET /orders/{id} needs).
+  // URL params are accepted as fallbacks: revolut_order_id (legacy/explicit),
+  // then Revolut's own appended ids.
+  const cookieStore = await cookies()
   const revolutOrderId =
-    typeof sp.revolut_order_id === "string" ? sp.revolut_order_id : null
+    param("revolut_order_id") ||
+    cookieStore.get("mt_pending_order")?.value ||
+    param("_rp_oid") ||
+    param("order_id") ||
+    null
 
   if (!revolutOrderId) {
     return (
