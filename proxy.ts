@@ -36,8 +36,50 @@ function resolveCurrency(request: NextRequest): {
   return { currency: DEFAULT_CURRENCY, fromCookie: false }
 }
 
+// Hotlink protection for /tanneurs/ imagery + films. Blocks OTHER websites
+// from embedding our campaign assets via their own <img src="...">, while
+// keeping everything that drives traffic working: direct access / right-click-
+// open (no referer), our own pages, and the crawlers that build OG previews
+// and image search (Facebook, Instagram, Pinterest, X, Google, Bing, LinkedIn).
+const REFERER_ALLOW = [
+  "maisontanneurs.com",
+  "vercel.app",
+  "facebook.com",
+  "fbcdn.net",
+  "instagram.com",
+  "pinterest.com",
+  "pinimg.com",
+  "twitter.com",
+  "x.com",
+  "t.co",
+  "google.com",
+  "googleusercontent.com",
+  "bing.com",
+  "linkedin.com",
+]
+
+function hotlinkBlocked(request: NextRequest): boolean {
+  const referer = request.headers.get("referer")
+  if (!referer) return false // direct nav, OG/social crawlers, image search
+  let host: string
+  try {
+    host = new URL(referer).hostname.toLowerCase()
+  } catch {
+    return false
+  }
+  return !REFERER_ALLOW.some((d) => host === d || host.endsWith(`.${d}`))
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Asset hotlink guard runs before locale logic.
+  if (pathname.startsWith("/tanneurs/")) {
+    if (hotlinkBlocked(request)) {
+      return new NextResponse(null, { status: 403, statusText: "Forbidden" })
+    }
+    return NextResponse.next()
+  }
   const first = pathname.split("/").filter(Boolean)[0]
   const locale: Locale = isLocale(first) ? first : DEFAULT_LOCALE
   const requestHeaders = new Headers(request.headers)
@@ -69,6 +111,9 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // Page routes (locale + currency handling)
     "/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|icon-light-32x32.png|icon-dark-32x32.png|robots.txt|sitemap.xml|llms.txt|feed|.*\\..*).*)",
+    // Brand assets (hotlink protection)
+    "/tanneurs/:path*",
   ],
 }

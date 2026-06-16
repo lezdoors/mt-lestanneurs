@@ -7,6 +7,7 @@ import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
 import { LocaleProvider } from "@/lib/i18n-client"
 import { CurrencyProvider } from "@/lib/currency-client"
+import { AssetGuard } from "@/components/editorial/asset-guard"
 import { getDisplayCurrency, getRates } from "@/lib/currency-display"
 import { dirForLocale, getLocale } from "@/lib/i18n"
 import { OrganizationJsonLd } from "@/components/seo/json-ld"
@@ -101,6 +102,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${bodoniSC.variable} ${cormorant.variable}`}
     >
       <body className="font-sans antialiased">
+        <AssetGuard />
         <OrganizationJsonLd />
         <LocaleProvider locale={locale}>
           <CurrencyProvider currency={currency} rate={rates[currency]}>
