@@ -144,6 +144,19 @@ export function CartDrawer() {
               >
                 {t("cart.checkout")}
               </Link>
+              <Link
+                href={href("/shop")}
+                onClick={closeCart}
+                className="group mx-auto mt-5 block w-fit"
+              >
+                <span className="text-micro relative uppercase text-ink-soft transition-colors duration-300 group-hover:text-ink">
+                  {t("cart.continue")}
+                  {/* resting underline */}
+                  <span className="absolute -bottom-1 left-0 h-px w-full bg-current opacity-40" />
+                  {/* animated wipe on hover */}
+                  <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100" />
+                </span>
+              </Link>
             </div>
           </>
         )}
