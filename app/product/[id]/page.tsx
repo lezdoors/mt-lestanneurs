@@ -8,6 +8,7 @@ import { AddToCart } from "@/components/editorial/add-to-cart"
 import { StickyAddToCart } from "@/components/editorial/sticky-add-to-cart"
 import { AmbientLoop } from "@/components/editorial/ambient-loop"
 import { MtMark } from "@/components/editorial/mt-mark"
+import { ViewContentTracker } from "@/components/seo/view-content"
 import { fetchAllProducts, fetchProductBySlug } from "@/lib/supabase"
 import { adaptProduct, curate, isCurated, relatedTo } from "@/lib/products"
 import { formatDisplayPrice, getDisplayCurrency, getRates } from "@/lib/currency-display"
@@ -110,6 +111,12 @@ export default async function ProductPage({
               </p>
             )}
 
+            <ViewContentTracker
+              slug={product.id}
+              priceCents={product.price}
+              name={product.name}
+              category={product.category}
+            />
             <div className="mt-10">
               <AddToCart product={product} />
               <StickyAddToCart product={product} />

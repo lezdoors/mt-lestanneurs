@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react"
 import { useCart } from "@/lib/cart"
 import type { Product } from "@/lib/products"
-import { useFormatPrice } from "@/lib/currency-client"
+import { useFormatPrice, useCurrency } from "@/lib/currency-client"
 import { useT } from "@/lib/i18n-client"
+import { trackAddToCart } from "@/lib/track"
 
 // Mobile-only sticky bar: appears once the primary Add to Bag scrolls
 // out of view, so the buy action never leaves the thumb's reach.
@@ -12,6 +13,7 @@ export function StickyAddToCart({ product }: { product: Product }) {
   const { addItem } = useCart()
   const t = useT()
   const formatPrice_ = useFormatPrice()
+  const { currency, rate } = useCurrency()
   const sentinelRef = useRef<HTMLDivElement>(null)
   const [show, setShow] = useState(false)
 
@@ -53,14 +55,15 @@ export function StickyAddToCart({ product }: { product: Product }) {
           </div>
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
               addItem({
                 slug: product.id,
                 name: product.name,
                 price: product.price,
                 image: product.image,
               })
-            }
+              trackAddToCart(product, rate, currency)
+            }}
             className="text-micro shrink-0 bg-ink px-6 py-3.5 text-ground transition-opacity hover:opacity-85"
           >
             {t("pdp.addToBag")}
