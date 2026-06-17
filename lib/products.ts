@@ -87,6 +87,7 @@ const CURATED_ORDER: string[] = [
   "atlas-weekender-cognac",
   "oasis-weekender-oxblood",
   "cabin-duffle-cognac",
+  "atlas-escape-duffle",
   "atlas-kilim-duffle",
   "medina-rucksack-drawstring",
   "atlas-field-briefcase",
