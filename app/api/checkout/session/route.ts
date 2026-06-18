@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { createOrder } from "@/lib/checkout/revolut";
 import { HIDDEN_SKUS } from "@/lib/hidden-skus";
 import { getRates, convertUSDCents } from "@/lib/checkout/fx";
+import { applyPromoMinor, normalizePromo } from "@/lib/checkout/promo";
 import {
   CURRENCY_COOKIE,
   DEFAULT_CURRENCY,
@@ -169,6 +170,7 @@ export async function POST(request: NextRequest) {
     items?: CartItem[];
     tracking?: MetaTrackingParams;
     customer?: CustomerParams;
+    promoCode?: string;
   };
   try {
     body = (await request.json()) as {
@@ -211,6 +213,11 @@ export async function POST(request: NextRequest) {
     }));
     const totalMinor = converted.reduce((acc, i) => acc + i.totalMinor, 0);
 
+    // Code-gated promo — the server is authoritative for what is actually
+    // charged (the client only previews it). Invalid/empty code = no change.
+    const promoResult = applyPromoMinor(totalMinor, body.promoCode);
+    const chargeMinor = promoResult.totalMinor;
+
     // Customer details collected on our branded form. We pass email to
     // Revolut (pre-fills Hosted Checkout + guarantees order.customer.email
     // for the receipt) and stash name + shipping in metadata so the admin
@@ -233,6 +240,10 @@ export async function POST(request: NextRequest) {
     if (c.country) metadata.ship_country = String(c.country).slice(0, 80);
     if (body.tracking?.fbp) metadata.meta_fbp = body.tracking.fbp;
     if (body.tracking?.fbc) metadata.meta_fbc = body.tracking.fbc;
+    if (promoResult.promo) {
+      metadata.promo_code = normalizePromo(body.promoCode);
+      metadata.discount_minor = String(promoResult.discountMinor);
+    }
     converted.forEach((i, idx) => {
       metadata[`item_${idx}`] = JSON.stringify({
         product_id: i.product_id,
@@ -245,24 +256,32 @@ export async function POST(request: NextRequest) {
     });
 
     const order = await createOrder({
-      amount: totalMinor,
+      amount: chargeMinor,
       currency,
       capture_mode: "automatic",
       redirect_url: `${siteUrl}/checkout/success`,
-      description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}`,
+      description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}${promoResult.promo ? ` · ${normalizePromo(body.promoCode)}` : ""}`,
       ...(custEmail ? { customer: { email: custEmail } } : {}),
       metadata,
-      line_items: converted.map((i) => ({
-        name: i.title,
-        type: "physical",
-        quantity: { value: i.quantity, unit: "piece" },
-        unit_price_amount: i.unitMinor,
-        total_amount: i.totalMinor,
-        external_id: i.product_id,
-        image_urls: i.image
-          ? [i.image.startsWith("http") ? i.image : `${siteUrl}${i.image}`]
-          : undefined,
-      })),
+      // Revolut requires line_items to sum to `amount`. A promo discount
+      // doesn't map cleanly onto a single line, so when one applies we omit
+      // itemization and let the hosted page show the discounted total +
+      // description. Full itemization is preserved for non-discounted orders.
+      ...(promoResult.promo
+        ? {}
+        : {
+            line_items: converted.map((i) => ({
+              name: i.title,
+              type: "physical" as const,
+              quantity: { value: i.quantity, unit: "piece" as const },
+              unit_price_amount: i.unitMinor,
+              total_amount: i.totalMinor,
+              external_id: i.product_id,
+              image_urls: i.image
+                ? [i.image.startsWith("http") ? i.image : `${siteUrl}${i.image}`]
+                : undefined,
+            })),
+          }),
     });
 
     return NextResponse.json({

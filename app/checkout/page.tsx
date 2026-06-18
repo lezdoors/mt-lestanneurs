@@ -7,6 +7,7 @@ import { useFormatPrice, useCurrency } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
 import { trackPixelEvent } from "@/components/seo/meta-pixel"
 import { trackGA4Event } from "@/components/seo/ga4"
+import { lookupPromo, applyPromoMinor } from "@/lib/checkout/promo"
 
 // Checkout — shipping details + order summary wired to the live cart.
 // Payment runs on Revolut's Hosted Checkout Page: we create the order
@@ -58,6 +59,25 @@ export default function CheckoutPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const initiatedRef = useRef(false)
 
+  // Promo code — previewed client-side; the session route re-validates and is
+  // authoritative for the actual charge.
+  const [promoInput, setPromoInput] = useState("")
+  const [promoCode, setPromoCode] = useState<string | null>(null)
+  const [promoError, setPromoError] = useState(false)
+  const promoCalc = applyPromoMinor(subtotal, promoCode)
+  const displayTotal = promoCalc.totalMinor
+
+  function applyPromo() {
+    const p = lookupPromo(promoInput)
+    if (p) {
+      setPromoCode(promoInput.trim().toUpperCase())
+      setPromoError(false)
+    } else {
+      setPromoCode(null)
+      setPromoError(true)
+    }
+  }
+
   // InitiateCheckout — once, when the cart is first shown at checkout.
   useEffect(() => {
     if (items.length === 0 || initiatedRef.current) return
@@ -98,6 +118,7 @@ export default function CheckoutPage() {
             slug: i.slug,
             quantity: i.quantity,
           })),
+          promoCode: promoCode ?? undefined,
           customer: {
             email: get("email"),
             firstName: get("firstName"),
@@ -193,7 +214,7 @@ export default function CheckoutPage() {
                 >
                   {submitting
                     ? t("checkout.processing")
-                    : `${t("checkout.continue")} · ${formatPrice(subtotal)}`}
+                    : `${t("checkout.continue")} · ${formatPrice(displayTotal)}`}
                 </button>
                 {errorMessage && (
                   <p className="text-micro text-center text-[#9b2c2c]">
@@ -232,13 +253,57 @@ export default function CheckoutPage() {
                 ))}
               </ul>
 
-              <dl className="mt-10 border-t border-hairline pt-6">
+              {/* Promo code */}
+              <div className="mt-10 flex items-end gap-3">
+                <div className="flex flex-1 flex-col gap-2">
+                  <label htmlFor="promo" className="text-micro text-ink-muted">
+                    {t("checkout.promoLabel")}
+                  </label>
+                  <input
+                    id="promo"
+                    value={promoInput}
+                    onChange={(e) => {
+                      setPromoInput(e.target.value)
+                      setPromoError(false)
+                    }}
+                    placeholder={t("checkout.promoPlaceholder")}
+                    className="border-b border-hairline bg-transparent pb-2 font-serif text-lg uppercase text-ink outline-none transition-colors focus:border-ink"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={applyPromo}
+                  className="text-micro pb-2 text-ink-soft underline underline-offset-4 transition-opacity hover:opacity-60"
+                >
+                  {t("checkout.promoApply")}
+                </button>
+              </div>
+              {promoError && (
+                <p className="text-micro mt-2 text-[#9b2c2c]">
+                  {t("checkout.promoInvalid")}
+                </p>
+              )}
+              {promoCalc.promo && (
+                <p className="text-micro mt-2 italic text-ink-soft">
+                  {promoCalc.promo.label}
+                </p>
+              )}
+
+              <dl className="mt-6 border-t border-hairline pt-6">
                 <div className="flex justify-between py-1.5">
                   <dt className="text-micro text-ink-soft">{t("checkout.subtotal")}</dt>
                   <dd className="font-sans text-sm text-ink">
                     {formatPrice(subtotal)}
                   </dd>
                 </div>
+                {promoCalc.promo && (
+                  <div className="flex justify-between py-1.5">
+                    <dt className="text-micro text-ink-soft">{t("checkout.discount")}</dt>
+                    <dd className="font-sans text-sm text-ink">
+                      −{formatPrice(promoCalc.discountMinor)}
+                    </dd>
+                  </div>
+                )}
                 <div className="flex justify-between py-1.5">
                   <dt className="text-micro text-ink-soft">{t("checkout.shipping")}</dt>
                   <dd className="font-sans text-sm text-ink">{t("checkout.complimentary")}</dd>
@@ -246,7 +311,7 @@ export default function CheckoutPage() {
                 <div className="mt-3 flex justify-between border-t border-hairline pt-4">
                   <dt className="text-micro text-ink">{t("checkout.total")}</dt>
                   <dd className="font-serif text-xl text-ink">
-                    {formatPrice(subtotal)}
+                    {formatPrice(displayTotal)}
                   </dd>
                 </div>
               </dl>
