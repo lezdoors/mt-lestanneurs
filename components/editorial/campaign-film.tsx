@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { useT } from "@/lib/i18n-client"
+import { Reveal } from "@/components/editorial/reveal"
 
 export function CampaignFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -31,12 +32,14 @@ export function CampaignFilm() {
   return (
     <section className="bg-ground px-6 py-24 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-center md:mb-14">
-          <p className="text-micro mb-6 text-ink-muted">{t("film.eyebrow")}</p>
-          <h2 className="font-serif text-4xl text-ink md:text-5xl">
-            Le Départ
-          </h2>
-        </div>
+        <Reveal>
+          <div className="mb-10 text-center md:mb-14">
+            <p className="text-micro mb-6 text-ink-muted">{t("film.eyebrow")}</p>
+            <h2 className="font-serif text-4xl text-ink md:text-5xl">
+              Le Départ
+            </h2>
+          </div>
+        </Reveal>
         <div className="aspect-video w-full overflow-hidden">
           <video
             ref={videoRef}

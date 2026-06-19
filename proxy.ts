@@ -69,6 +69,13 @@ function hotlinkBlocked(request: NextRequest): boolean {
   } catch {
     return false
   }
+  // Same-origin is never a hotlink: our own pages requesting our own assets,
+  // on whatever host is serving them (localhost + LAN IP in dev, *.vercel.app
+  // previews, the production domain). This is what makes local QA work without
+  // weakening cross-site protection — a foreign embedder's referer host will
+  // never match our serving host.
+  const self = (request.headers.get("host") || "").split(":")[0].toLowerCase()
+  if (self && host === self) return false
   return !REFERER_ALLOW.some((d) => host === d || host.endsWith(`.${d}`))
 }
 

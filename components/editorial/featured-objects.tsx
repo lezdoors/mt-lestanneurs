@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
 import type { Product } from "@/lib/products"
 import { formatDisplayPrice, getDisplayCurrency, getRates } from "@/lib/currency-display"
+import { Reveal } from "@/components/editorial/reveal"
 
 // Floating collection — no plates, no borders, no buttons. White packshot
 // grounds dissolve into the page via multiply; the bag sits as sculpture.
@@ -13,11 +14,13 @@ export async function FeaturedObjects({ products }: { products: Product[] }) {
   return (
     <section className="bg-ground px-6 pb-24 pt-4 md:pb-32">
       <div className="mx-auto max-w-[1560px]">
-        <div className="mb-12 text-center md:mb-16">
-          <h2 className="font-serif text-4xl text-ink md:text-5xl">
-            {t(lo, "featured.title")}
-          </h2>
-        </div>
+        <Reveal>
+          <div className="mb-12 text-center md:mb-16">
+            <h2 className="font-serif text-4xl text-ink md:text-5xl">
+              {t(lo, "featured.title")}
+            </h2>
+          </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[5fr_7fr] md:gap-14">
           {/* Campaign panel — the Medina Zigzag Tote in noir, studio portrait */}
@@ -67,11 +70,13 @@ export async function FeaturedObjects({ products }: { products: Product[] }) {
           </div>
         </div>
 
-        <div className="mt-14 text-center md:mt-16">
-          <Link href={withLocale("/shop", lo)} className="link-caps inline-block text-ink">
-            {t(lo, "featured.cta")}
-          </Link>
-        </div>
+        <Reveal delay={120}>
+          <div className="mt-14 text-center md:mt-16">
+            <Link href={withLocale("/shop", lo)} className="link-caps inline-block text-ink">
+              {t(lo, "featured.cta")}
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </section>
   )

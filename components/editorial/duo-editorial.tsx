@@ -1,8 +1,11 @@
+import { RevealGroup } from "@/components/editorial/reveal"
+
 // Wordless 2-up — two departures: the red kilim rucksack at the golden
 // door, the noir rolltop on the rooftop at dusk.
 export function DuoEditorial() {
   return (
-    <section className="grid grid-cols-1 gap-1 bg-ground md:grid-cols-2">
+    <section className="bg-ground">
+      <RevealGroup className="grid grid-cols-1 gap-1 md:grid-cols-2">
       <picture>
         <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/duo-blue-door-m.webp" />
         <img
@@ -21,6 +24,7 @@ export function DuoEditorial() {
           className="aspect-[4/5] w-full object-cover md:aspect-[5/6]"
         />
       </picture>
+      </RevealGroup>
     </section>
   )
 }

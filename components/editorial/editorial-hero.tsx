@@ -26,7 +26,7 @@ export async function EditorialHero() {
       {/* The thesis — the page's first words (and, at the closing, its
           last). With the product card gone the line holds the bottom of
           the frame on every breakpoint. */}
-      <p className="text-micro pointer-events-none absolute inset-x-0 bottom-8 text-center text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.45)] md:bottom-10">
+      <p className="thesis-rise text-micro pointer-events-none absolute inset-x-0 bottom-8 text-center text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.45)] md:bottom-10">
         {t(lo, "hero.thesis")}
       </p>
     </section>

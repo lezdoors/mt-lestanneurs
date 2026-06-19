@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
+import { Reveal } from "@/components/editorial/reveal"
 
 // Full-bleed editorial moment — caption-scale type, bottom-left, once.
 export async function TravelEditorial() {
@@ -17,18 +18,20 @@ export async function TravelEditorial() {
       </picture>
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 px-6 pb-14 [text-shadow:0_1px_14px_rgba(0,0,0,0.35)] md:px-14 md:pb-20">
-        <h2 className="max-w-xl font-serif text-3xl leading-[1.15] text-white md:text-[40px]">
-          {t(lo, "travel.title")}
-        </h2>
-        <p className="mt-4 max-w-md font-serif text-lg italic leading-relaxed text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]">
-          {t(lo, "travel.body")}
-        </p>
-        <Link
-          href={withLocale("/shop", lo)}
-          className="link-caps mt-8 inline-block text-white"
-        >
-          {t(lo, "travel.cta")}
-        </Link>
+        <Reveal>
+          <h2 className="max-w-xl font-serif text-3xl leading-[1.15] text-white md:text-[40px]">
+            {t(lo, "travel.title")}
+          </h2>
+          <p className="mt-4 max-w-md font-serif text-lg italic leading-relaxed text-white/90 [text-shadow:0_1px_12px_rgba(0,0,0,0.45)]">
+            {t(lo, "travel.body")}
+          </p>
+          <Link
+            href={withLocale("/shop", lo)}
+            className="link-caps mt-8 inline-block text-white"
+          >
+            {t(lo, "travel.cta")}
+          </Link>
+        </Reveal>
       </div>
     </section>
   )

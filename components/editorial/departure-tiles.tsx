@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
+import { Reveal, RevealGroup } from "@/components/editorial/reveal"
 
 // L'Heure du Départ — one campaign, three frames (DeMellier's
 // signature-row device): the same morning, the same street, three bags
@@ -26,10 +27,12 @@ export async function DepartureTiles() {
   const lo = await getLocale()
   return (
     <section className="bg-ground px-6 pb-4 pt-14 md:px-10 md:pt-20">
-      <p className="text-micro mb-10 text-center text-ink-muted md:mb-12">
-        L&rsquo;Heure du Départ
-      </p>
-      <div className="mx-auto grid max-w-[1560px] grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+      <Reveal>
+        <p className="text-micro mb-10 text-center text-ink-muted md:mb-12">
+          L&rsquo;Heure du Départ
+        </p>
+      </Reveal>
+      <RevealGroup className="mx-auto grid max-w-[1560px] grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
         {TILES.map((tile) => (
           <Link key={tile.img} href={withLocale(tile.href, lo)} className="group">
             <div className="overflow-hidden">
@@ -48,15 +51,17 @@ export async function DepartureTiles() {
             </div>
           </Link>
         ))}
-      </div>
-      <p className="mt-10 text-center md:mt-12">
-        <Link
-          href={withLocale("/shop", lo)}
-          className="link-caps inline-block text-ink"
-        >
-          {t(lo, "featured.cta")}
-        </Link>
-      </p>
+      </RevealGroup>
+      <Reveal delay={120}>
+        <p className="mt-10 text-center md:mt-12">
+          <Link
+            href={withLocale("/shop", lo)}
+            className="link-caps inline-block text-ink"
+          >
+            {t(lo, "featured.cta")}
+          </Link>
+        </p>
+      </Reveal>
     </section>
   )
 }

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
+import { RevealGroup } from "@/components/editorial/reveal"
 
 // DeMellier's trust-band device in the house register.
 const CELLS = [
@@ -12,7 +13,7 @@ export async function TrustBand() {
   const lo = await getLocale()
   return (
     <section className="border-y border-hairline bg-ground">
-      <div className="mx-auto grid max-w-[1560px] grid-cols-1 divide-y divide-hairline md:grid-cols-3 md:divide-x md:divide-y-0">
+      <RevealGroup className="mx-auto grid max-w-[1560px] grid-cols-1 divide-y divide-hairline md:grid-cols-3 md:divide-x md:divide-y-0">
         {CELLS.map((c) => (
           <Link
             key={c.href}
@@ -25,7 +26,7 @@ export async function TrustBand() {
             </p>
           </Link>
         ))}
-      </div>
+      </RevealGroup>
     </section>
   )
 }

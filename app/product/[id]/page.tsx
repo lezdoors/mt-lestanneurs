@@ -9,6 +9,7 @@ import { StickyAddToCart } from "@/components/editorial/sticky-add-to-cart"
 import { AmbientLoop } from "@/components/editorial/ambient-loop"
 import { MtMark } from "@/components/editorial/mt-mark"
 import { ViewContentTracker } from "@/components/seo/view-content"
+import { Reveal } from "@/components/editorial/reveal"
 import { fetchAllProducts, fetchProductBySlug } from "@/lib/supabase"
 import { adaptProduct, curate, isCurated, relatedTo } from "@/lib/products"
 import { formatDisplayPrice, getDisplayCurrency, getRates } from "@/lib/currency-display"
@@ -219,9 +220,11 @@ export default async function ProductPage({
 
         {related.length > 0 && (
           <section className="border-t border-hairline px-6 py-24 md:py-32">
-            <h2 className="text-center font-serif text-3xl text-ink md:text-4xl">
-              {t(lo, "pdp.related")}
-            </h2>
+            <Reveal>
+              <h2 className="text-center font-serif text-3xl text-ink md:text-4xl">
+                {t(lo, "pdp.related")}
+              </h2>
+            </Reveal>
             <div className="mx-auto mt-14 grid max-w-[1200px] grid-cols-2 gap-x-6 md:grid-cols-3 md:mt-20 md:gap-x-12">
               {related.map((p) => (
                 <Link key={p.id} href={withLocale(`/product/${p.id}`, lo)} className="group">
