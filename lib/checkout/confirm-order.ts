@@ -169,6 +169,19 @@ export async function confirmAndPersistOrder(
 
   const supabase = getSupabase();
 
+  // Mark any abandoned-cart intent row for this order as converted, so the
+  // recovery cron never emails a customer who actually paid. Best-effort —
+  // a failure here must never interfere with order persistence below.
+  try {
+    await supabase
+      .from("abandoned_checkouts")
+      .update({ status: "converted", updated_at: new Date().toISOString() })
+      .eq("revolut_order_id", revolutOrderId)
+      .neq("status", "converted");
+  } catch (e) {
+    console.error("[abandoned] convert flip failed:", e);
+  }
+
   // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
   // Exactly one concurrent caller (success page load, refresh, future
   // webhook) gets a row back and owns the side effects; everyone else

@@ -12,6 +12,8 @@ function asCurrency(value: string | undefined): Currency {
 const FROM_EMAIL = "Maison Tanneurs <orders@maisontanneurs.com>";
 const REPLY_TO = "hello@maisontanneurs.com";
 const ADMIN_EMAIL = "orders@maisontanneurs.com";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com";
 
 async function resendSend(payload: Record<string, unknown>): Promise<void> {
   const key = process.env.RESEND_API_KEY;
@@ -79,6 +81,66 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<void>
         </div>
         <div style="text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid #d9cfbb;">
           <div style="font-family:monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#7a6f5c;">Maison Tanneurs · Marrakech</div>
+        </div>
+      </div>
+    `,
+  });
+}
+
+interface RecoveryEmailData {
+  to: string;
+  customerName?: string;
+  items: { title: string; price: number; quantity: number; image?: string }[];
+  total: number;
+  currency?: string;
+  recoveryToken: string;
+  secondTouch?: boolean;
+}
+
+// Abandoned-cart recovery. `price`/`total` are minor units (cents) in the
+// charge currency. The CTA carries the recovery token so /cart/recover
+// rehydrates the exact cart; the footer carries a one-click unsubscribe.
+export async function sendAbandonedCartEmail(data: RecoveryEmailData): Promise<void> {
+  const cur = asCurrency(data.currency);
+  const recoverUrl = `${SITE_URL}/cart/recover?token=${encodeURIComponent(data.recoveryToken)}`;
+  const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${encodeURIComponent(data.recoveryToken)}`;
+  const name = (data.customerName || "").trim().split(" ")[0] || "there";
+
+  const itemsHtml = data.items
+    .map(
+      (i) =>
+        `<tr><td style="padding:10px 0;border-bottom:1px solid #e4dcc8;font-family:Georgia,serif;color:#1f1b16;">${i.title}</td><td style="padding:10px 0;border-bottom:1px solid #e4dcc8;text-align:right;font-family:Georgia,serif;font-style:italic;color:#3a332a;">${formatPrice(i.price * i.quantity, cur)}</td></tr>`,
+    )
+    .join("");
+
+  const intro = data.secondTouch
+    ? "Your selection is still held for you. Pieces leave our bench in small numbers — we wanted to make sure this one didn't slip away."
+    : "You left a piece in your bag. It's still here, and still yours to claim.";
+
+  await resendSend({
+    from: FROM_EMAIL,
+    reply_to: REPLY_TO,
+    to: data.to,
+    subject: data.secondTouch
+      ? "Your piece is still waiting — Maison Tanneurs"
+      : "You left something behind — Maison Tanneurs",
+    html: `
+      <div style="max-width:600px;margin:0 auto;background:#f5efe3;padding:48px 32px;font-family:'Inter Tight',Helvetica,Arial,sans-serif;color:#1f1b16;">
+        <div style="text-align:center;margin-bottom:36px;">
+          <div style="font-family:Georgia,serif;font-size:34px;letter-spacing:-0.01em;">MAISON TANNEURS</div>
+        </div>
+        <p style="font-family:Georgia,serif;font-style:italic;font-size:18px;line-height:1.5;color:#3a332a;">Dear ${name},</p>
+        <p style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#3a332a;">${intro}</p>
+        <table style="width:100%;border-collapse:collapse;margin:28px 0;"><tbody>${itemsHtml}</tbody></table>
+        <p style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#3a332a;">As this is your first order, enjoy <strong>15% with the code WELCOME15</strong> at checkout — and complimentary worldwide shipping, with 30-day returns and lifetime repair.</p>
+        <div style="text-align:center;margin:36px 0;">
+          <a href="${recoverUrl}" style="display:inline-block;background:#1f1b16;color:#f5efe3;text-decoration:none;font-family:monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;padding:16px 38px;">Complete your order</a>
+        </div>
+        <div style="text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid #d9cfbb;">
+          <div style="font-family:monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#7a6f5c;">Cut and stitched by Les Tanneurs · Marrakech</div>
+          <div style="margin-top:12px;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#9a8f7c;">
+            <a href="${unsubUrl}" style="color:#9a8f7c;text-decoration:underline;">Unsubscribe from reminders</a>
+          </div>
         </div>
       </div>
     `,

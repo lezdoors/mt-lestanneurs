@@ -284,6 +284,34 @@ export async function POST(request: NextRequest) {
           }),
     });
 
+    // Log the checkout intent for abandoned-cart recovery. The Revolut
+    // webhook flips this row to 'converted' on payment; an hourly cron emails
+    // the ones still 'pending' after a few hours. Best-effort and only when we
+    // have an email to recover to — a failure must never block checkout.
+    if (custEmail) {
+      try {
+        const supabase = getSupabase();
+        await supabase?.from("abandoned_checkouts").insert({
+          email: custEmail,
+          customer_name: custName || null,
+          items: converted.map((i) => ({
+            slug: i.slug,
+            title: i.title,
+            image: i.image,
+            price: i.unitMinor,
+            quantity: i.quantity,
+          })),
+          amount_minor: chargeMinor,
+          currency,
+          promo_code: promoResult.promo ? normalizePromo(body.promoCode) : null,
+          revolut_order_id: order.id,
+          status: "pending",
+        });
+      } catch (e) {
+        console.error("[abandoned] intent log failed:", e);
+      }
+    }
+
     return NextResponse.json({
       orderId: order.id,
       token: order.token,
