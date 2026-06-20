@@ -193,12 +193,12 @@ export async function POST(request: NextRequest) {
   try {
     const validated = await validateCart(items);
 
-    // [2026-06-16] USD-everywhere. Revolut confirmed USD is accepted by
-    // default (settles into a USD merchant pocket), so we charge in the same
-    // currency the house prices and the storefront displays. Prices are
-    // stored USD-canonical, so this is a 1:1 pass-through.
-    const currency = "USD" as Awaited<ReturnType<typeof getRequestCurrency>>;
-    void getRequestCurrency;
+    // Charge in the visitor's resolved currency (mt-currency cookie, set by the
+    // proxy from geo on first visit) — the SAME currency the storefront showed,
+    // so the Revolut page matches the page they shopped. Prices are stored
+    // USD-canonical and converted with the same ECB rates the display side uses.
+    // Revolut settles USD/EUR/GBP each into its own merchant pocket.
+    const currency = await getRequestCurrency();
     const rates = await getRates();
     // Charge the SAME whole-unit price the storefront displays
     // (formatDisplayPrice rounds to whole units). Without this, a £242 page

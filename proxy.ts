@@ -28,14 +28,26 @@ function resolveCurrency(request: NextRequest): {
   currency: Currency
   fromCookie: boolean
 } {
-  // [2026-06-16] USD-everywhere launch state. Revolut confirmed USD/EUR/GBP
-  // are all accepted by default (each settles into its own merchant pocket),
-  // so the earlier GBP-only workaround is retired. The house prices in USD;
-  // we DISPLAY and CHARGE USD for every visitor (the customer's own bank
-  // handles their card FX). Geo display (the cookie/IP logic above) can be
-  // switched on later as a conversion lever — EUR for Europe, GBP for the UK.
-  void CURRENCY_COOKIE; void EUR_COUNTRIES; void DEFAULT_CURRENCY; void isCurrency
-  return { currency: "USD", fromCookie: true }
+  // The mt-currency cookie wins (an explicit choice, or a prior visit's geo
+  // result the proxy persisted). It is the SAME value the checkout API reads,
+  // so the page the visitor shopped and the Revolut order match.
+  const cookieValue = request.cookies.get(CURRENCY_COOKIE)?.value
+  if (isCurrency(cookieValue)) {
+    return { currency: cookieValue, fromCookie: true }
+  }
+  // First-time visitor: geo currency from Vercel's IP-country header.
+  // GB → GBP, eurozone/Europe → EUR, everywhere else → USD. Revolut settles
+  // USD/EUR/GBP each into its own merchant pocket (confirmed 2026-06); the
+  // customer's own bank handles their card FX. !fromCookie => proxy persists
+  // this in the mt-currency cookie below.
+  const country = (request.headers.get("x-vercel-ip-country") || "").toUpperCase()
+  const currency: Currency =
+    country === "GB"
+      ? "GBP"
+      : EUR_COUNTRIES.has(country)
+        ? "EUR"
+        : DEFAULT_CURRENCY
+  return { currency, fromCookie: false }
 }
 
 // Hotlink protection for /tanneurs/ imagery + films. Blocks OTHER websites
