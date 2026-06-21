@@ -26,8 +26,14 @@ function injectGA4(id: string) {
   if (window.gtag) return // already loaded
 
   window.dataLayer = window.dataLayer || []
-  const gtag = (...args: unknown[]) => {
-    window.dataLayer!.push(args)
+  // gtag.js only treats a dataLayer entry as a COMMAND when it is the special
+  // `arguments` object. The previous arrow-function impl pushed a plain array
+  // (`[...args]`), which gtag.js reads as a data-layer variable merge — so the
+  // `config` command never registered and NO /collect hit was ever sent (GA
+  // recorded zero traffic despite the library loading). Must push `arguments`.
+  const gtag: (...args: unknown[]) => void = function () {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer!.push(arguments)
   }
   window.gtag = gtag
 
