@@ -3,8 +3,9 @@
 import { useEffect } from "react"
 
 // Meta Pixel loader. Server-side companion: lib/checkout/meta-capi.ts fires
-// Purchase via the Conversions API from the Revolut webhook; the shared
-// event_id (Revolut order id) lets Meta dedupe browser vs server events.
+// Purchase via the Conversions API from the Stripe webhook; the shared
+// event_id (Stripe Checkout Session id) lets Meta dedupe browser vs server
+// events.
 //
 // Env var: NEXT_PUBLIC_META_PIXEL_ID — unset = this component is a no-op.
 

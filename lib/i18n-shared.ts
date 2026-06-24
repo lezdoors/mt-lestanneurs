@@ -163,7 +163,7 @@ const en: Dict = {
     "Every order includes tracked shipping and the house packaging. Returns accepted within 30 days.",
   "checkout.processing": "Processing…",
   "checkout.payNote":
-    "Card, Apple Pay and Google Pay accepted. Encrypted by Revolut — card details never touch our servers.",
+    "Card, Apple Pay and Google Pay accepted. Encrypted by Stripe — card details never touch our servers.",
   "checkout.payError": "Payment did not complete. Please try again.",
   "checkout.sessionError":
     "We couldn't start your checkout. Please refresh the page, or email hello@maisontanneurs.com.",
@@ -309,7 +309,7 @@ const fr: Dict = {
     "Chaque commande inclut la livraison suivie et l'emballage de la maison. Retours acceptés sous 30 jours.",
   "checkout.processing": "Traitement…",
   "checkout.payNote":
-    "Carte, Apple Pay et Google Pay acceptés. Chiffré par Revolut — vos données bancaires ne transitent jamais par nos serveurs.",
+    "Carte, Apple Pay et Google Pay acceptés. Chiffré par Stripe — vos données bancaires ne transitent jamais par nos serveurs.",
   "checkout.payError": "Le paiement n'a pas abouti. Veuillez réessayer.",
   "checkout.sessionError":
     "Impossible de démarrer votre paiement. Actualisez la page ou écrivez à hello@maisontanneurs.com.",
@@ -448,7 +448,7 @@ const de: Dict = {
   "checkout.note": "Jede Bestellung umfasst versicherten Versand und die Verpackung des Hauses. Rückgabe innerhalb von 30 Tagen.",
   "checkout.processing": "Wird verarbeitet…",
   "checkout.payNote":
-    "Karte, Apple Pay und Google Pay akzeptiert. Verschlüsselt durch Revolut — Kartendaten erreichen unsere Server nie.",
+    "Karte, Apple Pay und Google Pay akzeptiert. Verschlüsselt durch Stripe — Kartendaten erreichen unsere Server nie.",
   "checkout.payError": "Die Zahlung wurde nicht abgeschlossen. Bitte erneut versuchen.",
   "checkout.sessionError":
     "Der Checkout konnte nicht gestartet werden. Bitte Seite aktualisieren oder an hello@maisontanneurs.com schreiben.",
@@ -587,7 +587,7 @@ const es: Dict = {
   "checkout.note": "Cada pedido incluye envío con seguimiento y el empaquetado de la casa. Devoluciones aceptadas en 30 días.",
   "checkout.processing": "Procesando…",
   "checkout.payNote":
-    "Tarjeta, Apple Pay y Google Pay aceptados. Cifrado por Revolut — los datos de su tarjeta nunca tocan nuestros servidores.",
+    "Tarjeta, Apple Pay y Google Pay aceptados. Cifrado por Stripe — los datos de su tarjeta nunca tocan nuestros servidores.",
   "checkout.payError": "El pago no se completó. Inténtelo de nuevo.",
   "checkout.sessionError":
     "No pudimos iniciar su pago. Actualice la página o escriba a hello@maisontanneurs.com.",
@@ -726,7 +726,7 @@ const it: Dict = {
   "checkout.note": "Ogni ordine include spedizione tracciata e il packaging della maison. Resi accettati entro 30 giorni.",
   "checkout.processing": "Elaborazione…",
   "checkout.payNote":
-    "Carta, Apple Pay e Google Pay accettati. Crittografato da Revolut — i dati della carta non toccano mai i nostri server.",
+    "Carta, Apple Pay e Google Pay accettati. Crittografato da Stripe — i dati della carta non toccano mai i nostri server.",
   "checkout.payError": "Il pagamento non è andato a buon fine. Riprovi.",
   "checkout.sessionError":
     "Non è stato possibile avviare il pagamento. Aggiorni la pagina o scriva a hello@maisontanneurs.com.",

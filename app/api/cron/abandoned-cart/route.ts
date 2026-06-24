@@ -6,7 +6,7 @@ import { sendAbandonedCartEmail } from "@/lib/checkout/email";
 //   first  — pending + un-emailed, aged >= 5h
 //   second — pending + first-sent, aged >= 24h
 // Never older than 72h (a stale cart isn't worth recovering). Rows are
-// flipped to 'converted' by the Revolut webhook the moment a customer pays,
+// flipped to 'converted' by the Stripe webhook the moment a customer pays,
 // so a buyer is never emailed. Triggered by Vercel Cron (vercel.json), which
 // carries Authorization: Bearer <CRON_SECRET>.
 
