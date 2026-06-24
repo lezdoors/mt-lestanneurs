@@ -2,6 +2,11 @@
 
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
+import { loadStripe } from "@stripe/stripe-js"
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout,
+} from "@stripe/react-stripe-js"
 import { useCart } from "@/lib/cart"
 import { useFormatPrice, useCurrency } from "@/lib/currency-client"
 import { useHref, useT } from "@/lib/i18n-client"
@@ -10,15 +15,22 @@ import { trackGA4Event } from "@/components/seo/ga4"
 import { lookupPromo, applyPromoMinor } from "@/lib/checkout/promo"
 
 // Checkout — shipping details + order summary wired to the live cart.
-// Payment runs on Stripe's Hosted Checkout Page: we create the session
-// server-side with the shopper's details, then redirect the browser to
-// the returned session.url. The hosted page surfaces card + Apple Pay /
-// Google Pay / Link / Klarna / Bancontact and handles 3DS, then redirects
-// back to /checkout/success?session_id=cs_..., which verifies + persists
-// the order server-side.
+// Payment is Stripe Embedded Checkout — the session is created server-side
+// with the shopper's details, the returned client_secret binds the embed,
+// and the entire payment surface (card / Apple Pay / Google Pay / Link /
+// Klarna) renders INSIDE this page. The customer never leaves
+// maisontanneurs.com. After confirmation Stripe navigates the parent window
+// to /checkout/success?session_id=cs_..., which verifies + persists the
+// order server-side via the same path the webhook uses.
 //
-// Migrated from Revolut Acquiring 2026-06-23 after repeated customer
-// checkout failures on Revolut. Hosted Checkout pattern preserved.
+// Migrated from Stripe Hosted Checkout 2026-06-24 — the hosted page rendered
+// our white-plate product image inside Stripe's dark backplate (square-in-
+// square anti-pattern) and the third-party domain bounce was costing
+// conversions.
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+)
 
 // The created session id is parked in this first-party cookie right before
 // the redirect, as a belt-and-suspenders fallback alongside Stripe's
@@ -58,6 +70,7 @@ export default function CheckoutPage() {
 
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
   const initiatedRef = useRef(false)
 
   // Promo code — previewed client-side; the session route re-validates and is
@@ -154,18 +167,18 @@ export default function CheckoutPage() {
       if (!res.ok) throw new Error("Failed to create checkout order")
       const data = (await res.json()) as {
         orderId?: string
-        checkoutUrl?: string
+        clientSecret?: string
       }
-      if (!data.checkoutUrl || !data.orderId) {
-        throw new Error("Missing checkout URL")
+      if (!data.clientSecret || !data.orderId) {
+        throw new Error("Missing checkout client secret")
       }
       // Park the Stripe session id so /checkout/success can confirm it on
-      // return even if the success_url query param is stripped.
+      // return even if the return_url query param is stripped.
       document.cookie = `${PENDING_ORDER_COOKIE}=${encodeURIComponent(
         data.orderId,
       )}; path=/; max-age=3600; samesite=lax; secure`
-      // Hand off to Stripe's Hosted Checkout Page.
-      window.location.assign(data.checkoutUrl)
+      // Mount Stripe Embedded Checkout in place of the shipping form.
+      setClientSecret(data.clientSecret)
     } catch {
       setErrorMessage(t("checkout.payError"))
       setSubmitting(false)
@@ -209,50 +222,75 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <div className="grid gap-14 md:grid-cols-2 md:gap-20">
-            {/* Shipping form */}
+            {/* Shipping form / embedded payment panel */}
             <section className="order-2 md:order-1">
-              <h1 className="font-serif text-3xl text-ink">{t("checkout.shippingTitle")}</h1>
-              {/* Country deliberately omitted — the proxy's geo cookie tells
-                  the server which country (and currency) to ship to; if the
-                  card brand needs it, Stripe collects it on the payment page.
-                  Browser autofill resolves the rest from saved profiles. */}
-              <form
-                className="mt-10 flex flex-col gap-6"
-                onSubmit={handleSubmit}
-                autoComplete="on"
-              >
-                <Field label={t("checkout.email")} id="email" type="email" required inputMode="email" autoComplete="email" />
-                <div className="grid grid-cols-2 gap-5">
-                  <Field label={t("checkout.firstName")} id="firstName" required autoComplete="given-name" />
-                  <Field label={t("checkout.lastName")} id="lastName" required autoComplete="family-name" />
-                </div>
-                <Field label={t("checkout.address")} id="address" required autoComplete="street-address" />
-                <div className="grid grid-cols-2 gap-5">
-                  <Field label={t("checkout.city")} id="city" required autoComplete="address-level2" />
-                  <Field label={t("checkout.zip")} id="zip" required autoComplete="postal-code" />
-                </div>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className={`text-micro mt-4 w-full py-5 text-ground transition-opacity ${
-                    submitting
-                      ? "cursor-wait bg-ink/40"
-                      : "bg-ink hover:opacity-85"
-                  }`}
-                >
-                  {submitting
-                    ? t("checkout.processing")
-                    : `${t("checkout.continue")} · ${formatPrice(displayTotal)}`}
-                </button>
-                {errorMessage && (
-                  <p className="text-micro text-center text-[#9b2c2c]">
-                    {errorMessage}
-                  </p>
-                )}
-                <p className="text-micro text-center text-ink-muted">
-                  {t("checkout.payNote")}
-                </p>
-              </form>
+              {clientSecret ? (
+                <>
+                  <h1 className="font-serif text-3xl text-ink">
+                    {t("checkout.payTitle")}
+                  </h1>
+                  {/* Stripe Embedded Checkout iframe — handles card / Apple
+                      Pay / Google Pay / Link, 3DS, and confirmation. The
+                      provider auto-tears down on unmount; we key on the
+                      clientSecret so a fresh session re-mounts cleanly. */}
+                  <div className="mt-10">
+                    <EmbeddedCheckoutProvider
+                      key={clientSecret}
+                      stripe={stripePromise}
+                      options={{ clientSecret }}
+                    >
+                      <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h1 className="font-serif text-3xl text-ink">
+                    {t("checkout.shippingTitle")}
+                  </h1>
+                  {/* Country deliberately omitted — the proxy's geo cookie
+                      tells the server which country (and currency) to ship to;
+                      if the card brand needs it, Stripe collects it on the
+                      payment panel. Browser autofill handles the rest. */}
+                  <form
+                    className="mt-10 flex flex-col gap-6"
+                    onSubmit={handleSubmit}
+                    autoComplete="on"
+                  >
+                    <Field label={t("checkout.email")} id="email" type="email" required inputMode="email" autoComplete="email" />
+                    <div className="grid grid-cols-2 gap-5">
+                      <Field label={t("checkout.firstName")} id="firstName" required autoComplete="given-name" />
+                      <Field label={t("checkout.lastName")} id="lastName" required autoComplete="family-name" />
+                    </div>
+                    <Field label={t("checkout.address")} id="address" required autoComplete="street-address" />
+                    <div className="grid grid-cols-2 gap-5">
+                      <Field label={t("checkout.city")} id="city" required autoComplete="address-level2" />
+                      <Field label={t("checkout.zip")} id="zip" required autoComplete="postal-code" />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className={`text-micro mt-4 w-full py-5 text-ground transition-opacity ${
+                        submitting
+                          ? "cursor-wait bg-ink/40"
+                          : "bg-ink hover:opacity-85"
+                      }`}
+                    >
+                      {submitting
+                        ? t("checkout.processing")
+                        : `${t("checkout.continue")} · ${formatPrice(displayTotal)}`}
+                    </button>
+                    {errorMessage && (
+                      <p className="text-micro text-center text-[#9b2c2c]">
+                        {errorMessage}
+                      </p>
+                    )}
+                    <p className="text-micro text-center text-ink-muted">
+                      {t("checkout.payNote")}
+                    </p>
+                  </form>
+                </>
+              )}
             </section>
 
             {/* Order summary */}

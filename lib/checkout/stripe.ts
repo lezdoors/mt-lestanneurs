@@ -67,24 +67,27 @@ export interface CreateCheckoutSessionInput {
   currency: string; // ISO 4217 lower-case
   description: string;
   customerEmail?: string;
-  redirectUrlSuccess: string;
-  redirectUrlCancel: string;
+  // Embedded Checkout posts back to this URL with ?session_id={CHECKOUT_SESSION_ID}
+  // when the payment confirms. The visitor never leaves maisontanneurs.com to
+  // get here — Stripe navigates from inside the embedded iframe.
+  returnUrl: string;
   metadata: Record<string, string>;
-  // Stripe Hosted Checkout itemization. When a promo applies we collapse to
-  // a single line so the discount maps cleanly without phantom totals.
+  // One line per cart item. Images are deliberately omitted: Stripe's order
+  // summary on the embedded panel would otherwise render the white product
+  // plate inside our dark editorial chrome (square-in-square). The customer
+  // has already seen the product on the storefront — name + price is enough.
   lineItems: Array<{
     name: string;
     description?: string;
     unitAmountMinor: number;
     quantity: number;
-    imageUrl?: string;
   }>;
   locale?: Stripe.Checkout.SessionCreateParams.Locale;
 }
 
 export interface CreatedCheckoutSession {
   id: string; // cs_live_... / cs_test_...
-  url: string;
+  clientSecret: string; // passed to <EmbeddedCheckoutProvider options={{ clientSecret }} />
 }
 
 export async function createCheckoutSession(
@@ -92,20 +95,20 @@ export async function createCheckoutSession(
 ): Promise<CreatedCheckoutSession> {
   const stripe = getStripe();
 
-  // Deliberately NOT setting shipping_address_collection — we already
-  // captured the full shipping address on /checkout/page.tsx and stashed
-  // it in metadata. Asking Stripe to re-collect would force the customer
-  // to re-type their address on the hosted page (the exact redundancy
-  // that made the prior Revolut UX feel wrong). confirm-order.ts uses the
-  // metadata fallback when Stripe doesn't surface a shipping_details.
+  // ui_mode: 'embedded' renders Stripe Checkout INSIDE maisontanneurs.com
+  // via @stripe/react-stripe-js's <EmbeddedCheckout/>. The browser never
+  // navigates to checkout.stripe.com — Stripe returns a client_secret which
+  // /checkout binds to the embed. After success, Stripe navigates the parent
+  // window to return_url with {CHECKOUT_SESSION_ID} substituted.
   //
-  // billing_address_collection: 'auto' keeps Stripe's minimum (ZIP + country
-  // for AVS) only where the card brand actually requires it — not the full
-  // street/city.
+  // Deliberately NOT setting shipping_address_collection — full shipping
+  // address was already captured on /checkout and stashed in metadata.
+  // billing_address_collection: 'auto' keeps Stripe's minimum (ZIP+country
+  // for AVS) only where the card brand requires it.
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    success_url: input.redirectUrlSuccess,
-    cancel_url: input.redirectUrlCancel,
+    ui_mode: "embedded_page",
+    return_url: input.returnUrl,
     currency: input.currency,
     customer_email: input.customerEmail || undefined,
     customer_creation: "if_required",
@@ -117,7 +120,6 @@ export async function createCheckoutSession(
         product_data: {
           name: item.name,
           ...(item.description ? { description: item.description } : {}),
-          ...(item.imageUrl ? { images: [item.imageUrl] } : {}),
         },
       },
       quantity: item.quantity,
@@ -127,17 +129,16 @@ export async function createCheckoutSession(
     metadata: input.metadata,
     payment_intent_data: {
       description: input.description,
-      // PaymentIntent metadata is the canonical surface for Stripe-side ops
-      // (Disputes, Sigma). Mirror the session metadata so it's visible from
-      // either path.
+      // Mirror metadata onto the PaymentIntent so Disputes/Sigma see it from
+      // either surface.
       metadata: input.metadata,
     },
   });
 
-  if (!session.url) {
-    throw new Error("Stripe Checkout Session created without a redirect URL");
+  if (!session.client_secret) {
+    throw new Error("Stripe embedded Checkout Session missing client_secret");
   }
-  return { id: session.id, url: session.url };
+  return { id: session.id, clientSecret: session.client_secret };
 }
 
 // Used by confirm-order to settle on the final state. We expand line_items

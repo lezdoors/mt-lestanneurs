@@ -12,16 +12,19 @@ import {
   type Currency,
 } from "@/lib/checkout/currency";
 
-// Creates a Stripe Checkout Session and returns the redirect URL for the
-// browser to hand off to checkout.stripe.com. checkout.session.completed
-// fires on success → app/api/webhooks/stripe handles persistence + emails
-// + Meta CAPI (idempotent on the session id; success page also calls
-// confirm-order on return for the webhook-less path).
+// Creates a Stripe Embedded Checkout Session and returns the client_secret
+// the browser binds to <EmbeddedCheckout/>. The visitor never leaves
+// maisontanneurs.com — Stripe's payment surface renders inline.
+// checkout.session.completed fires on success → app/api/webhooks/stripe
+// handles persistence + emails + Meta CAPI (idempotent on the session id;
+// /checkout/success also calls confirm-order on return for the webhook-less
+// path).
 //
-// Migrated from Revolut Acquiring 2026-06-23 after repeated customer
-// checkout failures on Revolut ahead of launch. Hosted Checkout pattern
-// preserved; the columns named revolut_order_id in Supabase are now
-// generic processor session ids (Stripe cs_* values).
+// Migrated from Stripe Hosted Checkout 2026-06-24: the hosted page rendered
+// our white product plate inside Stripe's dark backplate (square-in-square)
+// and the third-party domain bounce was costing conversions. The columns
+// named revolut_order_id in Supabase still hold the processor session id
+// (Stripe cs_* values).
 //
 // Prices stored USD-canonical (cents) and converted to the charge currency
 // (mt-currency cookie, default USD).
@@ -271,8 +274,8 @@ export async function POST(request: NextRequest) {
 
     // When a promo applies we collapse the cart into one line so the
     // discounted total maps cleanly without per-line phantom amounts.
-    // Stripe Hosted Checkout shows the description + final total, which
-    // is what shopper saw on the storefront summary.
+    // Image URL deliberately omitted — Stripe's embedded order summary would
+    // otherwise render the white product plate inside the editorial chrome.
     const lineItems = promoResult.promo
       ? [
           {
@@ -286,26 +289,16 @@ export async function POST(request: NextRequest) {
           name: i.title,
           unitAmountMinor: i.unitMinor,
           quantity: i.quantity,
-          imageUrl: i.image
-            ? i.image.startsWith("http")
-              ? i.image
-              : `${siteUrl}${i.image}`
-            : undefined,
         }));
 
-    // Description shows on the PaymentIntent only (not the customer's
-    // Hosted Checkout page). Promo gets surfaced via the collapsed line
-    // item's description, so it's never double-displayed to the customer.
     const session = await createCheckoutSession({
       amount: chargeMinor,
       currency: currency.toLowerCase(),
       description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}`,
       customerEmail: custEmail || undefined,
-      // Stripe substitutes {CHECKOUT_SESSION_ID} server-side on redirect so
-      // /checkout/success can confirm the exact session. Belt-and-suspenders
-      // with the mt_pending_order cookie the client also sets.
-      redirectUrlSuccess: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      redirectUrlCancel: `${siteUrl}/checkout`,
+      // Embedded Checkout navigates the parent window to this URL after the
+      // PaymentIntent confirms. Stripe substitutes {CHECKOUT_SESSION_ID}.
+      returnUrl: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       metadata,
       lineItems,
       locale: "auto",
@@ -343,12 +336,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Response shape unchanged from the Revolut era — client uses
-    // checkoutUrl + parks orderId in the mt_pending_order cookie before
-    // redirecting. orderId is now a Stripe Checkout Session id (cs_*).
+    // Embedded Checkout response — client binds clientSecret to
+    // <EmbeddedCheckoutProvider>. orderId persists in the mt_pending_order
+    // cookie so /checkout/success can confirm the order even when the
+    // return_url query param is stripped by an upstream redirect.
     return NextResponse.json({
       orderId: session.id,
-      checkoutUrl: session.url,
+      clientSecret: session.clientSecret,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
