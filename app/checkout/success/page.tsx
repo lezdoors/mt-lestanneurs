@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { cookies } from "next/headers"
 import { confirmAndPersistOrder } from "@/lib/checkout/confirm-order"
+import { confirmAndPersistStripeSession } from "@/lib/checkout/confirm-stripe"
 import { formatPrice as formatChargePrice } from "@/lib/checkout/format"
 import type { Currency } from "@/lib/checkout/currency"
 import { isCurrency } from "@/lib/checkout/currency"
@@ -30,13 +31,23 @@ export default async function CheckoutSuccessPage({
   // the cookie is present, the webhook path still records the order and the
   // customer still gets their email; we just show the pending screen.
   const cookieStore = await cookies()
-  const revolutOrderId =
-    param("revolut_order_id") ||
-    cookieStore.get("mt_pending_order")?.value ||
-    param("order_id") ||
-    null
+  const pendingCookie = cookieStore.get("mt_pending_order")?.value || null
 
-  if (!revolutOrderId) {
+  // Stripe Checkout appends ?session_id=cs_… on the success redirect; the
+  // same id is also parked in mt_pending_order. A 'cs_' prefix means Stripe;
+  // anything else is a Revolut order id. confirm-stripe / confirm-order both
+  // verify the payment server-side and persist idempotently.
+  const stripeSessionId =
+    param("session_id") ||
+    (pendingCookie && pendingCookie.startsWith("cs_") ? pendingCookie : null)
+
+  const revolutOrderId = stripeSessionId
+    ? null
+    : param("revolut_order_id") || pendingCookie || param("order_id") || null
+
+  const refId = stripeSessionId || revolutOrderId
+
+  if (!refId) {
     return (
       <Shell>
         <Status
@@ -52,7 +63,9 @@ export default async function CheckoutSuccessPage({
 
   let confirmed
   try {
-    confirmed = await confirmAndPersistOrder(revolutOrderId)
+    confirmed = stripeSessionId
+      ? await confirmAndPersistStripeSession(stripeSessionId)
+      : await confirmAndPersistOrder(revolutOrderId as string)
   } catch {
     // The lookup failed (transient Revolut error, or an id we can't resolve).
     // The payment has very likely succeeded — never tell a paying customer
@@ -125,7 +138,7 @@ export default async function CheckoutSuccessPage({
           </p>
           <p className="font-sans text-lg tracking-[0.18em] text-ink">
             {confirmed.orderNumber ||
-              `${revolutOrderId.slice(0, 8)}…${revolutOrderId.slice(-4)}`}
+              `${refId.slice(0, 8)}…${refId.slice(-4)}`}
           </p>
           {confirmed.customerEmail && (
             <p className="text-micro mt-3 text-ink-muted">

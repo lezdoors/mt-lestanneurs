@@ -8,12 +8,19 @@ import {
 import { sendPurchaseToCAPI } from "@/lib/checkout/meta-capi";
 
 // Server-side order confirmation — the webhook-less path. The success page
-// calls this on load: it pulls the order straight from Revolut, verifies
-// state === COMPLETED, persists it once (idempotent on revolut_order_id),
-// and fires emails + Meta CAPI ONLY on first persistence so webhook
-// retries / page refreshes can never double-send. The Revolut webhook
-// route reuses this same function, so registering a webhook later is
-// safe — whichever path runs first wins, the other becomes a no-op.
+// calls this on load: it pulls the order straight from the processor, verifies
+// it is paid (state === COMPLETED), persists it once (idempotent on the
+// processor order id), and fires emails + Meta CAPI ONLY on first persistence
+// so webhook retries / page refreshes can never double-send. The webhook
+// routes reuse the same persist, so whichever path runs first wins, the other
+// becomes a no-op.
+//
+// Provider-agnostic core: persistConfirmedOrder() takes a NormalizedOrder.
+// confirmAndPersistOrder() adapts Revolut → NormalizedOrder; the Stripe path
+// (lib/checkout/confirm-stripe.ts) adapts a Checkout Session the same way.
+// The orders table keys idempotency on `revolut_order_id`, which now holds
+// whichever processor's order id (Revolut order id or Stripe session id) —
+// no schema migration.
 
 export type OrderItem = {
   product_id: string;
@@ -24,9 +31,35 @@ export type OrderItem = {
   quantity: number;
 };
 
+export interface ShippingAddress {
+  // Index signature mirrors the loose shape the email helpers accept (they
+  // were written against an inline object literal, not a named type).
+  [key: string]: unknown;
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  country?: string;
+}
+
+// The shared shape every processor adapter produces. `processorId` is the
+// idempotency key (stored in orders.revolut_order_id).
+export interface NormalizedOrder {
+  processorId: string;
+  state: OrderState;
+  customerEmail: string;
+  customerName: string;
+  items: OrderItem[];
+  total: number; // charge-currency minor units
+  currency: string; // upper-cased ISO 4217
+  shipping: ShippingAddress;
+  metaAttribution: { fbp?: string; fbc?: string };
+}
+
 export interface ConfirmedOrder {
   state: OrderState;
-  revolutOrderId: string;
+  revolutOrderId: string; // = processor order id (Revolut order id / Stripe session id)
   orderNumber?: string;
   customerName: string;
   customerEmail: string;
@@ -123,49 +156,34 @@ async function getOrderSettled(revolutOrderId: string): Promise<RevolutOrder> {
     : new Error("Revolut order lookup failed");
 }
 
-export async function confirmAndPersistOrder(
-  revolutOrderId: string,
+// === Provider-agnostic persistence ===
+// Everything below the COMPLETED gate is identical regardless of processor.
+// Idempotent: ON CONFLICT (revolut_order_id) DO NOTHING — exactly one caller
+// owns the side effects (persist + sale-marking + emails + CAPI).
+export async function persistConfirmedOrder(
+  n: NormalizedOrder,
 ): Promise<ConfirmedOrder> {
-  const order = await getOrderSettled(revolutOrderId);
-  const state = normState(order.state);
-
-  const items = parseItemsFromMetadata(order.metadata);
-  const meta = order.metadata || {};
-  const customerEmail = order.customer?.email || "";
-  const customerName = order.customer?.full_name || meta.customer_name || "";
-  const total = order.amount;
-  const currency = order.currency.toUpperCase();
-
   const result: ConfirmedOrder = {
-    state,
-    revolutOrderId,
-    customerName,
-    customerEmail,
+    state: n.state,
+    revolutOrderId: n.processorId,
+    customerName: n.customerName,
+    customerEmail: n.customerEmail,
+    items: n.items,
+    total: n.total,
+    currency: n.currency,
+  };
+
+  if (n.state !== "COMPLETED") return result;
+
+  const shippingAddress = n.shipping;
+  const {
+    processorId,
     items,
     total,
     currency,
-  };
-
-  if (state !== "COMPLETED") return result;
-
-  // Prefer Revolut's collected shipping; fall back to the address the
-  // shopper entered on our branded form (stashed in metadata at order
-  // creation) so fulfilment always has somewhere to send the piece.
-  const shippingAddress = order.shipping_address
-    ? {
-        line1: order.shipping_address.street_line_1,
-        line2: order.shipping_address.street_line_2,
-        city: order.shipping_address.city,
-        state: order.shipping_address.region,
-        postal_code: order.shipping_address.postcode,
-        country: order.shipping_address.country_code,
-      }
-    : {
-        line1: meta.ship_line1 || undefined,
-        city: meta.ship_city || undefined,
-        postal_code: meta.ship_postcode || undefined,
-        country: meta.ship_country || undefined,
-      };
+    customerName,
+    customerEmail,
+  } = n;
 
   const supabase = getSupabase();
 
@@ -176,23 +194,23 @@ export async function confirmAndPersistOrder(
     await supabase
       .from("abandoned_checkouts")
       .update({ status: "converted", updated_at: new Date().toISOString() })
-      .eq("revolut_order_id", revolutOrderId)
+      .eq("revolut_order_id", processorId)
       .neq("status", "converted");
   } catch (e) {
     console.error("[abandoned] convert flip failed:", e);
   }
 
   // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
-  // Exactly one concurrent caller (success page load, refresh, future
-  // webhook) gets a row back and owns the side effects; everyone else
-  // reads the canonical row and returns silently.
+  // Exactly one concurrent caller (success page load, refresh, webhook)
+  // gets a row back and owns the side effects; everyone else reads the
+  // canonical row and returns silently.
   const { data: won, error } = await supabase
     .from("orders")
     .upsert(
       {
         order_number: generateOrderNumber(),
         sales_channel: "direct",
-        revolut_order_id: revolutOrderId,
+        revolut_order_id: processorId,
         customer_email: customerEmail,
         customer_name: customerName,
         shipping_address: shippingAddress,
@@ -209,11 +227,11 @@ export async function confirmAndPersistOrder(
     .maybeSingle();
 
   if (error) {
-    // A COMPLETED payment we cannot record must never render as success —
-    // throw so the page shows the problem state and the error is loud in
-    // the logs. The customer's money is safe in Revolut either way.
+    // A paid order we cannot record must never render as success — throw so
+    // the page shows the problem state and the error is loud in the logs.
+    // The customer's money is safe with the processor either way.
     console.error(
-      `[confirm-order] PERSIST FAILED for paid order ${revolutOrderId}:`,
+      `[confirm-order] PERSIST FAILED for paid order ${processorId}:`,
       error,
     );
     // The card is already captured. A console.error in Vercel logs is not
@@ -221,7 +239,7 @@ export async function confirmAndPersistOrder(
     // order can be reconciled by hand. Best-effort; never mask the throw.
     try {
       await sendAdminNotification({
-        orderNumber: `PERSIST FAILED — ${revolutOrderId}`,
+        orderNumber: `PERSIST FAILED — ${processorId}`,
         customerName,
         customerEmail,
         items,
@@ -232,7 +250,7 @@ export async function confirmAndPersistOrder(
     } catch {
       /* logged above — alert is best-effort */
     }
-    throw new Error(`Order persistence failed for ${revolutOrderId}`);
+    throw new Error(`Order persistence failed for ${processorId}`);
   }
 
   if (!won) {
@@ -242,7 +260,7 @@ export async function confirmAndPersistOrder(
       const { data: existing } = await supabase
         .from("orders")
         .select("order_number")
-        .eq("revolut_order_id", revolutOrderId)
+        .eq("revolut_order_id", processorId)
         .maybeSingle();
       if (existing?.order_number) {
         result.orderNumber = existing.order_number as string;
@@ -251,9 +269,9 @@ export async function confirmAndPersistOrder(
       await new Promise((r) => setTimeout(r, 800));
     }
     console.error(
-      `[confirm-order] conflict row unreadable for ${revolutOrderId}`,
+      `[confirm-order] conflict row unreadable for ${processorId}`,
     );
-    throw new Error(`Order record unreadable for ${revolutOrderId}`);
+    throw new Error(`Order record unreadable for ${processorId}`);
   }
 
   const orderNumber = won.order_number as string;
@@ -318,7 +336,6 @@ export async function confirmAndPersistOrder(
   }
 
   try {
-    const metaAttribution = getMetaAttributionFromMetadata(order.metadata);
     const [firstName, ...rest] = (customerName || "").split(" ");
     await sendPurchaseToCAPI({
       email: customerEmail,
@@ -336,8 +353,8 @@ export async function confirmAndPersistOrder(
         quantity: i.quantity,
         price: i.price / 100,
       })),
-      fbp: metaAttribution.fbp,
-      fbc: metaAttribution.fbc,
+      fbp: n.metaAttribution.fbp,
+      fbc: n.metaAttribution.fbc,
       eventSourceUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com"}/checkout/success`,
     });
   } catch (capiErr) {
@@ -345,4 +362,43 @@ export async function confirmAndPersistOrder(
   }
 
   return result;
+}
+
+// === Revolut adapter ===
+export async function confirmAndPersistOrder(
+  revolutOrderId: string,
+): Promise<ConfirmedOrder> {
+  const order = await getOrderSettled(revolutOrderId);
+  const meta = order.metadata || {};
+
+  // Prefer Revolut's collected shipping; fall back to the address the shopper
+  // entered on our branded form (stashed in metadata at order creation) so
+  // fulfilment always has somewhere to send the piece.
+  const shipping: ShippingAddress = order.shipping_address
+    ? {
+        line1: order.shipping_address.street_line_1,
+        line2: order.shipping_address.street_line_2,
+        city: order.shipping_address.city,
+        state: order.shipping_address.region,
+        postal_code: order.shipping_address.postcode,
+        country: order.shipping_address.country_code,
+      }
+    : {
+        line1: meta.ship_line1 || undefined,
+        city: meta.ship_city || undefined,
+        postal_code: meta.ship_postcode || undefined,
+        country: meta.ship_country || undefined,
+      };
+
+  return persistConfirmedOrder({
+    processorId: revolutOrderId,
+    state: normState(order.state),
+    customerEmail: order.customer?.email || "",
+    customerName: order.customer?.full_name || meta.customer_name || "",
+    items: parseItemsFromMetadata(order.metadata),
+    total: order.amount,
+    currency: order.currency.toUpperCase(),
+    shipping,
+    metaAttribution: getMetaAttributionFromMetadata(order.metadata),
+  });
 }

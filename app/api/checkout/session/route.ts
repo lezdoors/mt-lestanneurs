@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 import { createOrder } from "@/lib/checkout/revolut";
+import { createCheckoutSession } from "@/lib/checkout/stripe";
 import { HIDDEN_SKUS } from "@/lib/hidden-skus";
 import { getRates, convertUSDCents } from "@/lib/checkout/fx";
 import { applyPromoMinor, normalizePromo } from "@/lib/checkout/promo";
@@ -254,6 +255,77 @@ export async function POST(request: NextRequest) {
         quantity: i.quantity,
       });
     });
+
+    // === Stripe path (CHECKOUT_PROVIDER=stripe) ===
+    // Dedicated Maison Tanneurs Stripe account. Stripe Checkout handles 3DS
+    // with risk-based authentication US issuers complete — the failure mode
+    // that made Revolut decline every real card. Same metadata contract, so
+    // confirm-stripe rebuilds items/shipping/attribution from the session.
+    const provider = (process.env.CHECKOUT_PROVIDER || "revolut").toLowerCase();
+    if (provider === "stripe") {
+      // On a promo, consolidate to a single discounted line (Stripe price_data
+      // can't carry a cart-level discount cleanly) — mirrors the Revolut
+      // itemization-omit branch. Otherwise itemize at the converted unit price.
+      const lineItems = promoResult.promo
+        ? [
+            {
+              name: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""} (${normalizePromo(body.promoCode)})`,
+              unitMinor: chargeMinor,
+              quantity: 1,
+            },
+          ]
+        : converted.map((i) => ({
+            name: i.title,
+            unitMinor: i.unitMinor,
+            quantity: i.quantity,
+            image: i.image
+              ? i.image.startsWith("http")
+                ? i.image
+                : `${siteUrl}${i.image}`
+              : undefined,
+          }));
+
+      const session = await createCheckoutSession({
+        currency,
+        customerEmail: custEmail || undefined,
+        description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}${promoResult.promo ? ` · ${normalizePromo(body.promoCode)}` : ""}`,
+        successUrl: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${siteUrl}/checkout`,
+        metadata,
+        lineItems,
+      });
+
+      // Abandoned-cart intent — confirm-stripe flips this to 'converted' on
+      // payment. Keyed on the session id in the same revolut_order_id column.
+      if (custEmail) {
+        try {
+          const supabase = getSupabase();
+          await supabase?.from("abandoned_checkouts").insert({
+            email: custEmail,
+            customer_name: custName || null,
+            items: converted.map((i) => ({
+              slug: i.slug,
+              title: i.title,
+              image: i.image,
+              price: i.unitMinor,
+              quantity: i.quantity,
+            })),
+            amount_minor: chargeMinor,
+            currency,
+            promo_code: promoResult.promo ? normalizePromo(body.promoCode) : null,
+            revolut_order_id: session.id,
+            status: "pending",
+          });
+        } catch (e) {
+          console.error("[abandoned] intent log failed:", e);
+        }
+      }
+
+      return NextResponse.json({
+        orderId: session.id,
+        checkoutUrl: session.url,
+      });
+    }
 
     const order = await createOrder({
       amount: chargeMinor,
