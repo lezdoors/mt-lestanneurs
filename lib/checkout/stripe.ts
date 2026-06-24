@@ -79,9 +79,7 @@ export interface CreateCheckoutSessionInput {
     quantity: number;
     imageUrl?: string;
   }>;
-  // Locale + shipping countries — keep the matrix small for launch (UK first).
   locale?: Stripe.Checkout.SessionCreateParams.Locale;
-  allowedShippingCountries: Stripe.Checkout.SessionCreateParams.ShippingAddressCollection.AllowedCountry[];
 }
 
 export interface CreatedCheckoutSession {
@@ -94,6 +92,16 @@ export async function createCheckoutSession(
 ): Promise<CreatedCheckoutSession> {
   const stripe = getStripe();
 
+  // Deliberately NOT setting shipping_address_collection — we already
+  // captured the full shipping address on /checkout/page.tsx and stashed
+  // it in metadata. Asking Stripe to re-collect would force the customer
+  // to re-type their address on the hosted page (the exact redundancy
+  // that made the prior Revolut UX feel wrong). confirm-order.ts uses the
+  // metadata fallback when Stripe doesn't surface a shipping_details.
+  //
+  // billing_address_collection: 'auto' keeps Stripe's minimum (ZIP + country
+  // for AVS) only where the card brand actually requires it — not the full
+  // street/city.
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: input.redirectUrlSuccess,
@@ -114,9 +122,6 @@ export async function createCheckoutSession(
       },
       quantity: item.quantity,
     })),
-    shipping_address_collection: {
-      allowed_countries: input.allowedShippingCountries,
-    },
     billing_address_collection: "auto",
     phone_number_collection: { enabled: false },
     metadata: input.metadata,

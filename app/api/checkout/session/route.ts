@@ -74,13 +74,6 @@ class CartValidationError extends Error {}
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-// Conservative launch matrix — every country the storefront actually ships
-// to. Tightened deliberately; expand once logistics confirms broader coverage.
-const ALLOWED_SHIPPING_COUNTRIES = [
-  "GB", "US", "FR", "DE", "IT", "ES", "NL", "BE", "IE", "AT", "PT", "LU",
-  "FI", "SE", "DK", "NO", "CH", "CA", "AU",
-] as const;
-
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -294,10 +287,13 @@ export async function POST(request: NextRequest) {
             : undefined,
         }));
 
+    // Description shows on the PaymentIntent only (not the customer's
+    // Hosted Checkout page). Promo gets surfaced via the collapsed line
+    // item's description, so it's never double-displayed to the customer.
     const session = await createCheckoutSession({
       amount: chargeMinor,
       currency: currency.toLowerCase(),
-      description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}${promoResult.promo ? ` · ${normalizePromo(body.promoCode)}` : ""}`,
+      description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}`,
       customerEmail: custEmail || undefined,
       // Stripe substitutes {CHECKOUT_SESSION_ID} server-side on redirect so
       // /checkout/success can confirm the exact session. Belt-and-suspenders
@@ -307,7 +303,6 @@ export async function POST(request: NextRequest) {
       metadata,
       lineItems,
       locale: "auto",
-      allowedShippingCountries: [...ALLOWED_SHIPPING_COUNTRIES],
     });
 
     // Log the checkout intent for abandoned-cart recovery. The Stripe
