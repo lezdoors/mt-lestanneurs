@@ -1,6 +1,6 @@
 // FX rate fetcher + USD-cents converter. Source: frankfurter.app (free, ECB
 // reference rates, daily). Cached 24h via Next fetch revalidate so the price
-// the user saw is the price Revolut charges.
+// the user saw is the price Stripe charges.
 
 import { SUPPORTED_CURRENCIES, type Currency } from "./currency";
 

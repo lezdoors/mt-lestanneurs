@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
-import { createOrder } from "@/lib/checkout/revolut";
+import { createCheckoutSession } from "@/lib/checkout/stripe";
 import { HIDDEN_SKUS } from "@/lib/hidden-skus";
 import { getRates, convertUSDCents } from "@/lib/checkout/fx";
 import { applyPromoMinor, normalizePromo } from "@/lib/checkout/promo";
@@ -12,12 +12,19 @@ import {
   type Currency,
 } from "@/lib/checkout/currency";
 
-// Creates a Revolut Acquiring order and returns the public token for the
-// embedded payment widget. Webhook fires ORDER_COMPLETED on success →
-// app/api/webhooks/revolut handles persistence + emails + Meta CAPI.
+// Creates a Stripe Checkout Session and returns the redirect URL for the
+// browser to hand off to checkout.stripe.com. checkout.session.completed
+// fires on success → app/api/webhooks/stripe handles persistence + emails
+// + Meta CAPI (idempotent on the session id; success page also calls
+// confirm-order on return for the webhook-less path).
 //
-// Added by the API port (server-only). Prices are stored USD-canonical (cents)
-// and converted to the charge currency (mt-currency cookie, default USD).
+// Migrated from Revolut Acquiring 2026-06-23 after repeated customer
+// checkout failures on Revolut ahead of launch. Hosted Checkout pattern
+// preserved; the columns named revolut_order_id in Supabase are now
+// generic processor session ids (Stripe cs_* values).
+//
+// Prices stored USD-canonical (cents) and converted to the charge currency
+// (mt-currency cookie, default USD).
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +73,13 @@ class CartValidationError extends Error {}
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+// Conservative launch matrix — every country the storefront actually ships
+// to. Tightened deliberately; expand once logistics confirms broader coverage.
+const ALLOWED_SHIPPING_COUNTRIES = [
+  "GB", "US", "FR", "DE", "IT", "ES", "NL", "BE", "IE", "AT", "PT", "LU",
+  "FI", "SE", "DK", "NO", "CH", "CA", "AU",
+] as const;
 
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -193,11 +207,12 @@ export async function POST(request: NextRequest) {
   try {
     const validated = await validateCart(items);
 
-    // Charge in the visitor's resolved currency (mt-currency cookie, set by the
-    // proxy from geo on first visit) — the SAME currency the storefront showed,
-    // so the Revolut page matches the page they shopped. Prices are stored
-    // USD-canonical and converted with the same ECB rates the display side uses.
-    // Revolut settles USD/EUR/GBP each into its own merchant pocket.
+    // Charge in the visitor's resolved currency (mt-currency cookie, set by
+    // the proxy from geo on first visit) — the SAME currency the storefront
+    // showed, so the Stripe page matches the page they shopped. Prices are
+    // stored USD-canonical and converted with the same ECB rates the display
+    // side uses. Stripe settles into the Maison Tanneurs GBP balance,
+    // converting non-GBP charges at settlement (FX margin ~1–2%).
     const currency = await getRequestCurrency();
     const rates = await getRates();
     // Charge the SAME whole-unit price the storefront displays
@@ -219,10 +234,10 @@ export async function POST(request: NextRequest) {
     const chargeMinor = promoResult.totalMinor;
 
     // Customer details collected on our branded form. We pass email to
-    // Revolut (pre-fills Hosted Checkout + guarantees order.customer.email
-    // for the receipt) and stash name + shipping in metadata so the admin
-    // notification + CAPI always have an address, even if the shopper pays
-    // with a wallet that doesn't surface a separate shipping step.
+    // Stripe (pre-fills Hosted Checkout + drives the receipt) and stash
+    // name + shipping in metadata so the admin notification + CAPI always
+    // have an address, even if the shopper pays with a wallet that doesn't
+    // surface a separate shipping step.
     const c = body.customer || {};
     const custEmail = String(c.email || "").trim();
     const custName = `${String(c.firstName || "").trim()} ${String(
@@ -255,39 +270,54 @@ export async function POST(request: NextRequest) {
       });
     });
 
-    const order = await createOrder({
+    // When a promo applies we collapse the cart into one line so the
+    // discounted total maps cleanly without per-line phantom amounts.
+    // Stripe Hosted Checkout shows the description + final total, which
+    // is what shopper saw on the storefront summary.
+    const lineItems = promoResult.promo
+      ? [
+          {
+            name: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}`,
+            description: `Promo ${normalizePromo(body.promoCode)}`,
+            unitAmountMinor: chargeMinor,
+            quantity: 1,
+          },
+        ]
+      : converted.map((i) => ({
+          name: i.title,
+          unitAmountMinor: i.unitMinor,
+          quantity: i.quantity,
+          imageUrl: i.image
+            ? i.image.startsWith("http")
+              ? i.image
+              : `${siteUrl}${i.image}`
+            : undefined,
+        }));
+
+    const session = await createCheckoutSession({
       amount: chargeMinor,
-      currency,
-      capture_mode: "automatic",
-      redirect_url: `${siteUrl}/checkout/success`,
+      currency: currency.toLowerCase(),
       description: `Maison Tanneurs · ${converted.length} item${converted.length > 1 ? "s" : ""}${promoResult.promo ? ` · ${normalizePromo(body.promoCode)}` : ""}`,
-      ...(custEmail ? { customer: { email: custEmail } } : {}),
+      customerEmail: custEmail || undefined,
+      // Stripe substitutes {CHECKOUT_SESSION_ID} server-side on redirect so
+      // /checkout/success can confirm the exact session. Belt-and-suspenders
+      // with the mt_pending_order cookie the client also sets.
+      redirectUrlSuccess: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      redirectUrlCancel: `${siteUrl}/checkout`,
       metadata,
-      // Revolut requires line_items to sum to `amount`. A promo discount
-      // doesn't map cleanly onto a single line, so when one applies we omit
-      // itemization and let the hosted page show the discounted total +
-      // description. Full itemization is preserved for non-discounted orders.
-      ...(promoResult.promo
-        ? {}
-        : {
-            line_items: converted.map((i) => ({
-              name: i.title,
-              type: "physical" as const,
-              quantity: { value: i.quantity, unit: "piece" as const },
-              unit_price_amount: i.unitMinor,
-              total_amount: i.totalMinor,
-              external_id: i.product_id,
-              image_urls: i.image
-                ? [i.image.startsWith("http") ? i.image : `${siteUrl}${i.image}`]
-                : undefined,
-            })),
-          }),
+      lineItems,
+      locale: "auto",
+      allowedShippingCountries: [...ALLOWED_SHIPPING_COUNTRIES],
     });
 
-    // Log the checkout intent for abandoned-cart recovery. The Revolut
+    // Log the checkout intent for abandoned-cart recovery. The Stripe
     // webhook flips this row to 'converted' on payment; an hourly cron emails
     // the ones still 'pending' after a few hours. Best-effort and only when we
     // have an email to recover to — a failure must never block checkout.
+    //
+    // Column name `revolut_order_id` retained for backwards compatibility
+    // with the existing Supabase schema; now stores Stripe session ids
+    // (cs_live_...).
     if (custEmail) {
       try {
         const supabase = getSupabase();
@@ -304,7 +334,7 @@ export async function POST(request: NextRequest) {
           amount_minor: chargeMinor,
           currency,
           promo_code: promoResult.promo ? normalizePromo(body.promoCode) : null,
-          revolut_order_id: order.id,
+          revolut_order_id: session.id,
           status: "pending",
         });
       } catch (e) {
@@ -312,11 +342,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Response shape unchanged from the Revolut era — client uses
+    // checkoutUrl + parks orderId in the mt_pending_order cookie before
+    // redirecting. orderId is now a Stripe Checkout Session id (cs_*).
     return NextResponse.json({
-      orderId: order.id,
-      token: order.token,
-      checkoutUrl: order.checkout_url,
-      publicKey: process.env.NEXT_PUBLIC_REVOLUT_PUBLIC_KEY,
+      orderId: session.id,
+      checkoutUrl: session.url,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -326,9 +357,9 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    console.error("Revolut createOrder failed:", message);
+    console.error("Stripe createCheckoutSession failed:", message);
     return NextResponse.json(
-      { error: "Failed to create checkout order", detail: message },
+      { error: "Failed to create checkout session", detail: message },
       { status: 500 },
     );
   }

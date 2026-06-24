@@ -17,7 +17,8 @@ export function formatPrice(cents: number, currency: Currency = "USD"): string {
 
 // Maison Tanneurs order number — "MT-NNNNNNNN". Seconds since the house
 // epoch + one random digit: unique per second, no coordination needed.
-// (The orders table also has UNIQUE(revolut_order_id), which is the real
+// (The orders table also has UNIQUE(revolut_order_id) — legacy column name
+// now holds the Stripe Checkout Session id — which is the real
 // idempotency guard — this only needs to be human-friendly and distinct.)
 const HOUSE_EPOCH = Date.UTC(2026, 0, 1) / 1000;
 export function generateOrderNumber(): string {

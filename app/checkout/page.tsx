@@ -10,18 +10,19 @@ import { trackGA4Event } from "@/components/seo/ga4"
 import { lookupPromo, applyPromoMinor } from "@/lib/checkout/promo"
 
 // Checkout — shipping details + order summary wired to the live cart.
-// Payment runs on Revolut's Hosted Checkout Page: we create the order
+// Payment runs on Stripe's Hosted Checkout Page: we create the session
 // server-side with the shopper's details, then redirect the browser to
-// the returned checkout_url. The hosted page surfaces card + Apple Pay /
-// Google Pay / Revolut Pay and handles 3DS, then redirects back to
-// /checkout/success, which verifies + persists the order server-side.
-// (The old card-only embedded popup is gone — it could not show wallets
-// and failed 3DS.)
+// the returned session.url. The hosted page surfaces card + Apple Pay /
+// Google Pay / Link / Klarna / Bancontact and handles 3DS, then redirects
+// back to /checkout/success?session_id=cs_..., which verifies + persists
+// the order server-side.
+//
+// Migrated from Revolut Acquiring 2026-06-23 after repeated customer
+// checkout failures on Revolut. Hosted Checkout pattern preserved.
 
-// The created order id is parked in this first-party cookie right before
-// the redirect, so /checkout/success can confirm the exact order on return
-// without depending on Revolut's appended _rp_oid (which is the public id,
-// not the order id our GET /orders/{id} call needs).
+// The created session id is parked in this first-party cookie right before
+// the redirect, as a belt-and-suspenders fallback alongside Stripe's
+// success_url query param. Cookie name unchanged for backwards compat.
 const PENDING_ORDER_COOKIE = "mt_pending_order"
 
 function getCookieValue(name: string): string | undefined {
@@ -139,11 +140,12 @@ export default function CheckoutPage() {
       if (!data.checkoutUrl || !data.orderId) {
         throw new Error("Missing checkout URL")
       }
-      // Park the real order id so /checkout/success can confirm it on return.
+      // Park the Stripe session id so /checkout/success can confirm it on
+      // return even if the success_url query param is stripped.
       document.cookie = `${PENDING_ORDER_COOKIE}=${encodeURIComponent(
         data.orderId,
       )}; path=/; max-age=3600; samesite=lax; secure`
-      // Hand off to Revolut's Hosted Checkout Page.
+      // Hand off to Stripe's Hosted Checkout Page.
       window.location.assign(data.checkoutUrl)
     } catch {
       setErrorMessage(t("checkout.payError"))

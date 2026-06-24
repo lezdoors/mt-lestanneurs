@@ -8,7 +8,7 @@ import { getLocale, t, withLocale } from "@/lib/i18n"
 import { SuccessClient } from "./success-client"
 
 // Order confirmation — the webhook-less confirmation path. Verifies the
-// order directly with Revolut server-side, persists it exactly once
+// order directly with Stripe server-side, persists it exactly once
 // (idempotent), then renders. See lib/checkout/confirm-order.ts.
 
 export const dynamic = "force-dynamic"
@@ -22,21 +22,21 @@ export default async function CheckoutSuccessPage({
   const sp = await searchParams
   const param = (k: string) =>
     typeof sp[k] === "string" ? (sp[k] as string) : null
-  // The Hosted Checkout flow parks the real Revolut order id (the one our
-  // GET /orders/{id} needs) in a first-party cookie before redirecting.
-  // We deliberately do NOT fall back to Revolut's appended `_rp_oid` — that
-  // is the PUBLIC order id and 404s against GET /orders/{id}, which would
-  // render a paid order as a hard error. If neither the explicit param nor
-  // the cookie is present, the webhook path still records the order and the
-  // customer still gets their email; we just show the pending screen.
+  // Stripe substitutes the literal {CHECKOUT_SESSION_ID} into the
+  // success_url server-side on redirect, so `session_id` is the canonical
+  // source. The first-party cookie set by the checkout page is the
+  // belt-and-suspenders fallback. If neither is present, the webhook path
+  // still records the order and the customer still gets their email; we
+  // just show the pending screen.
   const cookieStore = await cookies()
-  const revolutOrderId =
-    param("revolut_order_id") ||
+  const sessionId =
+    param("session_id") ||
     cookieStore.get("mt_pending_order")?.value ||
+    param("revolut_order_id") ||
     param("order_id") ||
     null
 
-  if (!revolutOrderId) {
+  if (!sessionId) {
     return (
       <Shell>
         <Status
@@ -52,9 +52,9 @@ export default async function CheckoutSuccessPage({
 
   let confirmed
   try {
-    confirmed = await confirmAndPersistOrder(revolutOrderId)
+    confirmed = await confirmAndPersistOrder(sessionId)
   } catch {
-    // The lookup failed (transient Revolut error, or an id we can't resolve).
+    // The lookup failed (transient Stripe error, or an id we can't resolve).
     // The payment has very likely succeeded — never tell a paying customer
     // their order is "invalid". Show the pending screen; the webhook will
     // record it and the confirmation email will follow.
@@ -125,7 +125,7 @@ export default async function CheckoutSuccessPage({
           </p>
           <p className="font-sans text-lg tracking-[0.18em] text-ink">
             {confirmed.orderNumber ||
-              `${revolutOrderId.slice(0, 8)}…${revolutOrderId.slice(-4)}`}
+              `${sessionId.slice(0, 8)}…${sessionId.slice(-4)}`}
           </p>
           {confirmed.customerEmail && (
             <p className="text-micro mt-3 text-ink-muted">

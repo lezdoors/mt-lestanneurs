@@ -30,16 +30,16 @@ function resolveCurrency(request: NextRequest): {
 } {
   // The mt-currency cookie wins (an explicit choice, or a prior visit's geo
   // result the proxy persisted). It is the SAME value the checkout API reads,
-  // so the page the visitor shopped and the Revolut order match.
+  // so the page the visitor shopped and the Stripe checkout session match.
   const cookieValue = request.cookies.get(CURRENCY_COOKIE)?.value
   if (isCurrency(cookieValue)) {
     return { currency: cookieValue, fromCookie: true }
   }
   // First-time visitor: geo currency from Vercel's IP-country header.
-  // GB → GBP, eurozone/Europe → EUR, everywhere else → USD. Revolut settles
-  // USD/EUR/GBP each into its own merchant pocket (confirmed 2026-06); the
-  // customer's own bank handles their card FX. !fromCookie => proxy persists
-  // this in the mt-currency cookie below.
+  // GB → GBP, eurozone/Europe → EUR, everywhere else → USD. Stripe presents
+  // the charge in this currency and settles into the Maison Tanneurs GBP
+  // balance (non-GBP charges convert at settlement, FX ~1-2%). !fromCookie
+  // => proxy persists this in the mt-currency cookie below.
   const country = (request.headers.get("x-vercel-ip-country") || "").toUpperCase()
   const currency: Currency =
     country === "GB"
