@@ -231,9 +231,116 @@ export default function CheckoutPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-14 md:grid-cols-[1fr_400px] md:gap-16">
-            {/* Form column */}
-            <section className="order-2 md:order-1">
+          <div className="grid gap-10 md:grid-cols-[1fr_400px] md:gap-16">
+            {/* Mobile compact summary — expandable. Tells the shopper what
+                they're paying and lets them re-check items without scrolling
+                past the whole desktop panel before reaching the form. */}
+            <details className="group md:hidden">
+              <summary className="flex cursor-pointer items-baseline justify-between border-y border-hairline py-4 [&::-webkit-details-marker]:hidden">
+                <span className="text-micro text-ink transition-opacity group-open:opacity-60">
+                  {t("checkout.orderTitle")} ·{" "}
+                  {items.length} {items.length === 1 ? "item" : "items"}{" "}
+                  <span className="ml-1 inline-block transition-transform group-open:rotate-180">
+                    ⌄
+                  </span>
+                </span>
+                <span className="font-serif text-xl text-ink">
+                  {formatPrice(displayTotal)}
+                </span>
+              </summary>
+              <div className="border-b border-hairline pb-6 pt-6">
+                <ul className="flex flex-col gap-4">
+                  {items.map((item) => (
+                    <li
+                      key={item.slug}
+                      className="flex items-baseline gap-4 border-b border-hairline pb-3 last:border-0"
+                    >
+                      <span className="flex-1 font-serif text-base text-ink">
+                        {item.name}
+                        {item.quantity > 1 && (
+                          <span className="text-micro ml-2 text-ink-muted">
+                            ×{item.quantity}
+                          </span>
+                        )}
+                      </span>
+                      <span className="font-sans text-sm text-ink-soft">
+                        {formatPrice(item.price * item.quantity)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-5 flex items-end gap-3">
+                  <div className="flex flex-1 flex-col gap-2">
+                    <label
+                      htmlFor="promo-mobile"
+                      className="text-micro text-ink-muted"
+                    >
+                      {t("checkout.promoLabel")}
+                    </label>
+                    <input
+                      id="promo-mobile"
+                      value={promoInput}
+                      onChange={(e) => {
+                        setPromoInput(e.target.value)
+                        setPromoError(false)
+                      }}
+                      placeholder={t("checkout.promoPlaceholder")}
+                      className="border-b border-hairline bg-transparent pb-2 font-serif text-base uppercase text-ink outline-none transition-colors focus:border-ink"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={applyPromo}
+                    className="text-micro pb-2 text-ink-soft underline underline-offset-4 transition-opacity hover:opacity-60"
+                  >
+                    {t("checkout.promoApply")}
+                  </button>
+                </div>
+                {promoError && (
+                  <p className="text-micro mt-2 text-[#9b2c2c]">
+                    {t("checkout.promoInvalid")}
+                  </p>
+                )}
+                {promoCalc.promo && (
+                  <p className="text-micro mt-2 italic text-ink-soft">
+                    {promoCalc.promo.label}
+                  </p>
+                )}
+
+                <dl className="mt-6 border-t border-hairline pt-4">
+                  <div className="flex justify-between py-1">
+                    <dt className="text-micro text-ink-soft">
+                      {t("checkout.subtotal")}
+                    </dt>
+                    <dd className="font-sans text-sm text-ink">
+                      {formatPrice(subtotal)}
+                    </dd>
+                  </div>
+                  {promoCalc.promo && (
+                    <div className="flex justify-between py-1">
+                      <dt className="text-micro text-ink-soft">
+                        {t("checkout.discount")}
+                      </dt>
+                      <dd className="font-sans text-sm text-ink">
+                        −{formatPrice(promoCalc.discountMinor)}
+                      </dd>
+                    </div>
+                  )}
+                  <div className="flex justify-between py-1">
+                    <dt className="text-micro text-ink-soft">
+                      {t("checkout.shipping")}
+                    </dt>
+                    <dd className="font-sans text-sm text-ink">
+                      {t("checkout.complimentary")}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </details>
+
+            {/* Form column — left on desktop, middle on mobile */}
+            <section className="md:order-1">
               <Elements
                 stripe={stripePromise}
                 options={{
@@ -254,8 +361,46 @@ export default function CheckoutPage() {
               </Elements>
             </section>
 
-            {/* Sticky order summary + assurance panel */}
-            <aside className="order-1 md:order-2 md:sticky md:top-24 md:self-start">
+            {/* Mobile trust footer — only on mobile, after the Pay button.
+                Same copy as the desktop right column but stacked at the
+                bottom of the page where it can't push the form down. */}
+            <div className="flex flex-col gap-8 border-t border-hairline pt-10 md:hidden">
+              <div>
+                <h3 className="font-serif text-lg text-ink">
+                  {t("checkout.assistTitle")}
+                </h3>
+                <p className="mt-3 font-serif text-sm leading-relaxed text-ink-soft">
+                  {t("checkout.assistBody")}
+                </p>
+                <Link
+                  href={lhref("/contact")}
+                  className="text-micro mt-4 inline-block border border-ink px-5 py-3 text-ink transition-colors hover:bg-ink hover:text-ground"
+                >
+                  {t("checkout.assistCta")}
+                </Link>
+              </div>
+              <div>
+                <h3 className="font-serif text-lg text-ink">
+                  {t("checkout.secureTitle")}
+                </h3>
+                <p className="mt-3 font-serif text-sm leading-relaxed text-ink-soft">
+                  {t("checkout.secureBody")}
+                </p>
+              </div>
+              <div>
+                <h3 className="font-serif text-lg text-ink">
+                  {t("checkout.returnsTitle")}
+                </h3>
+                <p className="mt-3 font-serif text-sm leading-relaxed text-ink-soft">
+                  {t("checkout.returnsBody")}
+                </p>
+              </div>
+            </div>
+
+            {/* Desktop sticky aside — order summary + assurance panel.
+                Hidden on mobile; the compact summary above + trust footer
+                below cover the same surface area without the long scroll. */}
+            <aside className="hidden md:order-2 md:block md:sticky md:top-24 md:self-start">
               <h2 className="font-serif text-3xl text-ink">
                 {t("checkout.orderTitle")}
               </h2>
