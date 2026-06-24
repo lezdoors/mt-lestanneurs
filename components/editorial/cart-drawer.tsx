@@ -137,13 +137,10 @@ export function CartDrawer() {
               <p className="mt-2 font-sans text-[11px] leading-relaxed text-ink-muted">
                 {t("cart.note")}
               </p>
-              <p className="text-micro mt-5 text-center text-tobacco">
-                {t("cart.offer")}
-              </p>
               <Link
                 href={href("/checkout")}
                 onClick={closeCart}
-                className="mt-3 block w-full bg-ink py-4 text-center text-micro text-ground transition-opacity hover:opacity-85"
+                className="mt-5 block w-full bg-ink py-4 text-center text-micro text-ground transition-opacity hover:opacity-85"
               >
                 {t("cart.checkout")}
               </Link>

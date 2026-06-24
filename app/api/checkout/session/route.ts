@@ -245,7 +245,13 @@ export async function POST(request: NextRequest) {
     if (c.address) metadata.ship_line1 = String(c.address).slice(0, 180);
     if (c.city) metadata.ship_city = String(c.city).slice(0, 80);
     if (c.zip) metadata.ship_postcode = String(c.zip).slice(0, 32);
-    if (c.country) metadata.ship_country = String(c.country).slice(0, 80);
+    // Country was dropped from the shipping form for UX — Stripe asks for
+    // it at billing, and Vercel's geo header is a reliable shipping fallback.
+    // Trust the form value if it was provided (legacy clients), else infer.
+    const inferredCountry =
+      request.headers.get("x-vercel-ip-country") || "";
+    const shipCountry = String(c.country || inferredCountry || "").slice(0, 80);
+    if (shipCountry) metadata.ship_country = shipCountry;
     if (body.tracking?.fbp) metadata.meta_fbp = body.tracking.fbp;
     if (body.tracking?.fbc) metadata.meta_fbc = body.tracking.fbc;
     if (promoResult.promo) {

@@ -105,9 +105,6 @@ export default async function ProductPage({
             <p className="mt-2 font-serif text-sm italic text-ink-muted">
               {t(lo, "pdp.atelierDirect")}
             </p>
-            <p className="text-micro mt-4 text-tobacco">
-              {t(lo, "cart.offer")}
-            </p>
 
             {product.longDescription && (
               <p className="mt-8 max-w-md font-serif text-lg leading-relaxed text-ink-soft">

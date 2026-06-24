@@ -79,6 +79,25 @@ export default function CheckoutPage() {
     }
   }
 
+  // ?promo=CODE in the URL auto-applies the offer. This is the only public
+  // pathway for WELCOME15 — Facebook ads land users here with the param so
+  // the discount appears for first-buyer traffic only, not for everyone who
+  // happens to browse the site. The PDP and cart drawer no longer surface
+  // the code.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const fromUrl = new URLSearchParams(window.location.search).get("promo")
+    if (!fromUrl) return
+    const normalized = fromUrl.trim().toUpperCase()
+    const p = lookupPromo(normalized)
+    if (p) {
+      setPromoInput(normalized)
+      setPromoCode(normalized)
+      setPromoError(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // InitiateCheckout — once, when the cart is first shown at checkout.
   useEffect(() => {
     if (items.length === 0 || initiatedRef.current) return
@@ -193,17 +212,24 @@ export default function CheckoutPage() {
             {/* Shipping form */}
             <section className="order-2 md:order-1">
               <h1 className="font-serif text-3xl text-ink">{t("checkout.shippingTitle")}</h1>
-              <form className="mt-10 flex flex-col gap-6" onSubmit={handleSubmit}>
-                <Field label={t("checkout.email")} id="email" type="email" required />
+              {/* Country deliberately omitted — the proxy's geo cookie tells
+                  the server which country (and currency) to ship to; if the
+                  card brand needs it, Stripe collects it on the payment page.
+                  Browser autofill resolves the rest from saved profiles. */}
+              <form
+                className="mt-10 flex flex-col gap-6"
+                onSubmit={handleSubmit}
+                autoComplete="on"
+              >
+                <Field label={t("checkout.email")} id="email" type="email" required inputMode="email" autoComplete="email" />
                 <div className="grid grid-cols-2 gap-5">
                   <Field label={t("checkout.firstName")} id="firstName" required autoComplete="given-name" />
                   <Field label={t("checkout.lastName")} id="lastName" required autoComplete="family-name" />
                 </div>
-                <Field label={t("checkout.address")} id="address" autoComplete="street-address" />
-                <div className="grid grid-cols-3 gap-5">
-                  <Field label={t("checkout.city")} id="city" autoComplete="address-level2" />
-                  <Field label={t("checkout.zip")} id="zip" autoComplete="postal-code" />
-                  <Field label={t("checkout.country")} id="country" autoComplete="country-name" />
+                <Field label={t("checkout.address")} id="address" required autoComplete="street-address" />
+                <div className="grid grid-cols-2 gap-5">
+                  <Field label={t("checkout.city")} id="city" required autoComplete="address-level2" />
+                  <Field label={t("checkout.zip")} id="zip" required autoComplete="postal-code" />
                 </div>
                 <button
                   type="submit"
@@ -335,12 +361,14 @@ function Field({
   type = "text",
   required = false,
   autoComplete,
+  inputMode,
 }: {
   label: string
   id: string
   type?: string
   required?: boolean
   autoComplete?: string
+  inputMode?: "text" | "email" | "tel" | "url" | "numeric" | "decimal" | "search"
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -353,6 +381,7 @@ function Field({
         type={type}
         required={required}
         autoComplete={autoComplete ?? (id === "email" ? "email" : undefined)}
+        inputMode={inputMode}
         className="border-b border-hairline bg-transparent pb-2 font-serif text-lg text-ink outline-none transition-colors focus:border-ink"
       />
     </div>
