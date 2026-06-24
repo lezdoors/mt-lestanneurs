@@ -28,8 +28,15 @@ export default async function CheckoutSuccessPage({
   // belt-and-suspenders fallback. If neither is present, the webhook path
   // still records the order and the customer still gets their email; we
   // just show the pending screen.
+  // Stripe Elements appends `payment_intent` + `payment_intent_client_secret`
+  // + `redirect_status` to return_url after stripe.confirmPayment succeeds.
+  // The first-party cookie set by /checkout is a belt-and-suspenders fallback
+  // for the rare case where Stripe's redirect drops the query string. We also
+  // honour the legacy session_id name on the off-chance a stale Embedded
+  // Checkout return is in flight at the moment of deploy.
   const cookieStore = await cookies()
   const sessionId =
+    param("payment_intent") ||
     param("session_id") ||
     cookieStore.get("mt_pending_order")?.value ||
     param("revolut_order_id") ||

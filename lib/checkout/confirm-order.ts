@@ -1,8 +1,8 @@
 import type Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 import {
-  getCheckoutSession,
-  normalizeSessionState,
+  getPaymentIntent,
+  normalizeIntentStatus,
   type OrderState,
 } from "@/lib/checkout/stripe";
 import { generateOrderNumber } from "@/lib/checkout/format";
@@ -12,18 +12,13 @@ import {
 } from "@/lib/checkout/email";
 import { sendPurchaseToCAPI } from "@/lib/checkout/meta-capi";
 
-// Server-side order confirmation — the webhook-less path. The success page
-// calls this on load: it pulls the session straight from Stripe, verifies
-// payment_status === 'paid', persists it once (idempotent on the Stripe
-// session id, stored in the legacy revolut_order_id column), and fires
-// emails + Meta CAPI ONLY on first persistence so webhook retries / page
-// refreshes can never double-send. The Stripe webhook route reuses this
-// same function, so whichever path runs first wins, the other becomes a
-// no-op.
-//
-// Migrated from Revolut Acquiring 2026-06-23 — Supabase column name
-// `revolut_order_id` retained (no migration), now stores Stripe Checkout
-// Session ids (cs_live_...).
+// Server-side order confirmation. The success page calls this on load:
+// pulls the PaymentIntent straight from Stripe, verifies status === 'succeeded',
+// persists once (idempotent on the PaymentIntent id, stored in the legacy
+// revolut_order_id column), and fires emails + Meta CAPI ONLY on first
+// persistence so webhook retries / page refreshes can never double-send.
+// The Stripe webhook handler reuses this same function — whichever path
+// runs first wins, the other becomes a no-op.
 
 export type OrderItem = {
   product_id: string;
@@ -36,7 +31,7 @@ export type OrderItem = {
 
 export interface ConfirmedOrder {
   state: OrderState;
-  sessionId: string;
+  intentId: string;
   orderNumber?: string;
   customerName: string;
   customerEmail: string;
@@ -89,59 +84,65 @@ function getMetaAttributionFromMetadata(
 
 // Bounded retry around Stripe: transient 5xx and transitional states settle
 // within seconds. async payment methods (Klarna, Bancontact) flip from
-// `unpaid` → `paid` on a subsequent webhook event, but for cards the success
-// page's read should be `paid` immediately.
+// `processing` → `succeeded` on a later webhook event; for cards the success
+// page's read should be `succeeded` immediately.
 const TRANSITIONAL_STATES = new Set(["PENDING", "PROCESSING", "AUTHORISED"]);
 const RETRY_DELAYS_MS = [1200, 2000, 3000];
 
-async function getSessionSettled(sessionId: string): Promise<Stripe.Checkout.Session> {
-  let session: Stripe.Checkout.Session | null = null;
+async function getIntentSettled(intentId: string): Promise<Stripe.PaymentIntent> {
+  let intent: Stripe.PaymentIntent | null = null;
   let lastErr: unknown = null;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     if (attempt > 0) {
       await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt - 1]));
     }
     try {
-      session = await getCheckoutSession(sessionId);
+      intent = await getPaymentIntent(intentId);
       lastErr = null;
-      if (!TRANSITIONAL_STATES.has(normalizeSessionState(session))) return session;
+      if (!TRANSITIONAL_STATES.has(normalizeIntentStatus(intent))) return intent;
     } catch (err) {
       lastErr = err;
     }
   }
-  if (session) {
+  if (intent) {
     console.error(
-      `[confirm-order] ${sessionId} still ${session.status}/${session.payment_status} after retries — rendering pending`,
+      `[confirm-order] ${intentId} still ${intent.status} after retries — rendering pending`,
     );
-    return session;
+    return intent;
   }
   console.error(
-    `[confirm-order] ${sessionId} unreachable at Stripe after retries:`,
+    `[confirm-order] ${intentId} unreachable at Stripe after retries:`,
     lastErr,
   );
   throw lastErr instanceof Error
     ? lastErr
-    : new Error("Stripe session lookup failed");
+    : new Error("Stripe intent lookup failed");
 }
 
 export async function confirmAndPersistOrder(
-  sessionId: string,
+  intentId: string,
 ): Promise<ConfirmedOrder> {
-  const session = await getSessionSettled(sessionId);
-  const state = normalizeSessionState(session);
+  const intent = await getIntentSettled(intentId);
+  const state = normalizeIntentStatus(intent);
 
-  const items = parseItemsFromMetadata(session.metadata);
-  const meta: Stripe.Metadata = session.metadata || {};
+  const items = parseItemsFromMetadata(intent.metadata);
+  const meta: Stripe.Metadata = intent.metadata || {};
+  // Customer email lands in receipt_email at PaymentIntent create-time. The
+  // billing_details object from confirmPayment carries name (and address if
+  // we asked Stripe to collect it).
+  const charge =
+    typeof intent.latest_charge === "object" ? intent.latest_charge : null;
+  const billingDetails = charge?.billing_details || null;
   const customerEmail =
-    session.customer_details?.email || session.customer_email || "";
+    intent.receipt_email || billingDetails?.email || meta.customer_email || "";
   const customerName =
-    session.customer_details?.name || meta.customer_name || "";
-  const total = session.amount_total || 0;
-  const currency = (session.currency || "usd").toUpperCase();
+    billingDetails?.name || meta.customer_name || "";
+  const total = intent.amount;
+  const currency = (intent.currency || "usd").toUpperCase();
 
   const result: ConfirmedOrder = {
     state,
-    sessionId,
+    intentId,
     customerName,
     customerEmail,
     items,
@@ -151,21 +152,13 @@ export async function confirmAndPersistOrder(
 
   if (state !== "COMPLETED") return result;
 
-  // Prefer Stripe's collected shipping; fall back to the address the
-  // shopper entered on our branded form (stashed in metadata at session
-  // creation) so fulfilment always has somewhere to send the piece.
-  // Stripe moved shipping details under `collected_information` in a recent
-  // API version; older versions surface them as `shipping_details` directly.
-  // Read both, prefer the newer location, accept either.
-  const ci = (session as Stripe.Checkout.Session & {
-    collected_information?: { shipping_details?: { address?: Stripe.Address; name?: string } };
-    shipping_details?: { address?: Stripe.Address; name?: string };
-  });
+  // Shipping address — prefer the PaymentIntent's shipping field (set by
+  // confirmPayment), fall back to the billing address on the charge, then
+  // to the values the shopper typed on our form (stashed in metadata at
+  // intent creation) so fulfilment always has somewhere to send the piece.
+  const stripeShipping = intent.shipping || null;
   const stripeAddress =
-    ci.collected_information?.shipping_details?.address ||
-    ci.shipping_details?.address ||
-    session.customer_details?.address ||
-    null;
+    stripeShipping?.address || billingDetails?.address || null;
   const shippingAddress = stripeAddress
     ? {
         line1: stripeAddress.line1 || undefined,
@@ -178,37 +171,36 @@ export async function confirmAndPersistOrder(
     : {
         line1: meta.ship_line1 || undefined,
         city: meta.ship_city || undefined,
+        state: meta.ship_state || undefined,
         postal_code: meta.ship_postcode || undefined,
         country: meta.ship_country || undefined,
       };
 
   const supabase = getSupabase();
 
-  // Mark any abandoned-cart intent row for this order as converted, so the
-  // recovery cron never emails a customer who actually paid. Best-effort —
-  // a failure here must never interfere with order persistence below.
-  // Column kept as `revolut_order_id`; now stores the Stripe session id.
+  // Mark any abandoned-cart intent row as converted, so the recovery cron
+  // never emails a customer who paid. Best-effort.
   try {
     await supabase
       .from("abandoned_checkouts")
       .update({ status: "converted", updated_at: new Date().toISOString() })
-      .eq("revolut_order_id", sessionId)
+      .eq("revolut_order_id", intentId)
       .neq("status", "converted");
   } catch (e) {
     console.error("[abandoned] convert flip failed:", e);
   }
 
   // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
-  // Exactly one concurrent caller (success page load, refresh, future
-  // webhook) gets a row back and owns the side effects; everyone else
-  // reads the canonical row and returns silently.
+  // Exactly one concurrent caller (success page load, refresh, webhook)
+  // gets a row back and owns the side effects; everyone else reads the
+  // canonical row and returns silently.
   const { data: won, error } = await supabase
     .from("orders")
     .upsert(
       {
         order_number: generateOrderNumber(),
         sales_channel: "direct",
-        revolut_order_id: sessionId,
+        revolut_order_id: intentId,
         customer_email: customerEmail,
         customer_name: customerName,
         shipping_address: shippingAddress,
@@ -225,19 +217,13 @@ export async function confirmAndPersistOrder(
     .maybeSingle();
 
   if (error) {
-    // A COMPLETED payment we cannot record must never render as success —
-    // throw so the page shows the problem state and the error is loud in
-    // the logs. The customer's money is safe in Stripe either way.
     console.error(
-      `[confirm-order] PERSIST FAILED for paid order ${sessionId}:`,
+      `[confirm-order] PERSIST FAILED for paid order ${intentId}:`,
       error,
     );
-    // The card is already captured. A console.error in Vercel logs is not
-    // monitored in real time — page a human so the paid-but-unrecorded
-    // order can be reconciled by hand. Best-effort; never mask the throw.
     try {
       await sendAdminNotification({
-        orderNumber: `PERSIST FAILED — ${sessionId}`,
+        orderNumber: `PERSIST FAILED — ${intentId}`,
         customerName,
         customerEmail,
         items,
@@ -248,17 +234,15 @@ export async function confirmAndPersistOrder(
     } catch {
       /* logged above — alert is best-effort */
     }
-    throw new Error(`Order persistence failed for ${sessionId}`);
+    throw new Error(`Order persistence failed for ${intentId}`);
   }
 
   if (!won) {
-    // Another caller won the insert — read its order number, send nothing.
-    // One short retry covers the sliver where the winner hasn't committed.
     for (let attempt = 0; attempt < 2; attempt++) {
       const { data: existing } = await supabase
         .from("orders")
         .select("order_number")
-        .eq("revolut_order_id", sessionId)
+        .eq("revolut_order_id", intentId)
         .maybeSingle();
       if (existing?.order_number) {
         result.orderNumber = existing.order_number as string;
@@ -266,18 +250,15 @@ export async function confirmAndPersistOrder(
       }
       await new Promise((r) => setTimeout(r, 800));
     }
-    console.error(
-      `[confirm-order] conflict row unreadable for ${sessionId}`,
-    );
-    throw new Error(`Order record unreadable for ${sessionId}`);
+    console.error(`[confirm-order] conflict row unreadable for ${intentId}`);
+    throw new Error(`Order record unreadable for ${intentId}`);
   }
 
   const orderNumber = won.order_number as string;
   result.orderNumber = orderNumber;
 
-  // Conditional sale-marking: only flips rows that are still purchasable.
-  // Zero rows affected means a concurrent order already took the piece —
-  // these are one-of-one objects, so scream for a manual refund.
+  // One-of-one stock — only flip rows still purchasable. Zero rows affected
+  // means a concurrent order took the piece; alert for manual refund.
   for (const item of items) {
     const { data: flipped } = await supabase
       .from("products")
@@ -300,13 +281,11 @@ export async function confirmAndPersistOrder(
           shippingAddress,
         });
       } catch {
-        /* logged above — admin email is best-effort */
+        /* logged above */
       }
     }
   }
 
-  // Independent try/catch — a failure sending the customer confirmation must
-  // not skip the admin notification (fulfilment depends on it), and vice versa.
   try {
     await sendOrderConfirmation({
       to: customerEmail,
@@ -334,7 +313,7 @@ export async function confirmAndPersistOrder(
   }
 
   try {
-    const metaAttribution = getMetaAttributionFromMetadata(session.metadata);
+    const metaAttribution = getMetaAttributionFromMetadata(intent.metadata);
     const [firstName, ...rest] = (customerName || "").split(" ");
     await sendPurchaseToCAPI({
       email: customerEmail,
