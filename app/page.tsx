@@ -1,7 +1,6 @@
 import { SiteHeader } from "@/components/editorial/site-header"
 import { EditorialHero } from "@/components/editorial/editorial-hero"
-import { FamilyMenu } from "@/components/editorial/family-menu"
-import { DepartureTiles } from "@/components/editorial/departure-tiles"
+import { DepartureEditorial } from "@/components/editorial/departure-editorial"
 import { TrustBand } from "@/components/editorial/trust-band"
 import { MaisonStatement } from "@/components/editorial/maison-statement"
 import { FeaturedObjects } from "@/components/editorial/featured-objects"
@@ -39,8 +38,7 @@ export default async function Home() {
       <SiteHeader />
       <main>
         <EditorialHero />
-        <DepartureTiles />
-        <FamilyMenu />
+        <DepartureEditorial />
         <FeaturedObjects products={featured.slice(1)} />
         <MaisonStatement />
         <DuoEditorial />

@@ -4,7 +4,7 @@ import { Reveal } from "@/components/editorial/reveal"
 export async function MaisonStatement() {
   const lo = await getLocale()
   return (
-    <section className="bg-ground px-6 py-24 text-center md:py-36">
+    <section className="bg-ground px-6 pb-1 pt-24 text-center md:pt-36">
       <Reveal>
         <p className="text-micro mb-8 text-ink-muted md:mb-10">
           {t(lo, "statement.eyebrow")}

@@ -49,6 +49,7 @@ const en: Dict = {
   // featured
   "featured.title": "Les Premiers Modèles",
   "featured.cta": "View the Collection",
+  "departure.line": "Made for the departure — and everything that follows.",
   // statement
   "statement.eyebrow": "Maison Tanneurs — Marrakech",
   "statement.body":
@@ -220,6 +221,7 @@ const fr: Dict = {
   "family.viewAll": "Tout voir",
   "featured.title": "Les Premiers Modèles",
   "featured.cta": "Voir la collection",
+  "departure.line": "Pensé pour le départ — et tout ce qui suit.",
   "statement.eyebrow": "Maison Tanneurs — Marrakech",
   "statement.body":
     "Une maison de cuir, pas un catalogue. Chaque pièce est coupée et cousue au point sellier sur un seul établi à Marrakech — et l'établi n'est que le commencement. Le reste se joue au départ.",
@@ -380,6 +382,7 @@ const de: Dict = {
   "family.viewAll": "Alles ansehen",
   "featured.title": "Les Premiers Modèles",
   "featured.cta": "Kollektion ansehen",
+  "departure.line": "Für den Aufbruch gemacht — und alles, was danach kommt.",
   "statement.eyebrow": "Maison Tanneurs — Marrakesch",
   "statement.body": "Ein Lederhaus, kein Katalog. Jedes Stück wird an einem einzigen Werktisch in Marrakesch zugeschnitten und im Sattlerstich genäht — und der Werktisch ist nur der Anfang. Der Rest geschieht im Aufbruch.",
   "travel.title": "Getragen — im ersten Licht.",
@@ -533,6 +536,7 @@ const es: Dict = {
   "family.viewAll": "Ver todo",
   "featured.title": "Les Premiers Modèles",
   "featured.cta": "Ver la colección",
+  "departure.line": "Pensado para la partida — y todo lo que viene después.",
   "statement.eyebrow": "Maison Tanneurs — Marrakech",
   "statement.body": "Una casa de cuero, no un catálogo. Cada pieza se corta y se cose a punto de guarnicionero en un solo banco en Marrakech — y el banco es solo el comienzo. El resto sucede en la partida.",
   "travel.title": "Llevado — con la primera luz.",
@@ -686,6 +690,7 @@ const it: Dict = {
   "family.viewAll": "Vedi tutto",
   "featured.title": "Les Premiers Modèles",
   "featured.cta": "Vedi la collezione",
+  "departure.line": "Pensato per la partenza — e tutto ciò che segue.",
   "statement.eyebrow": "Maison Tanneurs — Marrakech",
   "statement.body": "Una maison di pelletteria, non un catalogo. Ogni pezzo è tagliato e cucito a punto sellaio su un unico banco a Marrakech — e il banco è solo l'inizio. Il resto accade alla partenza.",
   "travel.title": "Portato — alla prima luce.",
