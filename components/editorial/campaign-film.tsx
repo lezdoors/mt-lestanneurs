@@ -2,8 +2,9 @@
 
 import { useEffect, useRef } from "react"
 import { useT } from "@/lib/i18n-client"
-import { Reveal } from "@/components/editorial/reveal"
 
+// Full-bleed brand film. Autoplays muted/looped only while in view, pauses out
+// of view, and never autoplays under reduced-motion.
 export function CampaignFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const t = useT()
@@ -30,30 +31,23 @@ export function CampaignFilm() {
   }, [])
 
   return (
-    <section className="bg-ground px-6 py-24 md:py-32">
-      <div className="mx-auto max-w-6xl">
-        <Reveal>
-          <div className="mb-10 text-center md:mb-14">
-            <p className="text-micro mb-6 text-ink-muted">{t("film.eyebrow")}</p>
-            <h2 className="font-serif text-4xl text-ink md:text-5xl">
-              Le Départ
-            </h2>
-          </div>
-        </Reveal>
-        <div className="aspect-video w-full overflow-hidden">
-          <video
-            ref={videoRef}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster="/tanneurs/films/maison-reel-v3-poster.jpg"
-            className="h-full w-full object-cover"
-          >
-            <source src="/tanneurs/films/maison-reel-v3.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <p className="mt-8 text-center font-serif text-lg italic text-ink-muted">
+    <section className="relative w-full overflow-hidden bg-dark-close">
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster="/tanneurs/films/maison-reel-v3-poster.jpg"
+        className="h-[90vh] min-h-[520px] w-full object-cover"
+      >
+        <source src="/tanneurs/films/maison-reel-v3.mp4" type="video/mp4" />
+      </video>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
+      <div className="absolute inset-x-0 bottom-0 px-6 pb-14 [text-shadow:0_1px_14px_rgba(0,0,0,0.4)] md:px-14 md:pb-20">
+        <p className="text-micro mb-4 text-white/80">{t("film.eyebrow")}</p>
+        <h2 className="font-serif text-4xl text-white md:text-6xl">Le Départ</h2>
+        <p className="mt-4 max-w-md font-serif text-lg italic leading-relaxed text-white/90">
           {t("film.caption")}
         </p>
       </div>

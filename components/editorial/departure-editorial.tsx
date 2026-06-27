@@ -19,7 +19,7 @@ const FAMILIES = [
 export async function DepartureEditorial() {
   const lo = await getLocale()
   return (
-    <section className="bg-ground px-6 py-20 md:px-10 md:py-28 lg:px-14">
+    <section className="bg-ground px-6 py-24 md:px-10 md:py-36 lg:px-14">
       <div className="mx-auto max-w-[1560px]">
         {/* ROW 1 — image LEFT (7), category list RIGHT (5), vertically centered */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10 lg:gap-16">
@@ -40,6 +40,9 @@ export async function DepartureEditorial() {
                   className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                 />
               </picture>
+              <p className="mt-5 font-sans text-[9px] uppercase tracking-[0.3em] text-ink-muted">
+                N&deg; 01 &mdash; Voyage
+              </p>
             </Link>
           </Reveal>
 
@@ -76,7 +79,7 @@ export async function DepartureEditorial() {
         {/* ROW 2 — image RIGHT (7) dropped below baseline, line + CTA LEFT (5).
             Image stays first in source so mobile reads image → text. */}
         <div className="mt-16 grid grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-10 lg:gap-16">
-          <Reveal className="md:order-2 md:col-span-7 md:mt-24">
+          <Reveal className="md:order-2 md:col-span-7 md:mt-32 lg:mt-48">
             <Link
               href={withLocale("/product/medina-saddlebag-tooled-cognac", lo)}
               className="group block overflow-hidden"
@@ -93,6 +96,9 @@ export async function DepartureEditorial() {
                   className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                 />
               </picture>
+              <p className="mt-5 font-sans text-[9px] uppercase tracking-[0.3em] text-ink-muted">
+                N&deg; 02 &mdash; Voyage
+              </p>
             </Link>
           </Reveal>
 

@@ -1,14 +1,15 @@
 import { SiteHeader } from "@/components/editorial/site-header"
 import { EditorialHero } from "@/components/editorial/editorial-hero"
+import { TrustStrip } from "@/components/editorial/trust-strip"
 import { DepartureEditorial } from "@/components/editorial/departure-editorial"
 import { TrustBand } from "@/components/editorial/trust-band"
+import { Newsletter } from "@/components/editorial/newsletter"
 import { MaisonStatement } from "@/components/editorial/maison-statement"
+import { LookbookCarousel } from "@/components/editorial/lookbook-carousel"
 import { FeaturedObjects } from "@/components/editorial/featured-objects"
-import { DuoEditorial } from "@/components/editorial/duo-editorial"
 import { TravelEditorial } from "@/components/editorial/travel-editorial"
 import { CraftEditorial } from "@/components/editorial/craft-editorial"
 import { CampaignFilm } from "@/components/editorial/campaign-film"
-import { ClosingInvitation } from "@/components/editorial/closing-invitation"
 import { SiteFooter } from "@/components/editorial/site-footer"
 import { fetchAllProducts } from "@/lib/supabase"
 import { adaptProduct } from "@/lib/products"
@@ -38,15 +39,16 @@ export default async function Home() {
       <SiteHeader />
       <main>
         <EditorialHero />
+        <TrustStrip />
         <DepartureEditorial />
         <FeaturedObjects products={featured.slice(1)} />
         <MaisonStatement />
-        <DuoEditorial />
+        <LookbookCarousel />
         <TravelEditorial />
         <CraftEditorial />
         <CampaignFilm />
         <TrustBand />
-        <ClosingInvitation />
+        <Newsletter />
       </main>
       <SiteFooter />
     </>

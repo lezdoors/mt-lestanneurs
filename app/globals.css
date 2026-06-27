@@ -162,6 +162,14 @@
   .img-float {
     mix-blend-mode: multiply;
   }
+  /* Lookbook carousel — snap track with the scrollbar hidden across engines */
+  .lookbook-track {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .lookbook-track::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Hero film respects reduced motion: swap the loop for its poster still */
