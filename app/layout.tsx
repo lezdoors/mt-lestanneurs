@@ -5,6 +5,7 @@ import localFont from "next/font/local"
 import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/lib/cart"
 import { CartDrawer } from "@/components/editorial/cart-drawer"
+import { ConciergeWidget } from "@/components/concierge/concierge-widget"
 import { LocaleProvider } from "@/lib/i18n-client"
 import { CurrencyProvider } from "@/lib/currency-client"
 import { AssetGuard } from "@/components/editorial/asset-guard"
@@ -109,6 +110,7 @@ export default async function RootLayout({
           <CartProvider>
             {children}
             <CartDrawer />
+            <ConciergeWidget />
           </CartProvider>
           </CurrencyProvider>
         </LocaleProvider>
