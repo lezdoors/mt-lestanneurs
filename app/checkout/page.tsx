@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
+import type { StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js"
 import {
   Elements,
   PaymentElement,
@@ -33,6 +34,51 @@ import { lookupPromo, applyPromoMinor } from "@/lib/checkout/promo"
 // path; both idempotent on the PaymentIntent id).
 
 const PENDING_ORDER_COOKIE = "mt_pending_order"
+
+type ExpressCustomer = {
+  email: string
+  firstName: string
+  lastName: string
+  address: string
+  city: string
+  zip: string
+  country: string
+  state: string
+}
+
+// Country selector — major shipping markets, ISO 3166-1 alpha-2 for Stripe
+// billing/shipping. Extend as new markets open.
+const COUNTRIES: { code: string; name: string }[] = [
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" },
+  { code: "ES", name: "Spain" },
+  { code: "IT", name: "Italy" },
+  { code: "NL", name: "Netherlands" },
+  { code: "BE", name: "Belgium" },
+  { code: "IE", name: "Ireland" },
+  { code: "PT", name: "Portugal" },
+  { code: "CH", name: "Switzerland" },
+  { code: "AT", name: "Austria" },
+  { code: "SE", name: "Sweden" },
+  { code: "NO", name: "Norway" },
+  { code: "DK", name: "Denmark" },
+  { code: "FI", name: "Finland" },
+  { code: "LU", name: "Luxembourg" },
+  { code: "CA", name: "Canada" },
+  { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "AE", name: "United Arab Emirates" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "QA", name: "Qatar" },
+  { code: "KW", name: "Kuwait" },
+  { code: "JP", name: "Japan" },
+  { code: "SG", name: "Singapore" },
+  { code: "HK", name: "Hong Kong" },
+  { code: "KR", name: "South Korea" },
+  { code: "MA", name: "Morocco" },
+]
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
@@ -556,7 +602,10 @@ function CheckoutForm({
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  async function confirmFromForm(formEl: HTMLFormElement | null) {
+  async function confirmFromForm(
+    formEl: HTMLFormElement | null,
+    express?: ExpressCustomer | null,
+  ) {
     if (!stripe || !elements) return
     if (submitting) return
     setSubmitting(true)
@@ -576,7 +625,7 @@ function CheckoutForm({
 
       const formData = formEl ? new FormData(formEl) : new FormData()
       const get = (k: string) => String(formData.get(k) || "").trim()
-      const customer = {
+      const customer = express ?? {
         email: get("email"),
         firstName: get("firstName"),
         lastName: get("lastName"),
@@ -631,38 +680,45 @@ function CheckoutForm({
       const siteOrigin =
         typeof window !== "undefined" ? window.location.origin : ""
 
+      // Wallet (Apple/Google Pay) payments already carry billing + shipping on
+      // the selected payment method via `elements` — overriding billing_details
+      // there can conflict, so for express we pass only the return_url and let
+      // the wallet's data flow through. The form path sets billing + shipping
+      // from the fields the shopper typed.
       const { error } = await stripe.confirmPayment({
         elements,
         clientSecret: data.clientSecret,
-        confirmParams: {
-          return_url: `${siteOrigin}/checkout/success`,
-          payment_method_data: {
-            billing_details: {
-              name: fullName || undefined,
-              email: customer.email || undefined,
-              address: {
-                line1: customer.address || undefined,
-                city: customer.city || undefined,
-                state: customer.state || undefined,
-                postal_code: customer.zip || undefined,
-                country: customer.country || undefined,
-              },
-            },
-          },
-          shipping:
-            fullName && customer.address
-              ? {
-                  name: fullName,
+        confirmParams: express
+          ? { return_url: `${siteOrigin}/checkout/success` }
+          : {
+              return_url: `${siteOrigin}/checkout/success`,
+              payment_method_data: {
+                billing_details: {
+                  name: fullName || undefined,
+                  email: customer.email || undefined,
                   address: {
-                    line1: customer.address,
+                    line1: customer.address || undefined,
                     city: customer.city || undefined,
                     state: customer.state || undefined,
                     postal_code: customer.zip || undefined,
                     country: customer.country || undefined,
                   },
-                }
-              : undefined,
-        },
+                },
+              },
+              shipping:
+                fullName && customer.address
+                  ? {
+                      name: fullName,
+                      address: {
+                        line1: customer.address,
+                        city: customer.city || undefined,
+                        state: customer.state || undefined,
+                        postal_code: customer.zip || undefined,
+                        country: customer.country || undefined,
+                      },
+                    }
+                  : undefined,
+            },
       })
 
       // confirmPayment only returns when payment fails (or 3DS modal closes
@@ -684,8 +740,28 @@ function CheckoutForm({
   // — we wire it through the same confirm path so a Pay-with-Apple shopper
   // hits the same metadata, the same PaymentIntent, the same persistence.
   const formRef = useRef<HTMLFormElement>(null)
-  async function handleExpressConfirm() {
-    await confirmFromForm(formRef.current)
+  async function handleExpressConfirm(
+    event: StripeExpressCheckoutElementConfirmEvent,
+  ) {
+    // Pull the contact + address the wallet collected instead of the (empty)
+    // form fields, so wallet orders are fulfillable and the customer gets a
+    // confirmation email.
+    const bd = event.billingDetails
+    const ba = bd?.address
+    const sa = event.shippingAddress?.address ?? ba
+    const name = event.shippingAddress?.name || bd?.name || ""
+    const [firstName, ...rest] = name.split(" ")
+    const express: ExpressCustomer = {
+      email: bd?.email || "",
+      firstName: firstName || "",
+      lastName: rest.join(" "),
+      address: sa?.line1 || ba?.line1 || "",
+      city: sa?.city || ba?.city || "",
+      state: sa?.state || ba?.state || "",
+      zip: sa?.postal_code || ba?.postal_code || "",
+      country: sa?.country || ba?.country || "",
+    }
+    await confirmFromForm(formRef.current, express)
   }
 
   return (
@@ -704,6 +780,20 @@ function CheckoutForm({
           layout: { maxColumns: 2, maxRows: 1 },
           buttonHeight: 48,
         }}
+        onClick={({ resolve }) =>
+          resolve({
+            emailRequired: true,
+            billingAddressRequired: true,
+            shippingAddressRequired: true,
+            shippingRates: [
+              {
+                id: "free",
+                displayName: "Complimentary worldwide",
+                amount: 0,
+              },
+            ],
+          })
+        }
         onConfirm={handleExpressConfirm}
       />
 
@@ -774,6 +864,28 @@ function CheckoutForm({
               required
               autoComplete="postal-code"
             />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="country" className="text-micro text-ink-muted">
+              {t("checkout.country")}
+            </label>
+            <select
+              id="country"
+              name="country"
+              required
+              defaultValue=""
+              autoComplete="country"
+              className="border-b border-[#e5e5e5] bg-transparent pb-2 font-sans text-lg text-ink outline-none transition-colors focus:border-ink"
+            >
+              <option value="" disabled>
+                {t("checkout.countryPlaceholder")}
+              </option>
+              {COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </section>

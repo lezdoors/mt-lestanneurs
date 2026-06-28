@@ -171,6 +171,7 @@ const en: Dict = {
   "checkout.city": "City",
   "checkout.state": "State / Region",
   "checkout.zip": "Postal code",
+  "checkout.countryPlaceholder": "Select country",
   "checkout.country": "Country",
   "checkout.continue": "Continue to payment",
   "checkout.payNow": "Pay now",
