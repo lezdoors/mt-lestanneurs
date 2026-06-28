@@ -11,6 +11,10 @@ import {
   sendAdminNotification,
 } from "@/lib/checkout/email";
 import { sendPurchaseToCAPI } from "@/lib/checkout/meta-capi";
+import {
+  abandonedCheckoutPatchForOrderResult,
+  nextInventoryState,
+} from "@/lib/checkout/order-state.mjs";
 
 // Server-side order confirmation. The success page calls this on load:
 // pulls the PaymentIntent straight from Stripe, verifies status === 'succeeded',
@@ -119,6 +123,23 @@ async function getIntentSettled(intentId: string): Promise<Stripe.PaymentIntent>
     : new Error("Stripe intent lookup failed");
 }
 
+async function markAbandonedCheckoutConverted(
+  supabase: ReturnType<typeof getSupabase>,
+  intentId: string,
+): Promise<void> {
+  const patch = abandonedCheckoutPatchForOrderResult({ persistedOrder: true });
+  if (!patch) return;
+  try {
+    await supabase
+      .from("abandoned_checkouts")
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq("revolut_order_id", intentId)
+      .neq("status", "converted");
+  } catch (e) {
+    console.error("[abandoned] convert flip failed after order persisted:", e);
+  }
+}
+
 export async function confirmAndPersistOrder(
   intentId: string,
 ): Promise<ConfirmedOrder> {
@@ -178,18 +199,6 @@ export async function confirmAndPersistOrder(
 
   const supabase = getSupabase();
 
-  // Mark any abandoned-cart intent row as converted, so the recovery cron
-  // never emails a customer who paid. Best-effort.
-  try {
-    await supabase
-      .from("abandoned_checkouts")
-      .update({ status: "converted", updated_at: new Date().toISOString() })
-      .eq("revolut_order_id", intentId)
-      .neq("status", "converted");
-  } catch (e) {
-    console.error("[abandoned] convert flip failed:", e);
-  }
-
   // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
   // Exactly one concurrent caller (success page load, refresh, webhook)
   // gets a row back and owns the side effects; everyone else reads the
@@ -246,6 +255,7 @@ export async function confirmAndPersistOrder(
         .maybeSingle();
       if (existing?.order_number) {
         result.orderNumber = existing.order_number as string;
+        await markAbandonedCheckoutConverted(supabase, intentId);
         return result;
       }
       await new Promise((r) => setTimeout(r, 800));
@@ -257,14 +267,33 @@ export async function confirmAndPersistOrder(
   const orderNumber = won.order_number as string;
   result.orderNumber = orderNumber;
 
-  // One-of-one stock — only flip rows still purchasable. Zero rows affected
-  // means a concurrent order took the piece; alert for manual refund.
+  await markAbandonedCheckoutConverted(supabase, intentId);
+
+  // Stock updates — decrement multi-quantity SKUs and mark sold only when the
+  // purchase exhausts stock. Zero rows affected means a concurrent order took
+  // the piece or stock changed underneath us; alert for manual review/refund.
   for (const item of items) {
+    const { data: current } = await supabase
+      .from("products")
+      .select("id,status,available_quantity")
+      .eq("id", item.product_id)
+      .maybeSingle();
+
+    const currentQuantity =
+      typeof current?.available_quantity === "number"
+        ? current.available_quantity
+        : item.quantity;
+    const next = nextInventoryState({
+      availableQuantity: currentQuantity,
+      orderedQuantity: item.quantity,
+    });
+
     const { data: flipped } = await supabase
       .from("products")
-      .update({ status: "sold", available_quantity: 0 })
+      .update(next)
       .eq("id", item.product_id)
       .eq("status", "available")
+      .eq("available_quantity", currentQuantity)
       .select("id");
     if (!flipped || flipped.length === 0) {
       console.error(
