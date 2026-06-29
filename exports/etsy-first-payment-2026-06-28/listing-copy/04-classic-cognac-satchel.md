@@ -15,6 +15,9 @@ Classic briefcase satchel in rich cognac full-grain leather. Dual brass buckle c
 Why it belongs on Etsy: handmade construction, full-grain leather, direct-from-atelier pricing, and a repair promise instead of anonymous resale stock.
 
 Details
+- Size: 40cm × 30cm × 12cm
+- Atelier reference: MT-BAG-007
+- Materials: Full-grain leather — Dual brass buckle closures — Top carry handle + crossbody strap — Cream contrast saddle-stitch — Hand-stitched in Marrakech
 - Full-grain leather, hand-finished in Marrakech
 - Free worldwide shipping from the atelier
 - 30-day returns, unused in original packaging
@@ -35,3 +38,19 @@ leather bag, handmade bag, full grain leather, marrakech atelier, moroccan leath
 - `04-classic-cognac-satchel/07-classic-cognac-satchel.webp` — 1365×1365
 - `04-classic-cognac-satchel/08-classic-cognac-satchel.webp` — 1365×1365
 - `04-classic-cognac-satchel/09-classic-cognac-satchel.webp` — 1365×1365
+## Etsy form fields
+- Etsy Category: Bags & Purses > Handbags > Satchels
+- Who Made It: I did / A member of my shop
+- What Is It: A finished product
+- When Made: Made to order or 2020s
+- Occasion: Everyday / Travel / Work
+- Recipient: Unisex adults
+- Primary Color: Brown
+- Materials: Full-grain leather — Dual brass buckle closures — Top carry handle + crossbody strap — Cream contrast saddle-stitch — Hand-stitched in Marrakech
+- Dimensions Cm: 40cm × 30cm × 12cm
+- Reference: MT-BAG-007
+- Renewal: Automatic if Etsy allows; manual is fine for first 8
+- Quantity: 1 until stock is confirmed
+- Personalization: No
+- Shipping Profile: Free worldwide shipping; 3–5 business days if in stock
+

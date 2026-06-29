@@ -15,6 +15,9 @@ Cognac full-grain saddle bag with hand-tooled diamond and rosette flap. Brass tu
 Why it belongs on Etsy: handmade construction, full-grain leather, direct-from-atelier pricing, and a repair promise instead of anonymous resale stock.
 
 Details
+- Size: 26cm × 22cm × 8cm
+- Atelier reference: MT-BAG-020
+- Materials: Full-grain leather — Hand-tooled leather flap — Solid brass hardware — Hand-finished in Marrakech
 - Full-grain leather, hand-finished in Marrakech
 - Free worldwide shipping from the atelier
 - 30-day returns, unused in original packaging
@@ -35,3 +38,19 @@ leather bag, handmade bag, full grain leather, marrakech atelier, moroccan leath
 - `03-medina-saddlebag-tooled-cognac/07-medina-saddlebag-tooled-cognac.webp` — 1600×1989
 - `03-medina-saddlebag-tooled-cognac/08-medina-saddlebag-tooled-cognac.webp` — 1600×1990
 - `03-medina-saddlebag-tooled-cognac/09-medina-saddlebag-tooled-cognac.webp` — 1600×1986
+## Etsy form fields
+- Etsy Category: Bags & Purses > Handbags > Crossbody Bags
+- Who Made It: I did / A member of my shop
+- What Is It: A finished product
+- When Made: Made to order or 2020s
+- Occasion: Everyday / Travel / Work
+- Recipient: Unisex adults
+- Primary Color: Brown
+- Materials: Full-grain leather — Hand-tooled leather flap — Solid brass hardware — Hand-finished in Marrakech
+- Dimensions Cm: 26cm × 22cm × 8cm
+- Reference: MT-BAG-020
+- Renewal: Automatic if Etsy allows; manual is fine for first 8
+- Quantity: 1 until stock is confirmed
+- Personalization: No
+- Shipping Profile: Free worldwide shipping; 3–5 business days if in stock
+

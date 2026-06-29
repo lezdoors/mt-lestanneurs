@@ -15,6 +15,9 @@ Modern rolltop rucksack in deep saddle cognac. Brass center buckle closes a full
 Why it belongs on Etsy: handmade construction, full-grain leather, direct-from-atelier pricing, and a repair promise instead of anonymous resale stock.
 
 Details
+- Size: 44cm × 30cm × 16cm
+- Atelier reference: MT-BAG-011
+- Materials: Full-grain leather — Solid antique brass center buckle — Brass YKK zip front panel — Adjustable dual shoulder straps — Hand saddle-stitched in Marrakech
 - Full-grain leather, hand-finished in Marrakech
 - Free worldwide shipping from the atelier
 - 30-day returns, unused in original packaging
@@ -35,3 +38,19 @@ leather bag, handmade bag, full grain leather, marrakech atelier, moroccan leath
 - `06-explorer-rolltop-cognac/07-explorer-rolltop-cognac.webp` — 1600×1606
 - `06-explorer-rolltop-cognac/08-explorer-rolltop-cognac.webp` — 3822×3838
 - `06-explorer-rolltop-cognac/09-explorer-rolltop-cognac.webp` — 1600×1596
+## Etsy form fields
+- Etsy Category: Bags & Purses > Backpacks
+- Who Made It: I did / A member of my shop
+- What Is It: A finished product
+- When Made: Made to order or 2020s
+- Occasion: Everyday / Travel / Work
+- Recipient: Unisex adults
+- Primary Color: Brown
+- Materials: Full-grain leather — Solid antique brass center buckle — Brass YKK zip front panel — Adjustable dual shoulder straps — Hand saddle-stitched in Marrakech
+- Dimensions Cm: 44cm × 30cm × 16cm
+- Reference: MT-BAG-011
+- Renewal: Automatic if Etsy allows; manual is fine for first 8
+- Quantity: 1 until stock is confirmed
+- Personalization: No
+- Shipping Profile: Free worldwide shipping; 3–5 business days if in stock
+

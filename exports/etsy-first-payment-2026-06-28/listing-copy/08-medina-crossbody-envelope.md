@@ -15,6 +15,9 @@ Compact envelope crossbody in deep walnut leather, finished with a single brass 
 Why it belongs on Etsy: handmade construction, full-grain leather, direct-from-atelier pricing, and a repair promise instead of anonymous resale stock.
 
 Details
+- Size: 24cm × 18cm × 4cm
+- Atelier reference: MT-BAG-015
+- Materials: Full-grain leather — Solid antique brass turn-lock — Adjustable shoulder strap — Hand saddle-stitched in Marrakech
 - Full-grain leather, hand-finished in Marrakech
 - Free worldwide shipping from the atelier
 - 30-day returns, unused in original packaging
@@ -35,3 +38,19 @@ leather bag, handmade bag, full grain leather, marrakech atelier, moroccan leath
 - `08-medina-crossbody-envelope/07-medina-crossbody-envelope.webp` — 3808×3839
 - `08-medina-crossbody-envelope/08-medina-crossbody-envelope.webp` — 1600×1599
 - `08-medina-crossbody-envelope/09-medina-crossbody-envelope.webp` — 1600×1602
+## Etsy form fields
+- Etsy Category: Bags & Purses > Handbags > Crossbody Bags
+- Who Made It: I did / A member of my shop
+- What Is It: A finished product
+- When Made: Made to order or 2020s
+- Occasion: Everyday / Travel / Work
+- Recipient: Unisex adults
+- Primary Color: Dark brown
+- Materials: Full-grain leather — Solid antique brass turn-lock — Adjustable shoulder strap — Hand saddle-stitched in Marrakech
+- Dimensions Cm: 24cm × 18cm × 4cm
+- Reference: MT-BAG-015
+- Renewal: Automatic if Etsy allows; manual is fine for first 8
+- Quantity: 1 until stock is confirmed
+- Personalization: No
+- Shipping Profile: Free worldwide shipping; 3–5 business days if in stock
+
