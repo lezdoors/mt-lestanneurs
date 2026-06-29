@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import { confirmAndPersistOrder } from "@/lib/checkout/confirm-order"
 import { formatPrice as formatChargePrice } from "@/lib/checkout/format"
 import type { Currency } from "@/lib/checkout/currency"
@@ -57,9 +57,19 @@ export default async function CheckoutSuccessPage({
     )
   }
 
+  // Capture the buyer's real IP + UA so the server-side CAPI Purchase carries
+  // them — lifts Event Match Quality (these are never available on the webhook
+  // path, which runs from Stripe's servers).
+  const hdrs = await headers()
+  const fwd = hdrs.get("x-forwarded-for")?.split(",")[0]?.trim()
+  const client = {
+    ip: fwd || hdrs.get("x-real-ip") || undefined,
+    userAgent: hdrs.get("user-agent") || undefined,
+  }
+
   let confirmed
   try {
-    confirmed = await confirmAndPersistOrder(sessionId)
+    confirmed = await confirmAndPersistOrder(sessionId, client)
   } catch {
     // The lookup failed (transient Stripe error, or an id we can't resolve).
     // The payment has very likely succeeded — never tell a paying customer

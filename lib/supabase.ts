@@ -41,7 +41,9 @@ type ImageManifest = Record<string, { hero: string; gallery: string[] }>
 const MANIFEST = imageManifest as ImageManifest
 
 
-const PUBLISHED_STATUSES = new Set(["available", "reserved"])
+// Only `available` SKUs are buyable — checkout rejects anything else, so the
+// storefront must not display a live Add-to-Bag for `reserved`/sold holds.
+const PUBLISHED_STATUSES = new Set(["available"])
 
 const FULL_COLS =
   "id,title,slug,description,price,images,category,status,featured,available_quantity,created_at,updated_at,dimensions,materials"
@@ -54,7 +56,14 @@ export function hasDriveImages(slug: string): boolean {
 }
 
 function visible(p: SupabaseProduct): boolean {
-  return PUBLISHED_STATUSES.has(p.status) && !HIDDEN_SKUS.has(p.slug) && hasDriveImages(p.slug)
+  // Mirror checkout eligibility exactly: status available + in stock (null qty
+  // is treated as in-stock, matching the session-route fallback).
+  return (
+    PUBLISHED_STATUSES.has(p.status) &&
+    (p.available_quantity ?? 1) > 0 &&
+    !HIDDEN_SKUS.has(p.slug) &&
+    hasDriveImages(p.slug)
+  )
 }
 
 export async function fetchAllProducts(): Promise<SupabaseProduct[]> {
@@ -63,7 +72,7 @@ export async function fetchAllProducts(): Promise<SupabaseProduct[]> {
   const { data } = await sb
     .from("products")
     .select(FULL_COLS)
-    .in("status", ["available", "reserved"])
+    .eq("status", "available")
     .order("featured", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(100)

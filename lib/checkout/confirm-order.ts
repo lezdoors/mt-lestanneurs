@@ -142,6 +142,7 @@ async function markAbandonedCheckoutConverted(
 
 export async function confirmAndPersistOrder(
   intentId: string,
+  client?: { ip?: string; userAgent?: string; eventSourceUrl?: string },
 ): Promise<ConfirmedOrder> {
   const intent = await getIntentSettled(intentId);
   const state = normalizeIntentStatus(intent);
@@ -362,7 +363,11 @@ export async function confirmAndPersistOrder(
       })),
       fbp: metaAttribution.fbp,
       fbc: metaAttribution.fbc,
-      eventSourceUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com"}/checkout/success`,
+      clientIp: client?.ip,
+      clientUserAgent: client?.userAgent,
+      eventSourceUrl:
+        client?.eventSourceUrl ||
+        `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.maisontanneurs.com"}/checkout/success`,
     });
   } catch (capiErr) {
     console.error("Failed to send CAPI Purchase event:", capiErr);

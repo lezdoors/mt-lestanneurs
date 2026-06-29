@@ -394,7 +394,6 @@ export default function CheckoutPage() {
                   amount: chargeAmount,
                   currency: displayCurrency.toLowerCase(),
                   appearance: ELEMENTS_APPEARANCE,
-                  paymentMethodCreation: "manual",
                 }}
               >
                 <CheckoutForm

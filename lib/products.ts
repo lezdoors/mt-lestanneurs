@@ -23,6 +23,7 @@ export interface Product {
   details: string[]
   images: string[]
   madeIn: string
+  availableQuantity: number
 }
 
 const LEATHER_CARE = [
@@ -67,6 +68,8 @@ export function adaptProduct(p: SupabaseProduct): Product {
     details,
     images: gallery,
     madeIn: "Marrakech",
+    availableQuantity:
+      typeof p.available_quantity === "number" ? p.available_quantity : 1,
   }
 }
 

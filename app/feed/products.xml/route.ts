@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { HIDDEN_SKUS, HIDDEN_SKUS_ARRAY } from "@/lib/hidden-skus";
 import { isCurated } from "@/lib/products";
+import { hasDriveImages } from "@/lib/supabase";
 import { getRates, convertUSDCents } from "@/lib/checkout/fx";
 import type { RateMap } from "@/lib/checkout/fx";
 
@@ -79,7 +80,8 @@ ${renderFeed([], rates)}`;
       (p) =>
         !HIDDEN_SKUS.has(p.slug) &&
         isCurated(p.slug) &&
-        (p.available_quantity ?? 0) > 0,
+        hasDriveImages(p.slug) &&
+        (p.available_quantity ?? 1) > 0,
     );
   }
 
@@ -106,7 +108,7 @@ function renderFeed(products: ProductRow[], rates: RateMap): string {
       const link = `${SITE_URL}/product/${p.slug}`;
       // USD-everywhere: feed advertises the same currency we charge.
       const priceStr = (convertUSDCents(p.price, "USD", rates) / 100).toFixed(2);
-      const availability = (p.available_quantity ?? 0) > 0 ? "in stock" : "out of stock";
+      const availability = (p.available_quantity ?? 1) > 0 ? "in stock" : "out of stock";
       const description = (p.description || p.title).slice(0, 4990);
       const additionalImages = imgs
         .slice(1, 11)

@@ -15,13 +15,14 @@ export function formatPrice(cents: number, currency: Currency = "USD"): string {
   }).format(cents / 100);
 }
 
-// Maison Tanneurs order number — "MT-NNNNNNNN". Seconds since the house
-// epoch + one random digit: unique per second, no coordination needed.
-// (The orders table also has UNIQUE(revolut_order_id) — legacy column name
-// now holds the Stripe Checkout Session id — which is the real
-// idempotency guard — this only needs to be human-friendly and distinct.)
+// Maison Tanneurs order number — "MT-NNNNNNNN-RRR". Seconds since the house
+// epoch + three random digits: collision needs the same second AND the same
+// 1-in-1000 draw. (The orders table also has UNIQUE(revolut_order_id) —
+// legacy column name now holds the Stripe PaymentIntent id — which is the
+// real idempotency guard — this only needs to be human-friendly and distinct.)
 const HOUSE_EPOCH = Date.UTC(2026, 0, 1) / 1000;
 export function generateOrderNumber(): string {
   const seconds = Math.floor(Date.now() / 1000 - HOUSE_EPOCH);
-  return `MT-${seconds}${Math.floor(Math.random() * 10)}`;
+  const rand = String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+  return `MT-${seconds}${rand}`;
 }

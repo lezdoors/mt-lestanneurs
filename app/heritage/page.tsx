@@ -54,9 +54,9 @@ export default function HeritagePage() {
           <div className="relative min-h-[420px] md:min-h-[700px]">
             <img
               loading="lazy"
-              src="/tanneurs/editorial/heritage-stamp-macro.webp"
-              alt="Raking morning light across full-grain cognac leather, the maker's stamp pressed blind into the hide"
-              className="absolute inset-0 h-full w-full object-cover"
+              src="/tanneurs/editorial/heritage-fullgrain-emboss.webp"
+              alt="Full-grain cognac leather with the maker's words pressed blind into the hide: Full-grain leather improves with age — Maison Tanneurs"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </div>
           <div className="flex flex-col justify-center px-6 py-24 md:px-20 md:py-32 lg:px-28">

@@ -40,7 +40,7 @@ export function StickyAddToCart({ product }: { product: Product }) {
       <div ref={sentinelRef} aria-hidden className="h-px w-full" />
 
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-ground transition-transform duration-300 md:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-[60] border-t border-hairline bg-ground transition-transform duration-300 md:hidden ${
           show ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -61,6 +61,7 @@ export function StickyAddToCart({ product }: { product: Product }) {
                 name: product.name,
                 price: product.price,
                 image: product.image,
+                maxQuantity: product.availableQuantity,
               })
               trackAddToCart(product, rate, currency)
             }}

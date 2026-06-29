@@ -20,6 +20,7 @@ export function AddToCart({ product }: { product: Product }) {
           name: product.name,
           price: product.price,
           image: product.image,
+          maxQuantity: product.availableQuantity,
         })
         trackAddToCart(product, rate, currency)
       }}
