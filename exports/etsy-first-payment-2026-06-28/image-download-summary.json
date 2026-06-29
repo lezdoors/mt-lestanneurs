@@ -1,0 +1,557 @@
+[
+  {
+    "priority": "1",
+    "slug": "medina-crossbody-cognac",
+    "title": "Medina Crossbody \u00b7 Cognac",
+    "price": "195.00",
+    "image_count": 10,
+    "files": [
+      {
+        "file": "01-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-white.webp",
+        "bytes": 257260,
+        "width": 2400,
+        "height": 2400
+      },
+      {
+        "file": "02-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-02.webp",
+        "bytes": 56582,
+        "width": 1346,
+        "height": 1346
+      },
+      {
+        "file": "03-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-03.webp",
+        "bytes": 79284,
+        "width": 1346,
+        "height": 1347
+      },
+      {
+        "file": "04-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-04.webp",
+        "bytes": 35304,
+        "width": 1346,
+        "height": 1346
+      },
+      {
+        "file": "05-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-05.webp",
+        "bytes": 64848,
+        "width": 1346,
+        "height": 1347
+      },
+      {
+        "file": "06-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-06.webp",
+        "bytes": 184258,
+        "width": 1352,
+        "height": 1348
+      },
+      {
+        "file": "07-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-07.webp",
+        "bytes": 32894,
+        "width": 1346,
+        "height": 1346
+      },
+      {
+        "file": "08-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-08.webp",
+        "bytes": 86756,
+        "width": 1347,
+        "height": 1348
+      },
+      {
+        "file": "09-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-09.webp",
+        "bytes": 92996,
+        "width": 1346,
+        "height": 1347
+      },
+      {
+        "file": "10-medina-crossbody-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-cognac-pdp-10.webp",
+        "bytes": 41182,
+        "width": 1346,
+        "height": 1346
+      }
+    ]
+  },
+  {
+    "priority": "2",
+    "slug": "medina-crossbody-tooled-walnut",
+    "title": "Medina Crossbody \u00b7 Tooled Walnut",
+    "price": "245.00",
+    "image_count": 5,
+    "files": [
+      {
+        "file": "01-medina-crossbody-tooled-walnut.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-tooled-walnut-pdp-white.webp",
+        "bytes": 934774,
+        "width": 3840,
+        "height": 3840
+      },
+      {
+        "file": "02-medina-crossbody-tooled-walnut.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-tooled-walnut-scale.webp",
+        "bytes": 934774,
+        "width": 3840,
+        "height": 3840
+      },
+      {
+        "file": "03-medina-crossbody-tooled-walnut.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-tooled-walnut-macro-01.webp",
+        "bytes": 231346,
+        "width": 3812,
+        "height": 3794
+      },
+      {
+        "file": "04-medina-crossbody-tooled-walnut.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-tooled-walnut-macro-02.webp",
+        "bytes": 238820,
+        "width": 3795,
+        "height": 3797
+      },
+      {
+        "file": "05-medina-crossbody-tooled-walnut.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-tooled-walnut-macro-03.webp",
+        "bytes": 186196,
+        "width": 3813,
+        "height": 3812
+      }
+    ]
+  },
+  {
+    "priority": "3",
+    "slug": "medina-saddlebag-tooled-cognac",
+    "title": "Medina Saddlebag \u00b7 Tooled Cognac",
+    "price": "265.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-white.webp",
+        "bytes": 93170,
+        "width": 1600,
+        "height": 1985
+      },
+      {
+        "file": "02-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-04.webp",
+        "bytes": 84242,
+        "width": 1600,
+        "height": 1986
+      },
+      {
+        "file": "03-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-05.webp",
+        "bytes": 128888,
+        "width": 1600,
+        "height": 1986
+      },
+      {
+        "file": "04-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-06.webp",
+        "bytes": 316094,
+        "width": 1600,
+        "height": 1988
+      },
+      {
+        "file": "05-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-07.webp",
+        "bytes": 94750,
+        "width": 1600,
+        "height": 1995
+      },
+      {
+        "file": "06-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-08.webp",
+        "bytes": 148338,
+        "width": 1600,
+        "height": 1988
+      },
+      {
+        "file": "07-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-01.webp",
+        "bytes": 270400,
+        "width": 1600,
+        "height": 1989
+      },
+      {
+        "file": "08-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-02.webp",
+        "bytes": 99826,
+        "width": 1600,
+        "height": 1990
+      },
+      {
+        "file": "09-medina-saddlebag-tooled-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-saddlebag-tooled-cognac-pdp-03.webp",
+        "bytes": 183736,
+        "width": 1600,
+        "height": 1986
+      }
+    ]
+  },
+  {
+    "priority": "4",
+    "slug": "classic-cognac-satchel",
+    "title": "Classic Cognac Satchel",
+    "price": "285.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-white.webp",
+        "bytes": 58806,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "02-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-02.webp",
+        "bytes": 54600,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "03-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-03.webp",
+        "bytes": 52062,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "04-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-04.webp",
+        "bytes": 83298,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "05-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-05.webp",
+        "bytes": 63280,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "06-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-06.webp",
+        "bytes": 65802,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "07-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-07.webp",
+        "bytes": 123588,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "08-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-08.webp",
+        "bytes": 229258,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "09-classic-cognac-satchel.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/classic-cognac-satchel-pdp-09.webp",
+        "bytes": 218648,
+        "width": 1365,
+        "height": 1365
+      }
+    ]
+  },
+  {
+    "priority": "5",
+    "slug": "marrakech-tote-cognac",
+    "title": "Marrakech Tote \u00b7 Cognac",
+    "price": "295.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-white.webp",
+        "bytes": 68596,
+        "width": 1600,
+        "height": 1600
+      },
+      {
+        "file": "02-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-scale.webp",
+        "bytes": 250702,
+        "width": 3821,
+        "height": 3810
+      },
+      {
+        "file": "03-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-04.webp",
+        "bytes": 85066,
+        "width": 1600,
+        "height": 1595
+      },
+      {
+        "file": "04-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-05.webp",
+        "bytes": 53324,
+        "width": 1600,
+        "height": 1603
+      },
+      {
+        "file": "05-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-06.webp",
+        "bytes": 50048,
+        "width": 1600,
+        "height": 1603
+      },
+      {
+        "file": "06-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-07.webp",
+        "bytes": 80400,
+        "width": 1600,
+        "height": 1605
+      },
+      {
+        "file": "07-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-08.webp",
+        "bytes": 83288,
+        "width": 1600,
+        "height": 1600
+      },
+      {
+        "file": "08-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-01.webp",
+        "bytes": 78800,
+        "width": 1600,
+        "height": 1600
+      },
+      {
+        "file": "09-marrakech-tote-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/marrakech-tote-cognac-pdp-02.webp",
+        "bytes": 66388,
+        "width": 1600,
+        "height": 1597
+      }
+    ]
+  },
+  {
+    "priority": "6",
+    "slug": "explorer-rolltop-cognac",
+    "title": "Explorer Rolltop \u00b7 Cognac",
+    "price": "285.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-white.webp",
+        "bytes": 579422,
+        "width": 3840,
+        "height": 3840
+      },
+      {
+        "file": "02-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-scale.webp",
+        "bytes": 221916,
+        "width": 3771,
+        "height": 3840
+      },
+      {
+        "file": "03-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-04.webp",
+        "bytes": 72136,
+        "width": 1600,
+        "height": 1608
+      },
+      {
+        "file": "04-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-05.webp",
+        "bytes": 152952,
+        "width": 1600,
+        "height": 1597
+      },
+      {
+        "file": "05-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-06.webp",
+        "bytes": 128446,
+        "width": 1600,
+        "height": 1598
+      },
+      {
+        "file": "06-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-07.webp",
+        "bytes": 103948,
+        "width": 1600,
+        "height": 1599
+      },
+      {
+        "file": "07-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-08.webp",
+        "bytes": 103000,
+        "width": 1600,
+        "height": 1606
+      },
+      {
+        "file": "08-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-09.webp",
+        "bytes": 289358,
+        "width": 3822,
+        "height": 3838
+      },
+      {
+        "file": "09-explorer-rolltop-cognac.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/explorer-rolltop-cognac-pdp-01.webp",
+        "bytes": 74560,
+        "width": 1600,
+        "height": 1596
+      }
+    ]
+  },
+  {
+    "priority": "7",
+    "slug": "atlas-kilim-duffle",
+    "title": "Atlas Kilim Duffle",
+    "price": "445.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-white.webp",
+        "bytes": 173498,
+        "width": 1365,
+        "height": 1365
+      },
+      {
+        "file": "02-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-02.webp",
+        "bytes": 117040,
+        "width": 1345,
+        "height": 1344
+      },
+      {
+        "file": "03-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-03.webp",
+        "bytes": 123172,
+        "width": 1355,
+        "height": 1344
+      },
+      {
+        "file": "04-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-04.webp",
+        "bytes": 82340,
+        "width": 1354,
+        "height": 1354
+      },
+      {
+        "file": "05-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-05.webp",
+        "bytes": 123172,
+        "width": 1355,
+        "height": 1344
+      },
+      {
+        "file": "06-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-06.webp",
+        "bytes": 129846,
+        "width": 1354,
+        "height": 1344
+      },
+      {
+        "file": "07-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-07.webp",
+        "bytes": 95690,
+        "width": 1355,
+        "height": 1354
+      },
+      {
+        "file": "08-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-08.webp",
+        "bytes": 250556,
+        "width": 1347,
+        "height": 1354
+      },
+      {
+        "file": "09-atlas-kilim-duffle.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/atlas-kilim-duffle-pdp-09.webp",
+        "bytes": 166464,
+        "width": 1365,
+        "height": 1356
+      }
+    ]
+  },
+  {
+    "priority": "8",
+    "slug": "medina-crossbody-envelope",
+    "title": "Medina Envelope Crossbody",
+    "price": "185.00",
+    "image_count": 9,
+    "files": [
+      {
+        "file": "01-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-white.webp",
+        "bytes": 89144,
+        "width": 1600,
+        "height": 1599
+      },
+      {
+        "file": "02-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-04.webp",
+        "bytes": 65370,
+        "width": 1600,
+        "height": 1588
+      },
+      {
+        "file": "03-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-05.webp",
+        "bytes": 46086,
+        "width": 1600,
+        "height": 1614
+      },
+      {
+        "file": "04-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-06.webp",
+        "bytes": 64700,
+        "width": 1600,
+        "height": 1600
+      },
+      {
+        "file": "05-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-07.webp",
+        "bytes": 213852,
+        "width": 1600,
+        "height": 1586
+      },
+      {
+        "file": "06-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-08.webp",
+        "bytes": 136658,
+        "width": 1600,
+        "height": 1586
+      },
+      {
+        "file": "07-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-09.webp",
+        "bytes": 144284,
+        "width": 3808,
+        "height": 3839
+      },
+      {
+        "file": "08-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-01.webp",
+        "bytes": 78166,
+        "width": 1600,
+        "height": 1599
+      },
+      {
+        "file": "09-medina-crossbody-envelope.webp",
+        "url": "https://xbtabpurfavngwmwtawc.supabase.co/storage/v1/object/public/products/drop-02/medina-crossbody-envelope-pdp-02.webp",
+        "bytes": 75248,
+        "width": 1600,
+        "height": 1602
+      }
+    ]
+  }
+]
