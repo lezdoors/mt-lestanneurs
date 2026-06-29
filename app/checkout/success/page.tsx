@@ -39,7 +39,7 @@ export default async function CheckoutSuccessPage({
     param("payment_intent") ||
     param("session_id") ||
     cookieStore.get("mt_pending_order")?.value ||
-    param("revolut_order_id") ||
+    param("stripe_payment_intent_id") ||
     param("order_id") ||
     null
 

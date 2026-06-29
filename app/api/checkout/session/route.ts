@@ -22,7 +22,7 @@ import {
 // calls confirmAndPersistOrder(pi_*). /checkout/success reads the same
 // pi_* from the return_url and calls confirmAndPersistOrder too — both
 // paths are idempotent on the PaymentIntent id, stored in the legacy
-// revolut_order_id column (no schema migration needed).
+// stripe_payment_intent_id column (no schema migration needed).
 
 export const dynamic = "force-dynamic";
 
@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
     // Abandoned-cart intent row, best-effort. The webhook flips this to
     // 'converted' on payment_intent.succeeded; an hourly cron emails the
     // ones still 'pending' a few hours later. Column kept as
-    // `revolut_order_id`; now stores the Stripe PaymentIntent id (pi_*).
+    // `stripe_payment_intent_id`; now stores the Stripe PaymentIntent id (pi_*).
     if (custEmail) {
       try {
         const supabase = getSupabase();
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
           amount_minor: chargeMinor,
           currency,
           promo_code: promoResult.promo ? normalizePromo(body.promoCode) : null,
-          revolut_order_id: intent.id,
+          stripe_payment_intent_id: intent.id,
           status: "pending",
         });
       } catch (e) {

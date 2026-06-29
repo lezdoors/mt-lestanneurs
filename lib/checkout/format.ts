@@ -17,7 +17,7 @@ export function formatPrice(cents: number, currency: Currency = "USD"): string {
 
 // Maison Tanneurs order number — "MT-NNNNNNNN-RRR". Seconds since the house
 // epoch + three random digits: collision needs the same second AND the same
-// 1-in-1000 draw. (The orders table also has UNIQUE(revolut_order_id) —
+// 1-in-1000 draw. (The orders table also has UNIQUE(stripe_payment_intent_id) —
 // legacy column name now holds the Stripe PaymentIntent id — which is the
 // real idempotency guard — this only needs to be human-friendly and distinct.)
 const HOUSE_EPOCH = Date.UTC(2026, 0, 1) / 1000;

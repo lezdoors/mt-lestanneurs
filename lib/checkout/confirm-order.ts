@@ -18,8 +18,8 @@ import {
 
 // Server-side order confirmation. The success page calls this on load:
 // pulls the PaymentIntent straight from Stripe, verifies status === 'succeeded',
-// persists once (idempotent on the PaymentIntent id, stored in the legacy
-// revolut_order_id column), and fires emails + Meta CAPI ONLY on first
+// persists once (idempotent on the PaymentIntent id, stored in the
+// stripe_payment_intent_id column), and fires emails + Meta CAPI ONLY on first
 // persistence so webhook retries / page refreshes can never double-send.
 // The Stripe webhook handler reuses this same function — whichever path
 // runs first wins, the other becomes a no-op.
@@ -133,7 +133,7 @@ async function markAbandonedCheckoutConverted(
     await supabase
       .from("abandoned_checkouts")
       .update({ ...patch, updated_at: new Date().toISOString() })
-      .eq("revolut_order_id", intentId)
+      .eq("stripe_payment_intent_id", intentId)
       .neq("status", "converted");
   } catch (e) {
     console.error("[abandoned] convert flip failed after order persisted:", e);
@@ -200,7 +200,7 @@ export async function confirmAndPersistOrder(
 
   const supabase = getSupabase();
 
-  // Race-proof persistence: ON CONFLICT (revolut_order_id) DO NOTHING.
+  // Race-proof persistence: ON CONFLICT (stripe_payment_intent_id) DO NOTHING.
   // Exactly one concurrent caller (success page load, refresh, webhook)
   // gets a row back and owns the side effects; everyone else reads the
   // canonical row and returns silently.
@@ -210,7 +210,7 @@ export async function confirmAndPersistOrder(
       {
         order_number: generateOrderNumber(),
         sales_channel: "direct",
-        revolut_order_id: intentId,
+        stripe_payment_intent_id: intentId,
         customer_email: customerEmail,
         customer_name: customerName,
         shipping_address: shippingAddress,
@@ -221,7 +221,7 @@ export async function confirmAndPersistOrder(
         currency,
         status: "paid",
       },
-      { onConflict: "revolut_order_id", ignoreDuplicates: true },
+      { onConflict: "stripe_payment_intent_id", ignoreDuplicates: true },
     )
     .select("order_number")
     .maybeSingle();
@@ -252,7 +252,7 @@ export async function confirmAndPersistOrder(
       const { data: existing } = await supabase
         .from("orders")
         .select("order_number")
-        .eq("revolut_order_id", intentId)
+        .eq("stripe_payment_intent_id", intentId)
         .maybeSingle();
       if (existing?.order_number) {
         result.orderNumber = existing.order_number as string;
