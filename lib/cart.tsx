@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react"
@@ -24,6 +25,11 @@ interface CartContextValue {
   count: number
   subtotal: number
   isOpen: boolean
+  // False until cart prices have been re-validated against the server on load.
+  // Checkout must not show a chargeable amount before this is true (a stale
+  // localStorage cart could otherwise display a price that differs from what
+  // the server will actually charge).
+  pricesReady: boolean
   addItem: (item: Omit<CartItem, "quantity">) => void
   removeItem: (slug: string) => void
   setQuantity: (slug: string, quantity: number) => void
@@ -39,6 +45,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [hydrated, setHydrated] = useState(false)
+  const [pricesReady, setPricesReady] = useState(false)
+  const repricedRef = useRef(false)
 
   useEffect(() => {
     try {
@@ -47,6 +55,85 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {}
     setHydrated(true)
   }, [])
+
+  // Re-price the cart against the server the moment it hydrates. The stored
+  // price is treated as untrusted (it can be stale from an older build, in the
+  // wrong unit, or reflect a price change) — we overwrite every line with the
+  // authoritative cents price, clamp quantity to current stock, and drop items
+  // that are no longer purchasable. This guarantees the displayed total and the
+  // Stripe Elements / wallet amount always equal what the server will charge.
+  useEffect(() => {
+    if (!hydrated || repricedRef.current) return
+    repricedRef.current = true
+    const slugs = items.map((i) => i.slug)
+    if (slugs.length === 0) {
+      setPricesReady(true)
+      return
+    }
+    let cancelled = false
+    const controller = new AbortController()
+    // Never let a hung request leave checkout stuck on the skeleton — bail to
+    // fail-open (keep stored prices, set pricesReady) after 8s.
+    const timer = setTimeout(() => controller.abort(), 8000)
+    ;(async () => {
+      try {
+        const res = await fetch("/api/cart/price", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slugs }),
+          signal: controller.signal,
+        })
+        if (res.ok) {
+          const data = (await res.json()) as {
+            items: {
+              slug: string
+              price: number
+              available_quantity: number | null
+              available: boolean
+            }[]
+          }
+          const bySlug = new Map(data.items.map((p) => [p.slug, p]))
+          if (!cancelled) {
+            setItems((prev) =>
+              prev
+                .map((i) => {
+                  const p = bySlug.get(i.slug)
+                  if (!p || !p.available) return null
+                  const cap =
+                    typeof p.available_quantity === "number"
+                      ? p.available_quantity
+                      : undefined
+                  return {
+                    ...i,
+                    price: p.price,
+                    maxQuantity: cap,
+                    quantity:
+                      typeof cap === "number"
+                        ? Math.min(i.quantity, cap)
+                        : i.quantity,
+                  }
+                })
+                .filter((i): i is CartItem => i !== null),
+            )
+          }
+        }
+      } catch {
+        /* keep the existing cart if the network call fails or times out */
+      } finally {
+        clearTimeout(timer)
+        if (!cancelled) setPricesReady(true)
+      }
+    })()
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+      controller.abort()
+      // Allow a fresh reprice on remount (e.g. React StrictMode double-invoke
+      // in dev) so pricesReady can't deadlock on the skeleton.
+      repricedRef.current = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated])
 
   useEffect(() => {
     if (!hydrated) return
@@ -110,13 +197,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       count,
       subtotal,
       isOpen,
+      pricesReady,
       addItem,
       removeItem,
       setQuantity,
       openCart,
       closeCart,
     }
-  }, [items, isOpen, addItem, removeItem, setQuantity, openCart, closeCart])
+  }, [items, isOpen, pricesReady, addItem, removeItem, setQuantity, openCart, closeCart])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

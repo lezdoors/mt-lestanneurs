@@ -134,22 +134,21 @@ const ELEMENTS_APPEARANCE = {
   },
   rules: {
     ".Input": {
-      backgroundColor: "transparent",
-      border: "none",
-      borderBottom: "1px solid #e5e5e5",
+      backgroundColor: "#ffffff",
+      border: "1px solid #d9d5ce",
       borderRadius: "0",
-      padding: "10px 0",
+      padding: "12px 16px",
       fontSize: "16px",
       fontFamily:
         '"Inter", system-ui, -apple-system, sans-serif',
       transition: "border-color 0.2s ease",
     },
     ".Input:focus": {
-      borderBottom: "1px solid #111111",
+      border: "1px solid #111111",
       boxShadow: "none",
     },
     ".Input--invalid": {
-      borderBottom: "1px solid #9b2c2c",
+      border: "1px solid #9b2c2c",
     },
     ".Label": {
       fontSize: "11px",
@@ -183,7 +182,7 @@ const ELEMENTS_APPEARANCE = {
 }
 
 export default function CheckoutPage() {
-  const { items, subtotal } = useCart()
+  const { items, subtotal, pricesReady } = useCart()
   const t = useT()
   const lhref = useHref()
   const formatPrice = useFormatPrice()
@@ -266,9 +265,9 @@ export default function CheckoutPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
+      <main>
         {items.length === 0 ? (
-          <div className="flex flex-col items-center gap-8 py-24 text-center">
+          <div className="mx-auto flex max-w-[1200px] flex-col items-center gap-8 px-6 py-24 text-center">
             <h1 className="font-sans text-3xl text-ink">
               {t("checkout.emptyTitle")}
             </h1>
@@ -277,7 +276,10 @@ export default function CheckoutPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-10 md:grid-cols-[1fr_400px] md:gap-0">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_minmax(380px,42%)]">
+            {/* LEFT — form column */}
+            <div className="order-2 px-6 py-12 md:order-1 md:px-12 md:py-16 lg:px-20">
+              <div className="mx-auto w-full max-w-[600px]">
             {/* Mobile compact summary — expandable. Tells the shopper what
                 they're paying and lets them re-check items without scrolling
                 past the whole desktop panel before reaching the form. */}
@@ -299,17 +301,29 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <li
                       key={item.slug}
-                      className="flex items-baseline gap-4 border-b border-[#e5e5e5] pb-3 last:border-0"
+                      className="flex items-center gap-3 border-b border-[#e5e5e5] pb-3 last:border-0"
                     >
-                      <span className="flex-1 font-sans text-base text-ink">
-                        {item.name}
+                      <div className="relative h-16 w-16 shrink-0">
+                        {item.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-full w-full object-contain mix-blend-multiply"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-[#ece9e4]" />
+                        )}
                         {item.quantity > 1 && (
-                          <span className="text-micro ml-2 text-ink-muted">
-                            ×{item.quantity}
+                          <span className="absolute -right-2 -top-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-ink px-1 text-[11px] font-medium text-ground">
+                            {item.quantity}
                           </span>
                         )}
+                      </div>
+                      <span className="flex-1 font-sans text-[15px] leading-snug text-ink">
+                        {item.name}
                       </span>
-                      <span className="font-sans text-sm text-ink-soft">
+                      <span className="shrink-0 font-sans text-sm text-ink">
                         {formatPrice(item.price * item.quantity)}
                       </span>
                     </li>
@@ -332,7 +346,7 @@ export default function CheckoutPage() {
                         setPromoError(false)
                       }}
                       placeholder={t("checkout.promoPlaceholder")}
-                      className="border-b border-[#e5e5e5] bg-transparent pb-2 font-sans text-base uppercase text-ink outline-none transition-colors focus:border-ink"
+                      className="border border-[#d9d5ce] bg-white px-4 py-3 font-sans text-base uppercase text-ink outline-none transition-colors focus:border-ink"
                     />
                   </div>
                   <button
@@ -385,25 +399,39 @@ export default function CheckoutPage() {
               </div>
             </details>
 
-            {/* Form column — left on desktop, middle on mobile */}
-            <section className="md:order-1 md:pr-12 lg:pr-16">
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  mode: "payment",
-                  amount: chargeAmount,
-                  currency: displayCurrency.toLowerCase(),
-                  appearance: ELEMENTS_APPEARANCE,
-                }}
-              >
-                <CheckoutForm
-                  promoCode={promoCode}
-                  displayTotal={displayTotal}
-                  formatPrice={formatPrice}
-                  displayCurrency={displayCurrency}
-                  displayRate={displayRate}
-                />
-              </Elements>
+            {/* Payment + delivery form */}
+            <section>
+              {pricesReady ? (
+                <Elements
+                  stripe={stripePromise}
+                  options={{
+                    mode: "payment",
+                    amount: chargeAmount,
+                    currency: displayCurrency.toLowerCase(),
+                    appearance: ELEMENTS_APPEARANCE,
+                  }}
+                >
+                  <CheckoutForm
+                    promoCode={promoCode}
+                    displayTotal={displayTotal}
+                    formatPrice={formatPrice}
+                    displayCurrency={displayCurrency}
+                    displayRate={displayRate}
+                  />
+                </Elements>
+              ) : (
+                // Prices are still being re-validated against the server — never
+                // mount the payment surface (and its wallet amount) until the
+                // total is authoritative.
+                <div className="min-h-[460px] animate-pulse space-y-5">
+                  <div className="h-12 w-full bg-[#f1efec]" />
+                  <div className="h-px w-full bg-[#e5e5e5]" />
+                  <div className="h-10 w-1/3 bg-[#f1efec]" />
+                  <div className="h-12 w-full bg-[#f1efec]" />
+                  <div className="h-12 w-full bg-[#f1efec]" />
+                  <div className="h-40 w-full bg-[#f1efec]" />
+                </div>
+              )}
             </section>
 
             {/* Mobile trust footer — only on mobile, after the Pay button.
@@ -441,39 +469,48 @@ export default function CheckoutPage() {
                 </p>
               </div>
             </div>
+              </div>
+            </div>
 
-            {/* Desktop sticky aside — order summary + assurance panel.
-                Hidden on mobile; the compact summary above + trust footer
-                below cover the same surface area without the long scroll. */}
-            <aside className="hidden md:order-2 md:block md:sticky md:top-0 md:self-start md:h-screen md:overflow-y-auto md:border-l md:border-[#e5e5e5] md:py-20 md:pl-12 lg:pl-16">
-              <h2 className="font-sans text-3xl text-ink">
-                {t("checkout.orderTitle")}
-              </h2>
+            {/* RIGHT — order summary, gray panel, full-height */}
+            <aside className="hidden bg-[#f6f5f2] md:order-2 md:block md:min-h-screen md:self-stretch md:border-l md:border-[#e9e7e3] md:px-12 md:py-14 lg:px-16">
+              <div className="mx-auto w-full max-w-[440px] md:sticky md:top-12">
+                <h2 className="font-sans text-[26px] leading-tight text-ink">
+                  {t("checkout.orderTitle")}
+                </h2>
 
-              <ul className="mt-10 flex flex-col gap-6 border-b border-[#e5e5e5] pb-6">
-                {items.map((item) => (
-                  <li key={item.slug} className="flex items-baseline gap-4">
-                    <span className="flex-1 font-sans text-base text-ink">
-                      {item.name}
-                      {item.quantity > 1 && (
-                        <span className="text-micro ml-2 text-ink-muted">
-                          ×{item.quantity}
-                        </span>
-                      )}
-                    </span>
-                    <span className="font-sans text-sm text-ink-soft">
-                      {formatPrice(item.price * item.quantity)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="mt-8 flex flex-col gap-5 border-b border-[#e3e0db] pb-7">
+                  {items.map((item) => (
+                    <li key={item.slug} className="flex items-start gap-4">
+                      <div className="relative h-[76px] w-[76px] shrink-0">
+                        {item.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-full w-full object-contain mix-blend-multiply"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-[#ece9e4]" />
+                        )}
+                        {item.quantity > 1 && (
+                          <span className="absolute -right-2 -top-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-ink px-1 text-[11px] font-medium text-ground">
+                            {item.quantity}
+                          </span>
+                        )}
+                      </div>
+                      <span className="flex-1 font-sans text-[15px] leading-snug text-ink">
+                        {item.name}
+                      </span>
+                      <span className="shrink-0 font-sans text-[15px] text-ink">
+                        {formatPrice(item.price * item.quantity)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
 
-              {/* Promo */}
-              <div className="mt-6 flex items-end gap-3">
-                <div className="flex flex-1 flex-col gap-2">
-                  <label htmlFor="promo" className="text-micro text-ink-muted">
-                    {t("checkout.promoLabel")}
-                  </label>
+                {/* Discount */}
+                <div className="mt-6 flex items-stretch gap-2">
                   <input
                     id="promo"
                     value={promoInput}
@@ -481,96 +518,101 @@ export default function CheckoutPage() {
                       setPromoInput(e.target.value)
                       setPromoError(false)
                     }}
-                    placeholder={t("checkout.promoPlaceholder")}
-                    className="border-b border-[#e5e5e5] bg-transparent pb-2 font-sans text-base uppercase text-ink outline-none transition-colors focus:border-ink"
+                    placeholder={t("checkout.promoLabel")}
+                    className="min-w-0 flex-1 border border-[#d9d5ce] bg-white px-4 py-3 font-sans text-[15px] uppercase tracking-[0.04em] text-ink outline-none transition-colors placeholder:normal-case placeholder:tracking-normal placeholder:text-ink-muted focus:border-ink"
                   />
+                  <button
+                    type="button"
+                    onClick={applyPromo}
+                    className="text-micro shrink-0 border border-[#d9d5ce] bg-white px-6 text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                  >
+                    {t("checkout.promoApply")}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={applyPromo}
-                  className="text-micro pb-2 text-ink-soft underline underline-offset-4 transition-opacity hover:opacity-60"
-                >
-                  {t("checkout.promoApply")}
-                </button>
-              </div>
-              {promoError && (
-                <p className="text-micro mt-2 text-[#9b2c2c]">
-                  {t("checkout.promoInvalid")}
-                </p>
-              )}
-              {promoCalc.promo && (
-                <p className="text-micro mt-2 italic text-ink-soft">
-                  {promoCalc.promo.label}
-                </p>
-              )}
-
-              <dl className="mt-8 border-t border-[#e5e5e5] pt-6">
-                <div className="flex justify-between py-1.5">
-                  <dt className="text-micro text-ink-soft">
-                    {t("checkout.subtotal")}
-                  </dt>
-                  <dd className="font-sans text-sm text-ink">
-                    {formatPrice(subtotal)}
-                  </dd>
-                </div>
+                {promoError && (
+                  <p className="text-micro mt-2 text-[#9b2c2c]">
+                    {t("checkout.promoInvalid")}
+                  </p>
+                )}
                 {promoCalc.promo && (
-                  <div className="flex justify-between py-1.5">
-                    <dt className="text-micro text-ink-soft">
-                      {t("checkout.discount")}
+                  <p className="text-micro mt-2 italic text-ink-soft">
+                    {promoCalc.promo.label}
+                  </p>
+                )}
+
+                <dl className="mt-7 flex flex-col gap-2 border-t border-[#e3e0db] pt-6">
+                  <div className="flex justify-between">
+                    <dt className="font-sans text-[15px] text-ink-soft">
+                      {t("checkout.subtotal")}
                     </dt>
-                    <dd className="font-sans text-sm text-ink">
-                      −{formatPrice(promoCalc.discountMinor)}
+                    <dd className="font-sans text-[15px] text-ink">
+                      {formatPrice(subtotal)}
                     </dd>
                   </div>
-                )}
-                <div className="flex justify-between py-1.5">
-                  <dt className="text-micro text-ink-soft">
-                    {t("checkout.shipping")}
-                  </dt>
-                  <dd className="font-sans text-sm text-ink">
-                    {t("checkout.complimentary")}
-                  </dd>
+                  {promoCalc.promo && (
+                    <div className="flex justify-between">
+                      <dt className="font-sans text-[15px] text-ink-soft">
+                        {t("checkout.discount")}
+                      </dt>
+                      <dd className="font-sans text-[15px] text-ink">
+                        −{formatPrice(promoCalc.discountMinor)}
+                      </dd>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <dt className="font-sans text-[15px] text-ink-soft">
+                      {t("checkout.shipping")}
+                    </dt>
+                    <dd className="font-sans text-[15px] text-ink">
+                      {t("checkout.complimentary")}
+                    </dd>
+                  </div>
+                  <div className="mt-3 flex items-baseline justify-between border-t border-[#e3e0db] pt-4">
+                    <dt className="font-sans text-xl text-ink">
+                      {t("checkout.total")}
+                    </dt>
+                    <dd className="font-sans text-2xl text-ink">
+                      <span className="mr-1.5 align-middle text-[11px] uppercase tracking-[0.12em] text-ink-muted">
+                        {displayCurrency}
+                      </span>
+                      {formatPrice(displayTotal)}
+                    </dd>
+                  </div>
+                </dl>
+
+                {/* Trust */}
+                <div className="mt-10 flex flex-col gap-7 border-t border-[#e3e0db] pt-8">
+                  <div>
+                    <h3 className="font-sans text-lg text-ink">
+                      {t("checkout.secureTitle")}
+                    </h3>
+                    <p className="mt-2 font-sans text-sm leading-relaxed text-ink-soft">
+                      {t("checkout.secureBody")}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-sans text-lg text-ink">
+                      {t("checkout.returnsTitle")}
+                    </h3>
+                    <p className="mt-2 font-sans text-sm leading-relaxed text-ink-soft">
+                      {t("checkout.returnsBody")}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-sans text-lg text-ink">
+                      {t("checkout.assistTitle")}
+                    </h3>
+                    <p className="mt-2 font-sans text-sm leading-relaxed text-ink-soft">
+                      {t("checkout.assistBody")}
+                    </p>
+                    <Link
+                      href={lhref("/contact")}
+                      className="text-micro mt-4 inline-block border border-ink px-5 py-3 text-ink transition-colors hover:bg-ink hover:text-ground"
+                    >
+                      {t("checkout.assistCta")}
+                    </Link>
+                  </div>
                 </div>
-                <div className="mt-3 flex justify-between border-t border-[#e5e5e5] pt-4">
-                  <dt className="text-micro text-ink">{t("checkout.total")}</dt>
-                  <dd className="font-sans text-xl text-ink">
-                    {formatPrice(displayTotal)}
-                  </dd>
-                </div>
-              </dl>
-
-              {/* Assurance panel — Polène-style trust block */}
-              <div className="mt-10 border-t border-[#e5e5e5] pt-8">
-                <h3 className="font-sans text-lg text-ink">
-                  {t("checkout.assistTitle")}
-                </h3>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-ink-soft">
-                  {t("checkout.assistBody")}
-                </p>
-                <Link
-                  href={lhref("/contact")}
-                  className="text-micro mt-5 inline-block border border-ink px-5 py-3 text-ink transition-colors hover:bg-ink hover:text-ground"
-                >
-                  {t("checkout.assistCta")}
-                </Link>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="font-sans text-lg text-ink">
-                  {t("checkout.secureTitle")}
-                </h3>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-ink-soft">
-                  {t("checkout.secureBody")}
-                </p>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="font-sans text-lg text-ink">
-                  {t("checkout.returnsTitle")}
-                </h3>
-                <p className="mt-3 font-sans text-sm leading-relaxed text-ink-soft">
-                  {t("checkout.returnsBody")}
-                </p>
               </div>
             </aside>
           </div>
@@ -874,7 +916,7 @@ function CheckoutForm({
               required
               defaultValue=""
               autoComplete="country"
-              className="border-b border-[#e5e5e5] bg-transparent pb-2 font-sans text-lg text-ink outline-none transition-colors focus:border-ink"
+              className="border border-[#d9d5ce] bg-white px-4 py-3 font-sans text-base text-ink outline-none transition-colors focus:border-ink"
             >
               <option value="" disabled>
                 {t("checkout.countryPlaceholder")}
@@ -959,7 +1001,7 @@ function Field({
         required={required}
         autoComplete={autoComplete ?? (id === "email" ? "email" : undefined)}
         inputMode={inputMode}
-        className="border-b border-[#e5e5e5] bg-transparent pb-2 font-sans text-lg text-ink outline-none transition-colors focus:border-ink"
+        className="border border-[#d9d5ce] bg-white px-4 py-3 font-sans text-base text-ink outline-none transition-colors placeholder:text-ink-muted focus:border-ink"
       />
     </div>
   )
