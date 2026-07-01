@@ -25,17 +25,17 @@ export async function DepartureEditorial() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:gap-10 lg:gap-16">
           <Reveal className="md:col-span-7">
             <Link
-              href={withLocale("/product/marrakech-tote-cognac", lo)}
+              href={withLocale("/product/medina-zigzag-tote-noir", lo)}
               className="group block overflow-hidden"
             >
               <picture>
                 <source
                   media="(max-width: 767px)"
-                  srcSet="/tanneurs/editorial/depart-street-tote-camel-m.webp"
+                  srcSet="/tanneurs/editorial/depart-monument-tote-m.webp"
                 />
                 <img
-                  src="/tanneurs/editorial/depart-street-tote-camel.webp"
-                  alt="A model in navy carrying the camel tote past sunlit stone facades"
+                  src="/tanneurs/editorial/depart-monument-tote.webp"
+                  alt="A woman in a cream coat carries the noir whipstitch tote past a sunlit limestone monument"
                   loading="lazy"
                   className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                 />
