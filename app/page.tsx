@@ -2,6 +2,8 @@ import { SiteHeader } from "@/components/editorial/site-header"
 import { EditorialHero } from "@/components/editorial/editorial-hero"
 import { TrustStrip } from "@/components/editorial/trust-strip"
 import { DepartureEditorial } from "@/components/editorial/departure-editorial"
+import { DuoEditorial } from "@/components/editorial/duo-editorial"
+import { ClosingInvitation } from "@/components/editorial/closing-invitation"
 import { TrustBand } from "@/components/editorial/trust-band"
 import { Newsletter } from "@/components/editorial/newsletter"
 import { MaisonStatement } from "@/components/editorial/maison-statement"
@@ -44,10 +46,12 @@ export default async function Home() {
         <FeaturedObjects products={featured.slice(1)} />
         <MaisonStatement />
         <LookbookCarousel />
+        <DuoEditorial />
         <TravelEditorial />
         <CraftEditorial />
         <CampaignFilm />
         <TrustBand />
+        <ClosingInvitation />
         <Newsletter />
       </main>
       <SiteFooter />

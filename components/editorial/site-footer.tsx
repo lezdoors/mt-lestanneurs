@@ -28,7 +28,7 @@ const COLUMNS: { title: string; links: { href: string; label: string }[] }[] = [
   {
     title: "footer.service",
     links: [
-      { href: "/legal/repair", label: "footer.repair" },
+      { href: "/repair", label: "footer.repair" },
       { href: "/legal/shipping", label: "footer.shipping" },
       { href: "/legal/returns", label: "footer.returns" },
       { href: "/legal/care", label: "footer.care" },
@@ -87,7 +87,8 @@ export async function SiteFooter() {
 
         <div className="mt-8 flex flex-col items-center gap-4 border-t border-hairline pt-8 md:flex-row md:justify-between">
           <p className="text-micro text-ink-muted">
-            © Maison Tanneurs {new Date().getFullYear()}
+            © Maison Tanneurs {new Date().getFullYear()} — Akal Digital
+            Services Ltd
           </p>
           <nav className="flex gap-8">
             <Link
@@ -101,6 +102,12 @@ export async function SiteFooter() {
               className="text-micro text-ink-muted transition-opacity hover:opacity-50"
             >
               {t(lo, "footer.privacy")}
+            </Link>
+            <Link
+              href={withLocale("/legal/mentions", lo)}
+              className="text-micro text-ink-muted transition-opacity hover:opacity-50"
+            >
+              Legal Notice
             </Link>
           </nav>
         </div>

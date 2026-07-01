@@ -23,25 +23,27 @@ export async function FeaturedObjects({ products }: { products: Product[] }) {
         </Reveal>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[5fr_7fr] md:gap-14">
-          {/* Campaign panel — the Medina Zigzag Tote in noir, studio portrait */}
+          {/* Campaign panel — golden-hour Marrakech rooftop, the maison's
+              provenance in one frame. Was collection-portrait, a fourth
+              limestone-street model shot in the first two viewports. */}
           <Link
-            href={withLocale("/product/medina-zigzag-tote-noir", lo)}
+            href={withLocale("/shop?c=Weekender", lo)}
             className="group relative block overflow-hidden"
           >
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet="/tanneurs/editorial/collection-portrait-m.webp"
+                srcSet="/tanneurs/editorial/duo-rooftop-cognac-m.webp"
               />
               <img
-                src="/tanneurs/editorial/collection-portrait.webp"
-                alt="A model in a cream shirt-dress holding the Medina Zigzag Tote in noir against a sunlit plaster wall"
+                src="/tanneurs/editorial/duo-rooftop-cognac.webp"
+                alt="A cognac leather weekender beside a stone table with mint tea, on a Marrakech rooftop at golden hour"
                 loading="lazy"
                 className="h-full max-h-[560px] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02] md:max-h-none"
               />
             </picture>
             <span className="text-micro absolute bottom-5 left-5 bg-white/95 px-4 py-2.5 text-ink">
-              Medina Zigzag Tote · Noir
+              Les Weekenders — Marrakech
             </span>
           </Link>
 

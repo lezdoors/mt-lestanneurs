@@ -99,7 +99,7 @@ export default async function ProductPage({
             <h1 className="font-serif text-4xl leading-tight text-ink md:text-5xl">
               {product.name}
             </h1>
-            <p className="mt-4 font-sans text-sm tracking-[0.08em] text-ink-soft">
+            <p className="mt-4 font-sans text-lg tracking-[0.06em] text-ink">
               {formatDisplayPrice(product.price, currency, rates)}
             </p>
             <p className="mt-2 font-serif text-sm italic text-ink-muted">
@@ -163,10 +163,13 @@ export default async function ProductPage({
               </div>
             </dl>
 
-            {/* Service strip — lifetime repair leads; each links to policy */}
+            {/* Service strip — lifetime repair leads and links to the
+                register-your-piece PROGRAM page (/repair), not the policy
+                doc; the program is the strongest differentiator vs the
+                benchmark maisons. */}
             <div className="mt-2">
               <Link
-                href={withLocale("/legal/repair", lo)}
+                href={withLocale("/repair", lo)}
                 className="group flex items-baseline justify-between border-b border-hairline py-4"
               >
                 <span className="text-micro text-ink">{t(lo, "pdp.repair")}</span>

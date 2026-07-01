@@ -46,7 +46,6 @@
     "gallery": [
       "/tanneurs/products/atlas-kilim-backpack/01.webp",
       "/tanneurs/products/atlas-kilim-backpack/02.webp",
-      "/tanneurs/products/atlas-kilim-backpack/03.webp",
       "/tanneurs/products/atlas-kilim-backpack/04.webp",
       "/tanneurs/products/atlas-kilim-backpack/05.webp",
       "/tanneurs/products/atlas-kilim-backpack/06.webp",
@@ -64,10 +63,7 @@
       "/tanneurs/products/atlas-kilim-duffle/06.webp",
       "/tanneurs/products/atlas-kilim-duffle/07.webp",
       "/tanneurs/products/atlas-kilim-duffle/08.webp",
-      "/tanneurs/products/atlas-kilim-duffle/09.webp",
-      "/tanneurs/products/atlas-kilim-duffle/10.webp",
-      "/tanneurs/products/atlas-kilim-duffle/11.webp",
-      "/tanneurs/products/atlas-kilim-duffle/12.webp"
+      "/tanneurs/products/atlas-kilim-duffle/09.webp"
     ],
     "hero": "/tanneurs/products/atlas-kilim-duffle.webp"
   },
@@ -234,7 +230,6 @@
     "gallery": [
       "/tanneurs/products/le-caravanier-chocolate/01.webp",
       "/tanneurs/products/le-caravanier-chocolate/02.webp",
-      "/tanneurs/products/le-caravanier-chocolate/03.webp",
       "/tanneurs/products/le-caravanier-chocolate/04.webp",
       "/tanneurs/products/le-caravanier-chocolate/05.webp",
       "/tanneurs/products/le-caravanier-chocolate/06.webp",
@@ -248,7 +243,6 @@
     "gallery": [
       "/tanneurs/products/le-caravanier-light/01.webp",
       "/tanneurs/products/le-caravanier-light/02.webp",
-      "/tanneurs/products/le-caravanier-light/03.webp",
       "/tanneurs/products/le-caravanier-light/04.webp",
       "/tanneurs/products/le-caravanier-light/05.webp",
       "/tanneurs/products/le-caravanier-light/06.webp",
@@ -260,7 +254,6 @@
   },
   "le-nomade": {
     "gallery": [
-      "/tanneurs/products/le-nomade/01.webp",
       "/tanneurs/products/le-nomade/02.webp",
       "/tanneurs/products/le-nomade/03.webp",
       "/tanneurs/products/le-nomade/04.webp",
@@ -325,7 +318,6 @@
       "/tanneurs/products/medina-courtyard-crossbody/02.webp",
       "/tanneurs/products/medina-courtyard-crossbody/03.webp",
       "/tanneurs/products/medina-courtyard-crossbody/04.webp",
-      "/tanneurs/products/medina-courtyard-crossbody/05.webp",
       "/tanneurs/products/medina-courtyard-crossbody/06.webp",
       "/tanneurs/products/medina-courtyard-crossbody/07.webp",
       "/tanneurs/products/medina-courtyard-crossbody/08.webp",
@@ -375,10 +367,7 @@
       "/tanneurs/products/medina-crossbody-envelope/06.webp",
       "/tanneurs/products/medina-crossbody-envelope/07.webp",
       "/tanneurs/products/medina-crossbody-envelope/08.webp",
-      "/tanneurs/products/medina-crossbody-envelope/09.webp",
-      "/tanneurs/products/medina-crossbody-envelope/10.webp",
-      "/tanneurs/products/medina-crossbody-envelope/11.webp",
-      "/tanneurs/products/medina-crossbody-envelope/12.webp"
+      "/tanneurs/products/medina-crossbody-envelope/09.webp"
     ],
     "hero": "/tanneurs/products/medina-crossbody-envelope.webp"
   },
@@ -392,10 +381,7 @@
       "/tanneurs/products/medina-crossbody-tooled-dark-brown/06.webp",
       "/tanneurs/products/medina-crossbody-tooled-dark-brown/07.webp",
       "/tanneurs/products/medina-crossbody-tooled-dark-brown/08.webp",
-      "/tanneurs/products/medina-crossbody-tooled-dark-brown/09.webp",
-      "/tanneurs/products/medina-crossbody-tooled-dark-brown/10.webp",
-      "/tanneurs/products/medina-crossbody-tooled-dark-brown/11.webp",
-      "/tanneurs/products/medina-crossbody-tooled-dark-brown/12.webp"
+      "/tanneurs/products/medina-crossbody-tooled-dark-brown/09.webp"
     ],
     "hero": "/tanneurs/products/medina-crossbody-tooled-dark-brown.webp"
   },
@@ -407,7 +393,6 @@
       "/tanneurs/products/medina-crossbody-tooled-walnut/04.webp",
       "/tanneurs/products/medina-crossbody-tooled-walnut/05.webp",
       "/tanneurs/products/medina-crossbody-tooled-walnut/06.webp",
-      "/tanneurs/products/medina-crossbody-tooled-walnut/07.webp",
       "/tanneurs/products/medina-crossbody-tooled-walnut/08.webp",
       "/tanneurs/products/medina-crossbody-tooled-walnut/09.webp",
       "/tanneurs/products/medina-crossbody-tooled-walnut/10.webp",
@@ -468,9 +453,7 @@
       "/tanneurs/products/medina-rucksack-drawstring-chocolate/07.webp",
       "/tanneurs/products/medina-rucksack-drawstring-chocolate/08.webp",
       "/tanneurs/products/medina-rucksack-drawstring-chocolate/09.webp",
-      "/tanneurs/products/medina-rucksack-drawstring-chocolate/10.webp",
-      "/tanneurs/products/medina-rucksack-drawstring-chocolate/11.webp",
-      "/tanneurs/products/medina-rucksack-drawstring-chocolate/12.webp"
+      "/tanneurs/products/medina-rucksack-drawstring-chocolate/10.webp"
     ],
     "hero": "/tanneurs/products/medina-rucksack-drawstring-chocolate.webp"
   },
@@ -583,10 +566,7 @@
       "/tanneurs/products/vintage-buckle-backpack/06.webp",
       "/tanneurs/products/vintage-buckle-backpack/07.webp",
       "/tanneurs/products/vintage-buckle-backpack/08.webp",
-      "/tanneurs/products/vintage-buckle-backpack/09.webp",
-      "/tanneurs/products/vintage-buckle-backpack/10.webp",
-      "/tanneurs/products/vintage-buckle-backpack/11.webp",
-      "/tanneurs/products/vintage-buckle-backpack/12.webp"
+      "/tanneurs/products/vintage-buckle-backpack/09.webp"
     ],
     "hero": "/tanneurs/products/vintage-buckle-backpack.webp"
   },
@@ -625,7 +605,6 @@
       "/tanneurs/products/vintage-satchel-moutarde/03.webp",
       "/tanneurs/products/vintage-satchel-moutarde/04.webp",
       "/tanneurs/products/vintage-satchel-moutarde/05.webp",
-      "/tanneurs/products/vintage-satchel-moutarde/06.webp",
       "/tanneurs/products/vintage-satchel-moutarde/07.webp",
       "/tanneurs/products/vintage-satchel-moutarde/08.webp",
       "/tanneurs/products/vintage-satchel-moutarde/09.webp",

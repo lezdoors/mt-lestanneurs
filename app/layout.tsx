@@ -15,6 +15,7 @@ import { OrganizationJsonLd } from "@/components/seo/json-ld"
 import { MetaPixel } from "@/components/seo/meta-pixel"
 import { GA4 } from "@/components/seo/ga4"
 import { Clarity } from "@/components/seo/clarity"
+import { ConsentGate } from "@/components/seo/consent"
 import "./globals.css"
 
 const inter = Inter({
@@ -105,6 +106,7 @@ export default async function RootLayout({
       <body className="font-sans antialiased">
         <AssetGuard />
         <OrganizationJsonLd />
+        {/* ConsentGate (bottom of body) needs locale context for its copy */}
         <LocaleProvider locale={locale}>
           <CurrencyProvider currency={currency} rate={rates[currency]}>
           <CartProvider>
@@ -115,9 +117,13 @@ export default async function RootLayout({
           </CurrencyProvider>
         </LocaleProvider>
         <Analytics />
-        <MetaPixel />
-        <GA4 />
-        <Clarity />
+        <LocaleProvider locale={locale}>
+          <ConsentGate>
+            <MetaPixel />
+            <GA4 />
+            <Clarity />
+          </ConsentGate>
+        </LocaleProvider>
       </body>
     </html>
   )

@@ -11,6 +11,16 @@ const NAV_LEFT = [
   { href: "/heritage", label: "nav.savoirFaire" },
 ]
 
+// Category families — DeMellier/Polène expose these at nav level; burying
+// them in the footer cost a first-time visitor two taps plus a scroll.
+const FAMILIES = [
+  { href: "/shop?c=Weekender", label: "family.weekenders" },
+  { href: "/shop?c=Briefcase", label: "family.briefcases" },
+  { href: "/shop?c=Backpack", label: "family.backpacks" },
+  { href: "/shop?c=Crossbody", label: "family.crossbodies" },
+  { href: "/shop?c=Tote", label: "family.totes" },
+]
+
 // variant "overlay": transparent white-on-image over a full-bleed hero,
 // refining to solid on scroll. variant "solid": ink-on-ground from the start.
 export function SiteHeader({
@@ -21,6 +31,7 @@ export function SiteHeader({
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const [langOpen, setLangOpen] = useState(false)
+  const [collectionOpen, setCollectionOpen] = useState(false)
   const ticking = useRef(false)
   const { count, openCart } = useCart()
   const t = useT()
@@ -75,15 +86,46 @@ export function SiteHeader({
         className={`mx-auto grid h-[72px] max-w-[1760px] grid-cols-[1fr_auto_1fr] items-center border-b px-5 transition-colors duration-500 md:h-[96px] md:px-10 ${rule}`}
       >
         <nav className={`hidden items-center gap-9 md:flex ${tone}`}>
-          {NAV_LEFT.map((l) => (
+          <span
+            className="relative"
+            onMouseEnter={() => setCollectionOpen(true)}
+            onMouseLeave={() => setCollectionOpen(false)}
+          >
             <Link
-              key={l.href}
-              href={href(l.href)}
+              href={href("/shop")}
+              onFocus={() => setCollectionOpen(true)}
               className="text-micro font-sans opacity-90 transition-opacity hover:opacity-50"
             >
-              {t(l.label)}
+              {t("nav.collection")}
             </Link>
-          ))}
+            {collectionOpen && (
+              <span className="absolute left-0 top-full z-50 flex min-w-[200px] flex-col border border-hairline bg-ground py-2 shadow-[0_8px_30px_rgba(28,26,23,0.08)]">
+                {FAMILIES.map((f) => (
+                  <Link
+                    key={f.href}
+                    href={href(f.href)}
+                    onClick={() => setCollectionOpen(false)}
+                    className="text-micro px-5 py-2.5 text-left text-ink-muted transition-colors hover:text-ink"
+                  >
+                    {t(f.label)}
+                  </Link>
+                ))}
+                <Link
+                  href={href("/shop")}
+                  onClick={() => setCollectionOpen(false)}
+                  className="text-micro mt-1 border-t border-hairline px-5 pb-1.5 pt-3 text-left text-ink transition-opacity hover:opacity-60"
+                >
+                  {t("family.viewAll")}
+                </Link>
+              </span>
+            )}
+          </span>
+          <Link
+            href={href("/heritage")}
+            className="text-micro font-sans opacity-90 transition-opacity hover:opacity-50"
+          >
+            {t("nav.savoirFaire")}
+          </Link>
         </nav>
 
         <button
@@ -172,7 +214,7 @@ export function SiteHeader({
               setOpen(false)
               openCart()
             }}
-            className="text-micro font-sans opacity-90 transition-opacity hover:opacity-50"
+            className="text-micro -m-2.5 p-2.5 font-sans opacity-90 transition-opacity hover:opacity-50"
           >
             {t("nav.bag")}{count > 0 ? ` (${count})` : ""}
           </button>
@@ -185,13 +227,32 @@ export function SiteHeader({
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <nav className="flex flex-col px-6 pt-10">
-          {[...NAV_LEFT, { href: "/atelier", label: "nav.atelier" }].map((l) => (
+        <nav className="flex flex-col overflow-y-auto px-6 pb-16 pt-8" style={{ maxHeight: "calc(100dvh - 72px)" }}>
+          <Link
+            href={href("/shop")}
+            onClick={() => setOpen(false)}
+            className="border-b border-hairline py-5 font-serif text-3xl text-ink"
+          >
+            {t("nav.collection")}
+          </Link>
+          <div className="flex flex-col gap-1 border-b border-hairline py-4">
+            {FAMILIES.map((f) => (
+              <Link
+                key={f.href}
+                href={href(f.href)}
+                onClick={() => setOpen(false)}
+                className="py-2 font-serif text-xl text-ink-soft"
+              >
+                {t(f.label)}
+              </Link>
+            ))}
+          </div>
+          {[{ href: "/heritage", label: "nav.savoirFaire" }, { href: "/atelier", label: "nav.atelier" }].map((l) => (
             <Link
               key={l.label}
               href={href(l.href)}
               onClick={() => setOpen(false)}
-              className="border-b border-hairline py-6 font-serif text-3xl text-ink"
+              className="border-b border-hairline py-5 font-serif text-3xl text-ink"
             >
               {t(l.label)}
             </Link>

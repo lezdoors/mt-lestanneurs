@@ -8,6 +8,8 @@ const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: "/", priority: 1.0 },
   { path: "/shop", priority: 0.9 },
   { path: "/heritage", priority: 0.7 },
+  { path: "/atelier", priority: 0.7 },
+  { path: "/repair", priority: 0.6 },
   { path: "/bespoke", priority: 0.6 },
   { path: "/trade", priority: 0.6 },
   { path: "/boutique", priority: 0.6 },
@@ -22,6 +24,7 @@ const LEGAL_SLUGS = [
   "faq",
   "terms",
   "privacy",
+  "mentions",
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

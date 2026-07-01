@@ -4,7 +4,9 @@ import { RevealGroup } from "@/components/editorial/reveal"
 
 // DeMellier's trust-band device in the house register.
 const CELLS = [
-  { href: "/legal/repair", title: "trust.repair", line: "trust.repairLine" },
+  // /repair is the register-your-piece program page, not the policy doc —
+  // the program is the maison's strongest differentiator; sell it, don't cite it.
+  { href: "/repair", title: "trust.repair", line: "trust.repairLine" },
   { href: "/legal/shipping", title: "trust.shipping", line: "trust.shippingLine" },
   { href: "/legal/returns", title: "trust.returns", line: "trust.returnsLine" },
 ]

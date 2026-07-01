@@ -5,11 +5,15 @@
 //
 // medina-duffle        — pixel-dupe of atlas-weekender-cognac
 // medina-cargo-rucksack-cognac — register mismatch, pending re-shoot
+// vintage-satchel-light-brown — photo set depicts a different bag than the
+//   sellable product (Birkin-silhouette lookalike); re-gen from the real
+//   satchel before relisting (returns + lookalike risk)
 
 export const HIDDEN_SKUS: ReadonlySet<string> = new Set([
   "test-e2e",
   "medina-duffle",
   "medina-cargo-rucksack-cognac",
+  "vintage-satchel-light-brown",
 ]);
 
 export const HIDDEN_SKUS_ARRAY: readonly string[] = Array.from(HIDDEN_SKUS);

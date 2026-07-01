@@ -13,6 +13,10 @@ import { SuccessClient } from "./success-client"
 
 export const dynamic = "force-dynamic"
 
+export const metadata = {
+  robots: { index: false, follow: false },
+}
+
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {

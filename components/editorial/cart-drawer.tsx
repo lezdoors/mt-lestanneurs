@@ -98,7 +98,7 @@ export function CartDrawer() {
                           type="button"
                           aria-label={t("cart.decrease")}
                           onClick={() => setQuantity(item.slug, item.quantity - 1)}
-                          className="flex h-7 w-7 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
+                          className="flex h-10 w-10 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
                         >
                           −
                         </button>
@@ -109,7 +109,7 @@ export function CartDrawer() {
                           type="button"
                           aria-label={t("cart.increase")}
                           onClick={() => setQuantity(item.slug, item.quantity + 1)}
-                          className="flex h-7 w-7 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
+                          className="flex h-10 w-10 items-center justify-center border border-hairline text-ink transition-opacity hover:opacity-50"
                         >
                           +
                         </button>

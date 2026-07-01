@@ -2,7 +2,10 @@ import Link from "next/link"
 import { getLocale, t, withLocale } from "@/lib/i18n"
 import { Reveal } from "@/components/editorial/reveal"
 
-// Savoir-faire — 50/50 split: statement against a single tactile frame.
+// Savoir-faire — statement against a tactile pair: the artisan at work and
+// a full-grain macro. The macro is the benchmark maisons' missing beat here:
+// studio / lifestyle / detail must alternate, and the page had zero grain
+// closeups before this.
 export async function CraftEditorial() {
   const lo = await getLocale()
   return (
@@ -24,16 +27,29 @@ export async function CraftEditorial() {
           </Link>
         </Reveal>
       </div>
-      <div className="relative min-h-[520px] md:min-h-[820px]">
-        <picture>
-          <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/craft-artisan-window-m.webp" />
-          <img
-            src="/tanneurs/editorial/craft-artisan-window.webp"
-            alt="An artisan bent over the work at an arched window, brass hardware laid out, a finished tote beside him"
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </picture>
+      <div className="grid grid-rows-[3fr_2fr]">
+        <div className="relative min-h-[420px] md:min-h-0">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/craft-artisan-window-m.webp" />
+            <img
+              src="/tanneurs/editorial/craft-artisan-window.webp"
+              alt="An artisan bent over the work at an arched window, brass hardware laid out, a finished tote beside him"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </picture>
+        </div>
+        <div className="relative min-h-[280px] md:min-h-0">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/heritage-stamp-macro-m.webp" />
+            <img
+              src="/tanneurs/editorial/heritage-stamp-macro.webp"
+              alt="Full-grain leather in raking light, the blind-debossed maison stamp catching the sun"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </picture>
+        </div>
       </div>
     </section>
   )

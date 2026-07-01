@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next"
 // to ChatGPT/Claude/Perplexity/Gemini crawlers even though the default rule
 // already permits them. Checkout and API stay out of every index.
 
-const DISALLOW = ["/checkout", "/api/"]
+const DISALLOW = ["/checkout", "/api/", "/cart/recover"]
 
 const AI_CRAWLERS = [
   "GPTBot",

@@ -7,6 +7,7 @@ import { getLocale, t } from "@/lib/i18n"
 import { adaptProduct, curate, getCategories } from "@/lib/products"
 import { ShopClient } from "./shop-client"
 import { AmbientLoop } from "@/components/editorial/ambient-loop"
+import { TrustBand } from "@/components/editorial/trust-band"
 
 export const revalidate = 300
 
@@ -48,6 +49,12 @@ export default async function ShopPage() {
         <Suspense>
           <ShopClient products={products} categories={categories} />
         </Suspense>
+
+        {/* The catalogue is the coldest landing surface for paid traffic —
+            it had zero trust cues below the grid before this. */}
+        <div className="mt-24">
+          <TrustBand />
+        </div>
       </main>
       <SiteFooter />
     </>

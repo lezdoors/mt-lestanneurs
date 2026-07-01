@@ -271,12 +271,45 @@ const PAGES: Record<string, LegalPage> = {
         ],
       },
       {
+        heading: "Data controller",
+        body: "The data controller for maisontanneurs.com is Akal Digital Services Ltd, a company registered in England and Wales (company no. 17229387), registered office: 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. For any privacy request, write to " + EMAIL + ".",
+      },
+      {
         heading: "Your rights",
         body: `You can request a copy of your data, correct it, or ask us to delete it at any time — write to ${EMAIL}.`,
       },
       {
         heading: "Security",
         body: "Data is transmitted over encrypted connections and access is limited to the people who need it to fulfil your order.",
+      },
+      {
+        heading: "Cookies and analytics",
+        body: "The site uses cookies and similar technologies for essential store functions (your bag, checkout) and — with your consent where required — for analytics and advertising measurement (Google Analytics, Meta Pixel, Microsoft Clarity). You can decline non-essential cookies via the consent notice, and change your mind at any time by clearing the site's cookies.",
+      },
+    ],
+  },
+  mentions: {
+    eyebrow: "Legal Notice",
+    title: "Mentions légales.",
+    description:
+      "Legal notice for maisontanneurs.com — publisher, registered office, and hosting information.",
+    updated: "1 July 2026",
+    sections: [
+      {
+        heading: "Publisher",
+        body: "maisontanneurs.com is published by Akal Digital Services Ltd, a private limited company registered in England and Wales under company number 17229387. Registered office: 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.",
+      },
+      {
+        heading: "Contact",
+        body: `Email: ${EMAIL} · Phone: +44 7828 726017. The atelier is located in Marrakech, Morocco; correspondence is handled through the addresses above.`,
+      },
+      {
+        heading: "Hosting",
+        body: "The site is hosted by Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, United States — vercel.com.",
+      },
+      {
+        heading: "Intellectual property",
+        body: "All content on this site — photography, film, copy, and the Maison Tanneurs name and marks — is the property of Akal Digital Services Ltd or its licensors and may not be reproduced without written permission.",
       },
     ],
   },

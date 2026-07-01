@@ -1,13 +1,15 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useRef } from "react"
-import { useT } from "@/lib/i18n-client"
+import { useHref, useT } from "@/lib/i18n-client"
 
 // Full-bleed brand film. Autoplays muted/looped only while in view, pauses out
 // of view, and never autoplays under reduced-motion.
 export function CampaignFilm() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const t = useT()
+  const href = useHref()
 
   useEffect(() => {
     const video = videoRef.current
@@ -50,6 +52,14 @@ export function CampaignFilm() {
         <p className="mt-4 max-w-md font-serif text-lg italic leading-relaxed text-white/90">
           {t("film.caption")}
         </p>
+        {/* The page's largest section must exit somewhere — 90vh of film
+            with no CTA was a dead-end admiration zone. */}
+        <Link
+          href={href("/shop")}
+          className="link-caps mt-7 inline-block text-white transition-opacity hover:opacity-70"
+        >
+          {t("featured.cta")}
+        </Link>
       </div>
     </section>
   )

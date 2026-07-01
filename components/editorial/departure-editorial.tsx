@@ -81,17 +81,17 @@ export async function DepartureEditorial() {
         <div className="mt-16 grid grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-10 lg:gap-16">
           <Reveal className="md:order-2 md:col-span-7 md:mt-32 lg:mt-48">
             <Link
-              href={withLocale("/product/medina-saddlebag-tooled-cognac", lo)}
+              href={withLocale("/product/atlas-kilim-rucksack", lo)}
               className="group block overflow-hidden"
             >
               <picture>
                 <source
                   media="(max-width: 767px)"
-                  srcSet="/tanneurs/editorial/depart-street-saddlebag-m.webp"
+                  srcSet="/tanneurs/editorial/depart-medina-door-m.webp"
                 />
                 <img
-                  src="/tanneurs/editorial/depart-street-saddlebag.webp"
-                  alt="The tooled cognac saddlebag worn crossbody on a limestone street in morning light"
+                  src="/tanneurs/editorial/depart-medina-door.webp"
+                  alt="The kilim rucksack carried past a deep-red carved door in a whitewashed medina wall"
                   loading="lazy"
                   className="aspect-[4/5] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                 />
