@@ -88,6 +88,22 @@ export default function BespokePage() {
           ))}
         </ol>
 
+        {/* The bench where it happens — patterns, tools, hides */}
+        <figure className="mt-16">
+          <picture>
+            <source media="(max-width: 767px)" srcSet="/tanneurs/editorial/atelier-hero-bench-m.webp" />
+            <img
+              src="/tanneurs/editorial/atelier-hero-bench.webp"
+              alt="The drafting bench — paper patterns, brass tools and cut hides in the atelier window light"
+              loading="lazy"
+              className="aspect-[16/9] w-full object-cover"
+            />
+          </picture>
+          <figcaption className="text-micro mt-4 text-center text-ink-muted">
+            Your pattern joins the bench.
+          </figcaption>
+        </figure>
+
         {/* The edition ritual — your piece leaving the bench */}
         <div className="mx-auto mt-16 grid grid-cols-1 items-center gap-10 md:grid-cols-[2fr_3fr] md:gap-14">
           <AmbientLoop
