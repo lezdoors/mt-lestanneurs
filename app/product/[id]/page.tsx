@@ -199,22 +199,40 @@ export default async function ProductPage({
           </div>
         </section>
 
-        {/* The craft, proven — the embossed promise and the hardware itself */}
+        {/* The craft, proven — per-category clips so the diptych isn't the
+            same two films on all 25 PDPs (audit fix). Totes get the zigzag
+            whipstitch reveal; weekenders/duffles the forest making-of. */}
         <section className="border-t border-hairline">
           <div className="mx-auto grid max-w-[1560px] grid-cols-1 md:grid-cols-2">
             <div className="relative min-h-[360px] md:min-h-[560px]">
-              <AmbientLoop
-                src="/tanneurs/films/pdp-craft-stitch.mp4"
-                poster="/tanneurs/films/pdp-craft-stitch-poster.jpg"
-                alt="An artisan's hands saddle-stitching a leather panel at the bench"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+              {product.category === "Tote" ? (
+                <AmbientLoop
+                  src="/tanneurs/films/pdp-craft-zigzag.mp4"
+                  poster="/tanneurs/films/pdp-craft-zigzag-poster.jpg"
+                  alt="The whipstitched tote edge in warm boutique light, macro"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : product.category === "Weekender" || product.category === "Duffle" ? (
+                <AmbientLoop
+                  src="/tanneurs/films/pdp-craft-forest.mp4"
+                  poster="/tanneurs/films/pdp-craft-forest-poster.jpg"
+                  alt="Saddle-stitching the forest-green full-grain leather at the bench"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <AmbientLoop
+                  src="/tanneurs/films/pdp-craft-stitch.mp4"
+                  poster="/tanneurs/films/pdp-craft-stitch-poster.jpg"
+                  alt="An artisan's hands saddle-stitching a leather panel at the bench"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              )}
             </div>
             <div className="relative min-h-[360px] md:min-h-[560px]">
               <AmbientLoop
                 src="/tanneurs/films/pdp-craft-finish.mp4"
                 poster="/tanneurs/films/pdp-craft-finish-poster.jpg"
-                alt="Solid brass buckle on full-grain leather, macro"
+                alt="Edge paint drawn along the saddle stitch, macro"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>

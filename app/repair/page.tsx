@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { PageShell } from "@/components/editorial/page-shell"
 import { RepairRegister } from "@/components/editorial/repair-register"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const metadata: Metadata = {
   title: "Lifetime Repair — Maison Tanneurs",
@@ -17,6 +18,20 @@ export default function RepairPage() {
     >
       <div className="mx-auto max-w-md px-6">
         <RepairRegister />
+
+        {/* The hand-numbered card being tied to a finished piece — the
+            register-your-piece story in one frame. The page had no imagery. */}
+        <div className="mx-auto mt-20 max-w-[320px] overflow-hidden">
+          <AmbientLoop
+            src="/tanneurs/films/repair-tag-tying.mp4"
+            poster="/tanneurs/films/repair-tag-tying-poster.jpg"
+            alt="An artisan's hands tying the numbered card to a finished bag's handle"
+            className="aspect-[9/16] w-full object-cover"
+          />
+          <p className="text-micro mt-4 text-center text-ink-muted">
+            N° — written by the hand that made it
+          </p>
+        </div>
 
         <dl className="mt-24 border-t border-hairline text-left">
           <div className="border-b border-hairline py-6">

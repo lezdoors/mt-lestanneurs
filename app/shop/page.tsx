@@ -39,9 +39,9 @@ export default async function ShopPage() {
         {/* Opener — the maison reel, bench to departure */}
         <div className="mx-auto mb-16 max-w-[1400px] px-6 md:mb-20 md:px-10">
           <AmbientLoop
-            src="/tanneurs/films/shop-opening-weekender.mp4"
-            poster="/tanneurs/films/shop-opening-weekender-poster.jpg"
-            alt="The maison reel — from the Marrakech bench to the ferry deck, the weekender carried into departure"
+            src="/tanneurs/films/shop-forest-holdall.mp4"
+            poster="/tanneurs/films/shop-forest-holdall-poster.jpg"
+            alt="The forest-green holdall in a bright limestone interior, curtains breathing in the light"
             className="aspect-video w-full object-cover"
           />
         </div>

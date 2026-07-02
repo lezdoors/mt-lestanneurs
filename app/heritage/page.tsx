@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { SiteHeader } from "@/components/editorial/site-header"
 import { SiteFooter } from "@/components/editorial/site-footer"
+import { AmbientLoop } from "@/components/editorial/ambient-loop"
 
 export const metadata: Metadata = {
   title: "Savoir-Faire — Maison Tanneurs",
@@ -28,12 +29,13 @@ export default function HeritagePage() {
           </p>
         </section>
 
-        {/* The bench — atelier scene */}
+        {/* The bench — atelier scene. The page's only motion: the real
+            register (Moroccan artisans at the bench), was a static webp. */}
         <section className="relative w-full overflow-hidden bg-dark-close">
-          <img
-            src="/tanneurs/editorial/atelier-arches.webp"
-            alt="An artisan working leather at a bench beneath an arched window"
-            loading="lazy"
+          <AmbientLoop
+            src="/tanneurs/films/heritage-atelier.mp4"
+            poster="/tanneurs/films/heritage-atelier-poster.jpg"
+            alt="Two artisans working leather at the bench in the Marrakech atelier, warm window light"
             className="h-[70vh] min-h-[440px] w-full object-cover md:h-[86vh]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
