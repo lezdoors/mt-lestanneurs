@@ -30,10 +30,10 @@ export async function EditorialHero() {
         loop
         playsInline
         preload="metadata"
-        poster="/tanneurs/films/hero-terrace-poster.jpg"
+        poster="/tanneurs/films/hero-l-attente-poster.jpg"
         aria-hidden="true"
       >
-        <source src="/tanneurs/films/hero-terrace.mp4" type="video/mp4" />
+        <source src="/tanneurs/films/hero-l-attente.mp4" type="video/mp4" />
       </video>
       {/* Top scrim keeps the white header legible over the bright sky */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-black/60 to-transparent" />

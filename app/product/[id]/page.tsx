@@ -204,16 +204,16 @@ export default async function ProductPage({
           <div className="mx-auto grid max-w-[1560px] grid-cols-1 md:grid-cols-2">
             <div className="relative min-h-[360px] md:min-h-[560px]">
               <AmbientLoop
-                src="/tanneurs/films/pdp-hands-work.mp4"
-                poster="/tanneurs/films/pdp-hands-work-poster.jpg"
+                src="/tanneurs/films/pdp-craft-stitch.mp4"
+                poster="/tanneurs/films/pdp-craft-stitch-poster.jpg"
                 alt="An artisan's hands saddle-stitching a leather panel at the bench"
                 className="absolute inset-0 h-full w-full object-cover"
               />
             </div>
             <div className="relative min-h-[360px] md:min-h-[560px]">
               <AmbientLoop
-                src="/tanneurs/films/pdp-buckle-macro.mp4"
-                poster="/tanneurs/films/pdp-buckle-macro-poster.jpg"
+                src="/tanneurs/films/pdp-craft-finish.mp4"
+                poster="/tanneurs/films/pdp-craft-finish-poster.jpg"
                 alt="Solid brass buckle on full-grain leather, macro"
                 className="absolute inset-0 h-full w-full object-cover"
               />

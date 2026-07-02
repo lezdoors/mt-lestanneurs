@@ -40,10 +40,10 @@ export function CampaignFilm() {
         loop
         playsInline
         preload="metadata"
-        poster="/tanneurs/films/maison-reel-v3-poster.jpg"
+        poster="/tanneurs/films/le-train-poster.jpg"
         className="h-[90vh] min-h-[520px] w-full object-cover"
       >
-        <source src="/tanneurs/films/maison-reel-v3.mp4" type="video/mp4" />
+        <source src="/tanneurs/films/le-train.mp4" type="video/mp4" />
       </video>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
       <div className="absolute inset-x-0 bottom-0 px-6 pb-14 [text-shadow:0_1px_14px_rgba(0,0,0,0.4)] md:px-14 md:pb-20">

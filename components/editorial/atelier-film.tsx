@@ -39,10 +39,10 @@ export function AtelierFilm() {
             loop
             playsInline
             preload="metadata"
-            poster="/tanneurs/films/the-making-poster.jpg"
+            poster="/tanneurs/films/la-fabrication-poster.jpg"
             className="h-full w-full object-cover"
           >
-            <source src="/tanneurs/films/the-making.mp4" type="video/mp4" />
+            <source src="/tanneurs/films/la-fabrication.mp4" type="video/mp4" />
           </video>
         </div>
         <p className="mt-8 text-center font-serif text-lg italic text-ink-muted">
